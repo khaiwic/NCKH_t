@@ -1231,10 +1231,8 @@ Chất lượng được đánh giá qua chiều dài đường, khoảng hở n
 \begin{center}
   \begin{minipage}{\linewidth}
     \centering
-    \fbox{\parbox[c][2.5cm][c]{0.9\linewidth}{\centering
-      So sánh mối nối \(G^1\), \(G^2\), độ cong và tốc độ hai bánh\\[4pt]
-      \textit{(Bổ sung hình ảnh sau)}}}
-    \chuthichhinh{Mối nối liên tục hình học và ảnh hưởng đến chuyển động robot}
+    \includegraphics[width=\linewidth]{moi_noi_G1_G2_do_cong_toc_do_banh.png}
+    \chuthichhinh[fig:moi-noi-g1-g2]{Mối nối liên tục hình học và ảnh hưởng đến chuyển động robot}
   \end{minipage}
 \end{center}
 
@@ -1350,7 +1348,12 @@ Tập mở (Open Set) chứa các đỉnh đã phát hiện và còn chờ mở 
 
 A* dừng khi đỉnh đích được lấy ra hợp lệ khỏi tập mở. Sau đó, đường đi được truy vết bằng các con trỏ cha. Trong bản đồ lưới có bước chéo, cần kiểm tra đoạn nối giữa hai ô và loại các chuyển động cắt qua góc vật cản; việc chỉ kiểm tra hai ô đầu cuối không bảo đảm an toàn cho đoạn đi qua giữa chúng.
 
-\hinhminhhoa[So sánh vùng tìm kiếm của Dijkstra và A*]{Hình so sánh vùng mở rộng của Dijkstra và A* trên cùng bản đồ, với các ô thuộc tập mở, tập đóng và đường đi tới đích}
+\noindent\begin{minipage}{\linewidth}
+  \begin{center}
+    \includegraphics[width=\linewidth]{so_sanh_dijkstra_astar_tap_mo_tap_dong.png}
+    \chuthichhinh[fig:dijkstra-astar-tap-mo-dong]{So sánh vùng tìm kiếm của Dijkstra và A*}
+  \end{center}
+\end{minipage}\par\medskip
 
 Với heuristic hữu ích, A* thường giảm số đỉnh phải mở rộng so với Dijkstra, nhưng không có bảo đảm mức giảm cố định trên mọi bản đồ. Trong trường hợp xấu, thuật toán vẫn có thể xét phần lớn đồ thị. Với heuristic nhất quán và heap nhị phân có giảm khóa, thời gian tìm kiếm trên đồ thị hữu hạn được chặn bởi \(O((V+E)\log V)\). Kết quả của A* vẫn cần qua bước làm mượt và tạo profile vận tốc; nếu sử dụng trạng thái chỉ gồm \((x,y)\), các ràng buộc hướng và động học của xe chưa tự động được bảo đảm.
 
@@ -1384,7 +1387,12 @@ Trong mô hình hình học đối xứng, roadmap thường là đồ thị vô
 
 Khi nhận \(q_s\) và \(q_g\), thuật toán kiểm tra hai cấu hình, thêm chúng vào roadmap và thử kết nối với các đỉnh lân cận bằng cùng bộ lập kế hoạch cục bộ. Sau đó, Dijkstra hoặc A* được dùng để tìm đường trong mạng. Nếu tìm thấy, chuỗi cạnh được ghép thành đường đi từ đầu đến đích. Nếu không tìm thấy, có thể tăng số mẫu hoặc mở rộng tập kết nối rồi truy vấn lại; một lần truy vấn thất bại trên roadmap hữu hạn chưa chứng minh môi trường không có đường đi.
 
-\hinhminhhoa[Hai giai đoạn xây dựng và truy vấn mạng PRM]{Hình minh họa hai giai đoạn của PRM: lấy mẫu và nối mạng trong miền tự do; gắn điểm xuất phát, điểm đích và tìm đường trên roadmap}
+\noindent\begin{minipage}{\linewidth}
+  \begin{center}
+    \includegraphics[width=\linewidth]{prm_xay_dung_va_truy_van.png}
+    \chuthichhinh[fig:prm-xay-dung-truy-van]{Hai giai đoạn xây dựng và truy vấn mạng PRM}
+  \end{center}
+\end{minipage}\par\medskip
 
 Giai đoạn học chỉ xây dựng mạng lưới, không phải huấn luyện một mô hình học máy. Lợi ích của PRM xuất hiện rõ khi chi phí xây dựng mạng được phân bổ cho nhiều truy vấn trong bản đồ ít thay đổi. Khi vật cản thay đổi, những cạnh và đỉnh bị ảnh hưởng phải được kiểm tra lại trước khi tiếp tục sử dụng.
 
@@ -1439,7 +1447,12 @@ với \(\mathcal{A}\) là tập ứng viên có chuyển động nối tới \(q
 \end{equation}
 thì thay cha cũ của \(q\) bằng \(q_{\mathrm{new}}\). Sau khi nối lại, cần cập nhật chi phí của các đỉnh hậu duệ bị ảnh hưởng và duy trì cấu trúc cây không có chu trình. Với mô hình chuyển động có hướng, tính hợp lệ của cạnh đi tới đỉnh mới và cạnh đi từ đỉnh mới phải được kiểm tra riêng.
 
-\hinhminhhoa[Phát triển cây và cải thiện đường đi của RRT, RRT*]{Hình so sánh RRT và RRT*: phát triển cây, chọn nút cha có chi phí nhỏ nhất và nối lại nhánh để cải thiện đường đi}
+\noindent\begin{minipage}{\linewidth}
+  \begin{center}
+    \includegraphics[width=\linewidth]{so_sanh_rrt_rrt_star.png}
+    \chuthichhinh[fig:so-sanh-rrt-rrt-star]{Phát triển cây và cải thiện đường đi của RRT, RRT*}
+  \end{center}
+\end{minipage}\par\medskip
 
 \subsubsection*{c. Tính tối ưu tiệm cận và ý nghĩa triển khai}
 
@@ -1527,7 +1540,12 @@ Lực ảo tổng hợp là
 \end{equation}
 Trong mô phỏng điểm hình học, có thể thử cập nhật \(\mathbf{q}_{k+1}=\mathbf{q}_k+\alpha_k\mathbf{F}_{\mathrm{total}}(\mathbf{q}_k)\), với \(\alpha_k>0\) là hệ số bước. Trước khi chấp nhận, phải kiểm tra toàn bộ đoạn chuyển động; nếu đoạn đi vào vùng cấm thì giảm bước hoặc loại cập nhật. Lực đẩy lớn không tự bảo đảm một bước rời rạc không đi xuyên qua vật cản.
 
-\hinhminhhoa[Thế hút, thế đẩy và trường lực tổng hợp của APF]{Hình minh họa thế hút, thế đẩy và trường lực tổng hợp quanh vật cản, kèm đường đi của robot từ điểm xuất phát tới đích}
+\noindent\begin{minipage}{\linewidth}
+  \begin{center}
+    \includegraphics[width=\linewidth]{apf_the_hut_the_day_truong_luc.png}
+    \chuthichhinh[fig:apf-the-hut-the-day]{Thế hút, thế đẩy và trường lực tổng hợp của APF}
+  \end{center}
+\end{minipage}\par\medskip
 
 Trong ứng dụng cho robot vi sai, \(\mathbf{F}_{\mathrm{total}}\) là hướng dẫn chuyển động và không phải lực cơ học được áp trực tiếp lên thân xe. Xe chỉ có thể tạo vận tốc dọc thân và vận tốc góc; vì vậy cần chuyển hướng trường lực thành hướng mong muốn, sau đó dùng bộ điều khiển phù hợp để tạo lệnh vận tốc có giới hạn. Việc đánh giá tránh va chạm phải dựa trên chuyển động thực sự của xe, không chỉ dựa trên một mô hình điểm di chuyển tự do theo hai phương.
 

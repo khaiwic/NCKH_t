@@ -10,18 +10,18 @@
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Gia tốc và vận tốc của profile chữ S.}}{33}{figure.2.4}%
 \contentsline {figure}{\numberline {2.5}{\ignorespaces So sánh đường đi gấp khúc và đường đi được làm mượt}}{37}{figure.2.5}%
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Đường Bézier, B-Spline và hành lang an toàn}}{39}{figure.2.6}%
-\contentsline {figure}{\numberline {2.7}{\ignorespaces Mối nối liên tục hình học và ảnh hưởng đến chuyển động robot}}{41}{figure.2.7}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Mối nối liên tục hình học và ảnh hưởng đến chuyển động robot}}{42}{figure.2.7}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Các bước mở rộng đỉnh của Dijkstra trên bản đồ lưới}}{44}{figure.3.1}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces So sánh vùng tìm kiếm của Dijkstra và A*}}{46}{figure.3.2}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Hai giai đoạn xây dựng và truy vấn mạng PRM}}{48}{figure.3.3}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Phát triển cây và cải thiện đường đi của RRT, RRT*}}{50}{figure.3.4}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Thế hút, thế đẩy và trường lực tổng hợp của APF}}{52}{figure.3.5}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Cực tiểu cục bộ và hiện tượng GNRON}}{54}{figure.3.6}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Lực ảo tiếp tuyến hỗ trợ thoát cực tiểu cục bộ}}{55}{figure.3.7}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Các bước mở rộng đỉnh của Dijkstra trên bản đồ lưới}}{45}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces So sánh vùng tìm kiếm của Dijkstra và A*}}{47}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Hai giai đoạn xây dựng và truy vấn mạng PRM}}{49}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Phát triển cây và cải thiện đường đi của RRT, RRT*}}{51}{figure.3.4}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Thế hút, thế đẩy và trường lực tổng hợp của APF}}{54}{figure.3.5}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Cực tiểu cục bộ và hiện tượng GNRON}}{55}{figure.3.6}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Lực ảo tiếp tuyến hỗ trợ thoát cực tiểu cục bộ}}{56}{figure.3.7}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Bố trí cơ khí của robot ba bánh thực nghiệm}}{58}{figure.4.1}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Sơ đồ kết nối phần cứng điều khiển và truyền động}}{59}{figure.4.2}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Kiến trúc điều khiển bám đường và tốc độ hai bánh}}{61}{figure.4.3}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Bố trí thí nghiệm bám đường thẳng và đường cong chữ S}}{66}{figure.4.4}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Đồ thị quỹ đạo, sai số bám và đáp ứng truyền động}}{69}{figure.4.5}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Bố trí cơ khí của robot ba bánh thực nghiệm}}{60}{figure.4.1}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Sơ đồ kết nối phần cứng điều khiển và truyền động}}{61}{figure.4.2}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Kiến trúc điều khiển bám đường và tốc độ hai bánh}}{63}{figure.4.3}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Bố trí thí nghiệm bám đường thẳng và đường cong chữ S}}{68}{figure.4.4}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Đồ thị quỹ đạo, sai số bám và đáp ứng truyền động}}{71}{figure.4.5}%
