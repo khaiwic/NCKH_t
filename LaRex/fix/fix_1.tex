@@ -1,0 +1,188 @@
+% !TeX encoding = UTF-8
+% !TeX program = xelatex
+% Bản chỉnh sửa độc lập; không thay đổi main.tex.
+% Số dòng dưới đây tham chiếu main.tex tại thời điểm lập bản chỉnh sửa.
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\usepackage[left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage[unicode,hidelinks]{hyperref}
+\onehalfspacing
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=*}
+\newcommand{\vitri}[1]{\par\noindent\textit{Vị trí thay thế trong main.tex: #1.}\par}
+
+\begin{document}
+\begin{center}
+  {\Large\bfseries BẢN CHỈNH SỬA NỘI DUNG QUY HOẠCH QUỸ ĐẠO}\par
+  \medskip
+  {\large Xe ba bánh vi sai là đối tượng nghiên cứu chủ đạo}
+\end{center}
+
+\noindent\textbf{Phạm vi sử dụng.} Các phần dưới đây là nội dung đề xuất thay thế tại những vị trí đã rà soát trong \texttt{main.tex}. Xe ba bánh gồm hai bánh chủ động điều khiển độc lập và một bánh tự lựa là đối tượng mô hình hóa và triển khai chính. Tay máy chỉ được sử dụng làm ví dụ lý thuyết bổ trợ để đối chiếu các khái niệm chung. Tệp này có thể biên dịch độc lập bằng XeLaTeX hoặc LuaLaTeX; các tiêu đề đánh số trong bản chỉnh sửa không thay thế hệ thống đánh số chương của tài liệu gốc.
+
+\section*{1. Đường đi trong bài toán xe ba bánh vi sai}
+\vitri{Mục 1.2.1.a, đoạn tại dòng 162}
+
+Đường đi (Path) mô tả hình học của chuyển động mà robot cần thực hiện, chưa gắn với thời gian. Đối với xe ba bánh vi sai chuyển động trên mặt phẳng, một đường đi của điểm tham chiếu trên thân xe có thể viết dưới dạng
+\[
+  \mathbf p(s)=\begin{bmatrix}x(s)\\y(s)\end{bmatrix},\qquad s\in[0,1],
+\]
+trong đó \(s\) là tham số tiến triển, không nhất thiết là độ dài cung. Để biểu diễn cấu hình thân xe, có thể bổ sung hướng \(\theta(s)\), tạo thành \(q(s)=(x(s),y(s),\theta(s))\). Đường đi trả lời robot đi qua đâu và theo hình dạng nào; nó chưa xác định thời điểm đến từng vị trí, vận tốc hoặc gia tốc.
+
+Đường tìm được trên bản đồ phải được kiểm tra với kích thước thân xe, vật cản và khả năng chuyển động vi sai. Một đường không va chạm của điểm tham chiếu chưa đủ chứng minh toàn bộ xe chuyển động an toàn. Việc gán quy luật \(s(t)\) và kiểm tra giới hạn vận tốc, gia tốc được thực hiện ở bước tạo quỹ đạo.
+
+Ở góc độ lý thuyết bổ trợ, đường đi của tay máy cũng có thể biểu diễn trong không gian khớp hoặc không gian thao tác. Ví dụ này chỉ làm rõ rằng cách biểu diễn đường đi phụ thuộc cơ cấu robot; phần triển khai của đề tài sử dụng mô hình xe vi sai.
+
+\section*{2. Không gian cấu hình của xe và ví dụ bổ trợ về tay máy}
+\vitri{Mục 1.2.2.a, đoạn ví dụ tay máy tại dòng 189}
+
+Đối với xe ba bánh vi sai, cấu hình thân xe được xác định bằng \(q=(x,y,\theta)\), với điểm tham chiếu đặt tại trung điểm trục hai bánh chủ động. Trong mô hình động học thân xe lý tưởng, không gian cấu hình là \(C\simeq SE(2)=\mathbb R^2\times S^1\). Hai cấu hình có cùng \((x,y)\) nhưng khác \(\theta\) có thể tạo ra vùng chiếm chỗ khác nhau, đặc biệt với khung xe không tròn. Vì vậy, kiểm tra va chạm cần xét hướng và hình học thân xe.
+
+Mô hình này giả thiết bánh tự lựa có thể tự định hướng và không bổ sung một ràng buộc động học độc lập lên thân xe trong điều kiện khảo sát. Ảnh hưởng quá độ khi bánh tự lựa đổi hướng chưa được mô tả trong cấu hình rút gọn trên.
+
+Để đối chiếu về lý thuyết, tay máy phẳng hai khớp quay có thể dùng cấu hình \((\theta_1,\theta_2)\); nếu hai khớp không giới hạn, không gian tương ứng là \(S^1\times S^1\). Ví dụ cho thấy cấu hình phải mô tả toàn cơ cấu, chứ không chỉ vị trí đầu công tác. Đây là minh họa bổ trợ, không phải mô hình sử dụng để điều khiển xe của đề tài.
+
+\section*{3. Không gian làm việc và hình minh họa}
+\vitri{Mục 1.2.2.b, dòng 204--213; thay riêng nội dung khung hình tại dòng 221}
+
+Trong bài toán của đề tài, không gian làm việc \(W\) là miền vật lý phẳng chứa xe và các vật cản. Vị trí của điểm tham chiếu thuộc \(W\subseteq\mathbb R^2\), còn cấu hình thân xe thuộc không gian có thêm tọa độ hướng. Với hình học thân xe đã biết, ký hiệu \(A(q)\) là vùng xe chiếm chỗ tại cấu hình \(q\). Nếu \(O\) là tập vật cản, điều kiện không va chạm là
+\[
+  A(q)\cap O=\varnothing.
+\]
+Một điểm \((x,y)\) nằm trong vùng trống chưa đủ để kết luận xe đi qua được: thân xe có thể chạm tường khi đổi hướng hoặc khi đi qua hành lang hẹp. Khi dùng bản đồ vị trí hai chiều, cần mở rộng vật cản theo mô hình bao hình học phù hợp; nếu hình bao phụ thuộc hướng, phải xét hướng hoặc dùng một hình bao bảo thủ.
+
+Về thuật ngữ, trong lý thuyết tay máy, workspace còn có thể chỉ miền vị trí hoặc tư thế mà đầu công tác đạt tới. Cách dùng này được nêu để đối chiếu, trong khi \(W\) của đề tài được thống nhất là không gian vật lý chứa xe và môi trường. Không sử dụng miền với tới của tay máy thay cho miền chuyển động khả thi của xe vi sai.
+
+\noindent\textbf{Nội dung thay thế cho khung hình:} So sánh không gian làm việc và không gian cấu hình của xe ba bánh vi sai: xe trong hành lang; hai cấu hình cùng vị trí nhưng khác hướng; vùng chiếm chỗ và các cấu hình gây va chạm. Khi đưa vào tài liệu gốc, giữ lệnh \verb|\hinhminhhoa| và thay chú thích cùng nội dung bằng mô tả này.
+
+\section*{4. Va chạm với môi trường và tự va chạm}
+\vitri{Mục 1.2.3.b, dòng 244--272}
+
+\noindent\textbf{Va chạm với môi trường.} Đối với xe ba bánh có khung cố định, kiểm tra trọng tâm là sự giao nhau giữa vùng thân xe chiếm chỗ và vật cản bên ngoài. Hình bao cần tính tới các bộ phận nhô ra và phạm vi quét của bánh tự lựa nếu chúng vượt ra ngoài khung. Miền cấu hình cấm được mô tả bởi
+\[
+  C_{\mathrm{obs}}=\{q\in C\mid A(q)\cap O\neq\varnothing\}.
+\]
+Trong thiết kế, có thể bổ sung khoảng dự phòng để xét sai số định vị, sai số kích thước và sai số bám. Giá trị dự phòng cần được công bố và dùng nhất quán khi so sánh các thuật toán.
+
+Kiểm tra các nút rời rạc chưa đủ chứng minh đoạn nối giữa chúng không va chạm. Vì vậy, cần kiểm tra chuyển động dọc các cạnh và kiểm tra lại đường sau khi làm mượt. Việc làm trơn có thể khiến đường mới tiến gần vật cản hoặc cắt qua vùng cấm.
+
+\noindent\textbf{Tự va chạm --- nội dung lý thuyết bổ trợ.} Với robot có nhiều bộ phận chuyển động tương đối, chẳng hạn tay máy, cần kiểm tra thêm các cặp bộ phận không được phép giao nhau. Điều kiện có dạng \(A_i(q)\cap A_j(q)\neq\varnothing\). Các tiếp xúc được thiết kế sẵn tại liên kết không được tự động xem là lỗi. Trong mô hình xe có khung cố định của đề tài, kiểm tra tự va chạm giữa các khâu không phải bài toán quy hoạch chính; các vướng mắc cơ khí phải được xử lý khi thiết kế và xác định hình bao xe.
+
+\section*{5. Ứng dụng PTP và CP theo đối tượng xe vi sai}
+\vitri{Mục 1.3.1.a, dòng 327; Mục 1.3.1.b, dòng 339}
+
+\noindent\textbf{Đoạn thay thế cho ứng dụng PTP.} Với xe ba bánh vi sai, chuyển động điểm tới điểm được dùng để đi từ trạm xuất phát tới trạm nhận hàng, vị trí chờ hoặc vị trí sạc. Đích có thể gồm cả vị trí và hướng \(q_f=(x_f,y_f,\theta_f)\), kèm yêu cầu dừng. Các tiêu chí đánh giá gồm sai số vị trí và hướng cuối, thời gian hoàn thành, khoảng cách an toàn và mức tuân thủ giới hạn bánh xe. Hai bánh phải được phối hợp theo chuyển động thân xe; điều khiển từng bánh độc lập theo mục tiêu không thống nhất có thể làm thay đổi hướng và đường đi. Trong lý thuyết tay máy, gắp--đặt và hàn điểm là các ví dụ PTP bổ trợ, thường cần đồng bộ thời gian chuyển động giữa các khớp.
+
+\noindent\textbf{Đoạn thay thế cho ứng dụng CP.} Với xe ba bánh vi sai, chuyển động theo đường liên tục được sử dụng khi đi theo tuyến vận chuyển hoặc đường tham chiếu đã làm mượt. Trên đoạn tiến có vận tốc khác không và thỏa mãn giả thiết không trượt ngang, hướng thân xe phải phù hợp với tiếp tuyến đường. Nếu \(\kappa\) là độ cong có dấu và \(v\) là tốc độ tiến thì
+\[
+  \omega=v\kappa,\qquad
+  v_R=v+\frac b2\omega,\qquad
+  v_L=v-\frac b2\omega,
+\]
+trong đó \(b\) là khoảng cách giữa hai bánh chủ động. Cần kiểm tra giới hạn tốc độ, gia tốc bánh xe và khả năng bám đường; chuyển động lùi hoặc quay tại chỗ được tổ chức thành chế độ riêng với quy ước phù hợp. Về lý thuyết bổ trợ, tay máy thực hiện hàn hoặc phun sơn có thể phải chuyển đường đầu công tác sang chuyển động khớp bằng động học ngược và xét kỳ dị. Những yêu cầu này không được áp dụng nguyên dạng cho xe vi sai.
+
+\section*{6. Phân loại theo cơ cấu: giữ tay máy ở vai trò bổ trợ}
+\vitri{Mục 1.3.2, tiêu đề dòng 363 và tiểu mục a tại dòng 365--371; giữ các tiểu mục còn lại}
+
+\noindent\textbf{Tiêu đề mục đề xuất:} Phân loại theo đối tượng cơ cấu: robot di động bánh xe là đối tượng chính và các cơ cấu robot khác dùng để đối chiếu lý thuyết.
+
+\noindent\textbf{a. Tay máy công nghiệp --- cơ sở lý thuyết bổ trợ}
+
+Tay máy được giới thiệu nhằm làm rõ sự khác nhau giữa các dạng bài toán quy hoạch chuyển động. Cấu hình tay máy thường được biểu diễn bằng các biến khớp \(q=(q_1,\ldots,q_n)\). Quy hoạch cần xét giới hạn khớp và va chạm của toàn cơ cấu; với cơ cấu có vòng kín, các biến còn phải thỏa mãn ràng buộc liên kết.
+
+Về lý thuyết, quan hệ vận tốc có dạng \(V=J(q)\dot q\). Khi hạng Jacobian giảm so với hạng cực đại, cơ cấu xuất hiện kỳ dị. Đường trong không gian khớp cũng không tự bảo đảm đầu công tác đi theo đường thẳng trong không gian thao tác. Các khái niệm này giúp phân biệt bài toán của tay máy với bài toán của xe, nhưng không thuộc nội dung xây dựng mô hình hoặc thực nghiệm tay máy trong đề tài.
+
+Đối tượng triển khai chính là xe ba bánh vi sai có cấu hình thân \((x,y,\theta)\) và ngõ vào động học \((v,\omega)\). Trọng tâm là ràng buộc không trượt ngang, hình học thân xe và giới hạn hai bánh chủ động. Vì vậy, các chương sau sử dụng mô hình xe để nối thuật toán tìm đường với bước làm mượt, gán thời gian và điều khiển bám.
+
+\section*{7. Ý nghĩa của biến cấu hình và các đạo hàm}
+\vitri{Mục 2.2.1, riêng gạch đầu dòng về vị trí tại dòng 778}
+
+\noindent\textbf{Vị trí và cấu hình \(q\):} Trong mô hình xe ba bánh vi sai, \(q=(x,y,\theta)\) gồm tọa độ điểm tham chiếu và hướng thân xe. Bộ biến này mô tả cấu hình hình học trong mặt phẳng, chưa bao gồm vận tốc và chưa phải trạng thái động lực học đầy đủ. Vị trí của điểm tham chiếu là \(\mathbf p=(x,y)\), cần phân biệt với cấu hình \(q\). Các đạo hàm \(\dot q,\ddot q,\dddot q\) lần lượt mô tả tốc độ thay đổi cấu hình, gia tốc và độ giật theo từng tọa độ; khi kết hợp các thành phần dài và góc trong một chỉ tiêu, phải chuẩn hóa hoặc dùng trọng số thích hợp. Ở lý thuyết robot tổng quát, \(q\) cũng có thể là tọa độ khớp của tay máy; cách biểu diễn đó chỉ được nêu để tham khảo.
+
+\section*{8. Nội suy đa thức cho xe ba bánh vi sai}
+\vitri{Mục 2.3.1, thay toàn bộ nội dung từ dòng 839 đến dòng 892; giữ tiêu đề mục dòng 837}
+
+\subsection*{a. Mô hình sử dụng và vai trò của nội suy}
+
+Phần tạo quỹ đạo sử dụng mô hình động học của xe ba bánh vi sai. Đặt \(r\) là bán kính chung của hai bánh chủ động và \(b\) là khoảng cách hai bánh; với giả thiết lăn không trượt,
+\[
+  \dot x=v\cos\theta,\qquad
+  \dot y=v\sin\theta,\qquad
+  \dot\theta=\omega.
+\]
+Quan hệ với tốc độ góc bánh là
+\[
+  v=\frac r2(\dot\phi_R+\dot\phi_L),\qquad
+  \omega=\frac r b(\dot\phi_R-\dot\phi_L).
+\]
+Xe không thể được gán tùy ý ba hàm \(x(t),y(t),\theta(t)\) độc lập, vì chúng phải thỏa mãn
+\[
+  \dot y\cos\theta-\dot x\sin\theta=0.
+\]
+Do đó, nội suy đa thức ở đây được dùng chủ yếu để xây dựng quy luật thời gian dọc một đường hình học đã kiểm tra. Mô hình động lực học dạng \(M(q)\ddot q+C(q,\dot q)\dot q+G(q)=\tau\), thường gặp trong lý thuyết cơ cấu robot, không được dùng thay trực tiếp cho mô hình động học xe. Việc xây dựng động lực học xe có xét ràng buộc và mô-men bánh là một bước mô hình hóa riêng, ngoài nội dung nội suy đang xét.
+
+\subsection*{b. Nội suy bậc ba và bậc năm cho quy luật thời gian}
+
+Cho đường \(\mathbf p(s)\), \(s\in[0,1]\), với các đạo hàm theo tham số đủ trơn cho đại lượng cần kiểm tra và \(\|\mathbf p_s(s)\|>0\). Chọn thời gian thực hiện \(T>0\), đặt \(\xi=t/T\) và xây dựng \(s(t)\) đơn điệu từ \(0\) tới \(1\).
+
+Đa thức bậc ba với vận tốc tham số bằng không tại hai đầu là
+\[
+  s(t)=3\xi^2-2\xi^3,
+\]
+\[
+  \dot s(t)=\frac{6\xi-6\xi^2}{T},\qquad
+  \ddot s(t)=\frac{6-12\xi}{T^2}.
+\]
+Profile này thỏa mãn \(s(0)=0\), \(s(T)=1\), \(\dot s(0)=\dot s(T)=0\), nhưng gia tốc tham số tại hai đầu khác không. Nếu nối trực tiếp với trạng thái đứng yên có gia tốc bằng không, gia tốc bị gián đoạn tại điểm nối.
+
+Đa thức bậc năm với vận tốc và gia tốc tham số bằng không tại hai đầu là
+\[
+  s(t)=10\xi^3-15\xi^4+6\xi^5,
+\]
+\[
+  \dot s(t)=\frac{30\xi^2-60\xi^3+30\xi^4}{T},\qquad
+  \ddot s(t)=\frac{60\xi-180\xi^2+120\xi^3}{T^2}.
+\]
+Profile bậc năm cho phép nối liên tục đến gia tốc với đoạn đứng yên nếu đường hình học đủ trơn. Tuy nhiên, jerk tại hai đầu không bằng không, nên không tự bảo đảm liên tục jerk khi ghép đoạn. Các công thức trên dành cho chuyển động bắt đầu và kết thúc ở trạng thái nghỉ; khi xe đang chuyển động, phải giải hệ điều kiện biên phù hợp với vận tốc và gia tốc tại thời điểm chuyển tiếp.
+
+\subsection*{c. Chuyển thành tham chiếu thân xe và bánh xe}
+
+Theo quy tắc đạo hàm,
+\[
+  \dot{\mathbf p}=\mathbf p_s\dot s,\qquad
+  \ddot{\mathbf p}=\mathbf p_{ss}\dot s^2+\mathbf p_s\ddot s.
+\]
+Với chế độ tiến dọc đường, hướng và độ cong tham chiếu được xác định bởi
+\[
+  \theta_d(s)=\operatorname{atan2}(y_s,x_s),\qquad
+  \kappa(s)=\frac{x_s y_{ss}-y_s x_{ss}}
+  {(x_s^2+y_s^2)^{3/2}}.
+\]
+Hướng cần được xử lý liên tục qua biên góc tuần hoàn. Các lệnh động học tham chiếu là
+\[
+  v_d=\|\mathbf p_s\|\dot s,\qquad
+  \omega_d=\kappa v_d,
+\]
+\[
+  \dot\phi_{R,d}=\frac{v_d+(b/2)\omega_d}{r},\qquad
+  \dot\phi_{L,d}=\frac{v_d-(b/2)\omega_d}{r}.
+\]
+Các công thức này xét đoạn đường tiến chính quy; quay tại chỗ và đổi chiều cần được xây dựng thành các đoạn chuyển động riêng với điều kiện nối phù hợp. Nếu hướng đầu hoặc cuối yêu cầu không trùng hướng tiếp tuyến, phải thiết kế đoạn chuyển tiếp thay vì gán hướng độc lập với đường.
+
+Thời gian \(T\) được lựa chọn sau khi kiểm tra vận tốc và gia tốc của cả hai bánh trên toàn đoạn. Với hình học đường và profile chuẩn hóa cố định, tăng \(T\) làm các vận tốc giảm theo \(T^{-1}\), các gia tốc giảm theo \(T^{-2}\), giúp điều chỉnh quỹ đạo theo giới hạn động học đã đặt. Điều này không thay thế kiểm tra mô-men, bám sàn hoặc va chạm. Nếu cần đánh giá jerk của chuyển động trên đường, phải xét cả đạo hàm hình học tương ứng, không chỉ \(\dddot s\).
+
+Đầu ra của bước tạo quỹ đạo là chuỗi tham chiếu có dấu thời gian, chẳng hạn
+\[
+  \mathcal T_{\mathrm{ref}}=
+  \{t_k,x_{d,k},y_{d,k},\theta_{d,k},v_{d,k},\omega_{d,k}\}_{k=0}^{N},
+\]
+được chuyển cho bộ điều khiển bám và vòng điều khiển tốc độ bánh. Cần phân biệt tọa độ trạng thái với tín hiệu đầu ra, tránh dùng cùng ký hiệu \(y\) vừa chỉ tọa độ ngang vừa chỉ đầu ra tổng quát mà không giải thích.
+
+Về lý thuyết bổ trợ, đa thức bậc ba và bậc năm cũng được sử dụng để tạo chuyển động từng khớp của tay máy. Trong đề tài này, ví dụ tay máy chỉ minh họa tính tổng quát của phương pháp nội suy; phần áp dụng cụ thể là quy luật thời gian và tham chiếu chuyển động cho xe ba bánh vi sai.
+
+\end{document}

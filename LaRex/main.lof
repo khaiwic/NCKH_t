@@ -1,0 +1,27 @@
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Các tầng chính của kiến trúc điều khiển tự hành}}{2}{figure.1.1}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Cùng vị trí nhưng khác cấu hình robot}}{7}{figure.1.2}%
+\contentsline {figure}{\numberline {1.3}{\ignorespaces Mở rộng vật cản bằng tổng Minkowski và khoảng dự phòng}}{9}{figure.1.3}%
+\contentsline {figure}{\numberline {1.4}{\ignorespaces So sánh các quy luật chuyển động và độ êm quỹ đạo}}{18}{figure.1.4}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Hệ tọa độ toàn cục và hệ tọa độ gắn với thân robot}}{22}{figure.2.1}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Mô hình robot dẫn động vi sai hai bánh chủ động}}{23}{figure.2.2}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Cấu tạo và các tham số hình học của bánh tự lựa}}{25}{figure.2.3}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Gia tốc và vận tốc của profile chữ S.}}{33}{figure.2.4}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces So sánh đường đi gấp khúc và đường đi được làm mượt}}{37}{figure.2.5}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Đường Bézier, B-Spline và hành lang an toàn}}{39}{figure.2.6}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Mối nối liên tục hình học và ảnh hưởng đến chuyển động robot}}{41}{figure.2.7}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Các bước mở rộng đỉnh của Dijkstra trên bản đồ lưới}}{44}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces So sánh vùng tìm kiếm của Dijkstra và A*}}{46}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Hai giai đoạn xây dựng và truy vấn mạng PRM}}{48}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Phát triển cây và cải thiện đường đi của RRT, RRT*}}{50}{figure.3.4}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Thế hút, thế đẩy và trường lực tổng hợp của APF}}{52}{figure.3.5}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Cực tiểu cục bộ và hiện tượng GNRON}}{54}{figure.3.6}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Lực ảo tiếp tuyến hỗ trợ thoát cực tiểu cục bộ}}{55}{figure.3.7}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Bố trí cơ khí của robot ba bánh thực nghiệm}}{58}{figure.4.1}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Sơ đồ kết nối phần cứng điều khiển và truyền động}}{59}{figure.4.2}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Kiến trúc điều khiển bám đường và tốc độ hai bánh}}{61}{figure.4.3}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Bố trí thí nghiệm bám đường thẳng và đường cong chữ S}}{66}{figure.4.4}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Đồ thị quỹ đạo, sai số bám và đáp ứng truyền động}}{69}{figure.4.5}%

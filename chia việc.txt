@@ -1,0 +1,48 @@
+Phần mở đầu:
+Giới thiệu đề tài.
+Lý do chọn đề tài:
+	Tính cấp thiết
+	Vấn đề cốt lõi
+	Lý do cá nhân/ nhóm: Cần làm chủ lý thuyết các thuật toán điều khiển vòng kín cơ bản trước khi ứng dụng vào việc chế tạo và tối ưu hóa ngoài thực tiễn.
+Tổng quan nghiên cứu thuộc lĩnh vực đề tài:
+	Lịch sử & Sự phát triển
+	Phân loại các loại thuật toán
+		Vòng kín
+		Vòng hở
+		Ưu/ nhược điểm
+		Đánh giá	
+Mục đích của nghiên cứu
+Mục tiêu nghiên cứu và nhiệm vụ nghiên cứu
+	Mục tiêu của nghiên cứu:
+		Mục tiêu 1:
+		Mục tiêu 2:
+	Nhiệm vụ nghiên cứu:
+		Nhiệm vụ 1:
+		Nhiệm vụ 2:
+		Nhiệm vụ 3:
+		Nhiệm vụ 4:
+Câu hỏi nghiên cứu và giả thuyết nghiên cứu
+Câu hỏi nghiên cứu
+	Thuật toán điều khiển vòng kín nào là phù hợp cho mô hình robot cơ bản?
+	Làm thế nào để tinh chỉnh các thông số điều khiển đạt đáp ứng nhan và ít vọt lố nhất?
+	Độ chính xác và tính ổn định của robot cải thiện ra sao so với khi không có vòng phản hồi?
+Giả thuyết nghiên cứu
+Đối tượng và phạm vi nghiên cứu
+	Đối tượng nghiên cứu
+	Phạm vi nghiên cứu
+		Về lý thuyết
+		Về thực nghiệm
+	Phương pháp nghiên cứu
+		Phương pháp thu thập & phân tích tài liệu
+		Phương pháp mô phỏng
+		Phương pháp thực nghiệm
+Lý thuyết nghiên cứu
+	Khái niệm
+	Phương trình toán học
+	Phương pháp tinh chỉnh tham số PID(VD Ziegler-Nichols, MATLAB hoặc dò tay)
+Ý nghĩa thực tiễn của đề tài
+	Về học thuật
+	Về ứng dụng
+Kết quả đề tài
+
+					

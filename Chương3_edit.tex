@@ -1,0 +1,451 @@
+% !TeX program = tectonic-local
+% !TeX encoding = UTF-8
+% Bản biên tập từ Chương 3.tex; giữ nguyên file nguồn.
+% Biên dịch độc lập bằng Tectonic, XeLaTeX hoặc LuaLaTeX.
+% Thiết kế mô phỏng và tham số trong chương là đề xuất, chưa phải kết quả chạy.
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\usepackage[left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx,array,longtable}
+\usepackage{setspace}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage[unicode,hidelinks]{hyperref}
+\renewcommand{\chaptername}{Chương}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\bibname}{Tài liệu tham khảo}
+\renewcommand{\contentsname}{Mục lục}
+\setcounter{secnumdepth}{2}
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{4pt}
+\setlength{\emergencystretch}{3em}
+\renewcommand{\arraystretch}{1.2}
+\onehalfspacing
+\numberwithin{equation}{chapter}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\att}{\mathrm{att}}
+\newcommand{\rep}{\mathrm{rep}}
+\newcommand{\goal}{\mathrm{g}}
+\newcommand{\obs}{\mathrm{obs}}
+\begin{document}
+\setcounter{chapter}{2}
+
+\chapter{Các thuật toán quy hoạch quỹ đạo và thiết kế mô phỏng}
+
+\section{Mục tiêu và phạm vi nghiên cứu}
+
+Theo đề cương đề tài, chương này trình bày các nhóm thuật toán quy hoạch chuyển động và phương án mô phỏng robot di động tránh vật cản. Nội dung gồm tìm kiếm trên đồ thị, lấy mẫu và trường thế nhân tạo (Artificial Potential Field -- APF), trong đó APF được phân tích chi tiết từ mô hình toán đến xử lý các tình huống thất bại. Việc phân nhóm và phân biệt quy hoạch hình học với quy hoạch có ràng buộc chuyển động tham khảo \cite{lavalle}.
+
+Phạm vi triển khai được đề xuất là môi trường phẳng, vật cản tĩnh và bản đồ đã biết. Mô hình cơ sở xem robot là đĩa tròn và quy hoạch vị trí tâm. Với robot vi sai, đường đi tìm được còn phải được kiểm tra và chuyển thành quỹ đạo có định thời hoặc lệnh điều khiển thỏa mãn động học. Môi trường động, robot tay máy và tối ưu hóa quỹ đạo được nêu như hướng mở rộng, chưa được coi là đối tượng đã kiểm chứng trong chương này.
+
+\textbf{Trạng thái nghiên cứu:} Các công thức trong chương được trình bày để xây dựng thuật toán. Kịch bản, tham số và biểu mẫu đánh giá ở phần sau là thiết kế thí nghiệm đề xuất. Chưa có dữ liệu chạy mô phỏng kèm theo bản biên tập này, vì vậy chưa kết luận thuật toán nào tốt hơn hoặc đã giải quyết hoàn toàn hiện tượng kẹt.
+
+\section{Phát biểu bài toán và quy ước ký hiệu}
+
+\subsection{Không gian làm việc và mô hình va chạm}
+
+Cho miền làm việc đóng, hữu hạn $\mathcal W\subset\mathbb R^2$, tập vật cản $\mathcal O_i$, vị trí bắt đầu $q_s$ và đích $q_g$. Robot có bán kính $r_b>0$; biên an toàn bổ sung là $\delta>0$. Để quy hoạch cho tâm robot, nới mỗi vật cản theo tổng Minkowski:
+\begin{equation}
+\widetilde{\mathcal O}_i=\mathcal O_i\oplus B(0,r_b+\delta),\qquad
+\mathcal C_{\mathrm{free}}=
+\bigl(\mathcal W\ominus B(0,r_b+\delta)\bigr)
+\setminus\bigcup_i\widetilde{\mathcal O}_i.
+\end{equation}
+Trong đó $B(0,r)$ là đĩa bán kính $r$; phép co miền làm việc bảo đảm thân robot không vượt biên. Yêu cầu $q_s,q_g\in\mathcal C_{\mathrm{free}}$. Nới vật cản thay thế hình học thân robot trong mô hình phẳng; không thay thế việc xử lý sai số định vị trên hệ thực.
+
+Đường đi hình học $p:[0,1]\to\mathcal C_{\mathrm{free}}$ nối $q_s$ với $q_g$. Quỹ đạo có định thời là $q(t)=p(s(t))$, cần thêm luật thời gian và các giới hạn vận tốc, gia tốc. Trong chương, kết quả các bộ quy hoạch trước hết được đánh giá ở mức đường đi; chỉ đánh giá thời gian di chuyển khi đã có cùng quy tắc định thời hoặc cùng bộ bám đường.
+
+Đặt $d_i(q)=\operatorname{dist}(q,\widetilde{\mathcal O}_i)$ cho $q$ ở ngoài vật cản đã nới. Với vật cản gốc là đĩa tâm $c_i$, bán kính $R_i$:
+\begin{equation}
+d_i(q)=\norm{q-c_i}-(R_i+r_b+\delta),\quad
+\nabla d_i(q)=\frac{q-c_i}{\norm{q-c_i}}.
+\label{eq:distance}
+\end{equation}
+Khoảng cách này được tính tới biên vật cản đã nới, không phải khoảng cách tới tâm. Với đa giác, cần tính điểm gần nhất trên các cạnh; tại vị trí có nhiều điểm gần nhất, gradient có thể không duy nhất. Phương án triển khai phải quy định quy tắc chọn nhất quán và kiểm tra dao động do chuyển đổi điểm gần nhất.
+
+\subsection{Ký hiệu và tiêu chí khả thi}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{11.2cm}|}
+\caption{Các ký hiệu chính}\label{tab:symbols}\\\hline
+Ký hiệu & Ý nghĩa\\\hline
+\endfirsthead
+\hline Ký hiệu & Ý nghĩa\\\hline
+\endhead
+$q=[x,y]^T$, $q_g$ & Vị trí tâm robot và vị trí đích, đơn vị m.\\\hline
+$r=\norm{q-q_g}$ & Khoảng cách tới đích.\\\hline
+$d_i$, $\rho_0$ & Khoảng cách tới vật cản đã nới và phạm vi tác động trường đẩy, đơn vị m.\\\hline
+$k_a,k_r,k_v$ & Hệ số thế hút, thế đẩy và lực ảo; đơn vị phụ thuộc cách chuẩn hóa trường và luật vận tốc.\\\hline
+$d_g$, $\varepsilon_g$ & Ngưỡng chuyển dạng thế hút và bán kính vùng chấp nhận đích.\\\hline
+$\Delta t$, $T_{stuck}$ & Chu kỳ cập nhật và cửa sổ thời gian xác nhận kẹt.\\\hline
+$v_{\max}$, $\omega_{\max}$ & Giới hạn vận tốc tịnh tiến và vận tốc góc.\\\hline
+$\varepsilon_F$, $\varepsilon_p$ & Ngưỡng trường lực nhỏ và ngưỡng dịch chuyển nhỏ trong cửa sổ quan sát.\\\hline
+$s\in\{-1,+1\}$ & Chiều quay lực ảo, được giữ trong một giai đoạn vòng tránh.\\\hline
+\end{longtable}
+
+Điều kiện khả thi tối thiểu là mọi đoạn nối hai vị trí liên tiếp đều nằm trong $\mathcal C_{\mathrm{free}}$, đạt vùng đích và không vượt ngân sách tính toán. Việc chỉ kiểm tra các điểm đầu mút chưa đủ loại trừ va chạm giữa hai bước. Đường đi ngắn và trơn chỉ được so sánh sau khi đã kiểm tra khả thi.
+
+\section{Các nhóm thuật toán quy hoạch đường đi}
+
+\subsection{Tìm kiếm trên đồ thị: Dijkstra và A*}
+
+Biểu diễn bản đồ bằng đồ thị $G=(V,E)$ có trọng số cạnh không âm; mỗi cạnh phải qua kiểm tra va chạm. Dijkstra chọn đỉnh có chi phí tích lũy $g$ nhỏ nhất để mở rộng. A* sử dụng $f(n)=g(n)+h(n)$, trong đó $h$ ước lượng chi phí còn lại. Với cạnh mang chi phí chiều dài Euclid, có thể chọn $h(n)=\norm{q_n-q_g}$ \cite{lavalle}.
+
+Trong thiết kế lưới tám hướng, cạnh ngang/dọc dài $h_{grid}$ và cạnh chéo dài $\sqrt2h_{grid}$. Cần cấm đi xuyên góc vật cản và kiểm tra đoạn cạnh trên hình học đã nới. Khi dùng heuristic nhất quán cùng cách đóng/mở đỉnh phù hợp, A* tìm đường tối ưu trên đồ thị đang xét; kết quả đó không đồng nghĩa đường ngắn nhất trong không gian liên tục. Độ phân giải lưới ảnh hưởng cả bộ nhớ, thời gian và khả năng biểu diễn hành lang hẹp.
+
+Trong thí nghiệm, Dijkstra dùng làm đối chứng cho A* trên cùng đồ thị. Sai khác về chiều dài khi cả hai hoàn tất phải được giải thích bằng cách xử lý cạnh, điểm đầu/đích hoặc tiêu chí dừng, thay vì mặc nhiên coi là ưu thế thuật toán.
+
+\subsection{Lấy mẫu: PRM, RRT và RRT*}
+
+PRM xây dựng mạng các cấu hình tự do; RRT phát triển cây từ điểm đầu bằng lấy mẫu và mở rộng có kiểm tra va chạm \cite{lavalle}. PRM phù hợp để khảo sát việc tái sử dụng cấu trúc khi có nhiều truy vấn trên bản đồ tĩnh; chi phí dựng mạng phải được báo cáo riêng. Với RRT, cần công bố bước mở rộng, phân bố lấy mẫu và quy tắc nối đích.
+
+RRT* bổ sung chọn cha theo chi phí và nối lại các đỉnh lân cận. Tính tối ưu tiệm cận được phát biểu dưới các giả thiết về bài toán và lịch kết nối; không phải bảo đảm tối ưu sau một số mẫu hữu hạn \cite{karaman}. Trong ngân sách cố định, phải đo chất lượng nghiệm thực tế và tỷ lệ tìm được nghiệm.
+
+Khi so sánh các bộ quy hoạch lấy mẫu, cần công bố hạt giống ngẫu nhiên, giới hạn thời gian/số mẫu, cách tìm lân cận và kiểm tra đoạn nối. Đường đi sau làm trơn phải được kiểm tra va chạm lại và tách khỏi kết quả đường đi thô.
+
+\subsection{Trường thế và phạm vi lựa chọn}
+
+APF tạo hướng chuyển động từ trường hút về đích và trường đẩy khỏi vật cản \cite{khatib}. Chương này chọn APF làm nội dung phân tích chính vì có thể khảo sát trực tiếp ảnh hưởng của tham số và cơ chế kẹt. A* được đề xuất làm đối chứng toàn cục trên bản đồ đã biết. Các thuật toán lấy mẫu được trình bày để hoàn thiện phạm vi thuật toán theo đề cương; chỉ ghi là đã thực nghiệm khi có chương trình và nhật ký chạy tương ứng.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Vai trò dự kiến của các thuật toán trong nghiên cứu}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{5.3cm}|>{\raggedright\arraybackslash}p{6.2cm}|}\hline
+Nhóm & Điểm cần khảo sát & Giới hạn cần công bố\\\hline
+Dijkstra/A* & Chi phí đường đi và số đỉnh mở rộng & Phụ thuộc đồ thị, độ phân giải, heuristic\\\hline
+PRM/RRT & Khả năng tìm nghiệm dưới ngân sách mẫu & Biến thiên theo lấy mẫu, hành lang hẹp\\\hline
+RRT* & Chất lượng nghiệm theo ngân sách tăng dần & Không suy ra tối ưu hữu hạn từ tính tiệm cận\\\hline
+APF & Phản ứng cục bộ và tác động của tham số & Cực tiểu cục bộ, GNRON, dao động\\\hline
+\end{tabular}
+\end{table}
+
+\section{Phương pháp trường thế nhân tạo}
+
+\subsection{Bản chất mô hình}
+
+Trường thế là hàm vô hướng $U(q)$; hướng điều hướng được lấy theo $F(q)=-\nabla U(q)$. Trong mô hình quy hoạch bậc nhất, $F$ là trường chỉ hướng hoặc lệnh trung gian, không mặc nhiên là lực cơ học đơn vị N. Muốn xem đây là lực thật cần bổ sung mô hình khối lượng, ma sát và cơ cấu chấp hành. Cách tiếp cận APF có nền tảng từ nghiên cứu tránh vật cản thời gian thực của Khatib \cite{khatib}.
+
+\subsection{Thế hút và lực hút}
+
+Thế hút bậc hai và lực tương ứng là
+\begin{equation}
+U_{\att}(q)=\frac12 k_a r^2,\qquad
+F_{\att}(q)=-k_a(q-q_g),\qquad k_a>0.
+\end{equation}
+Độ lớn trường tăng theo khoảng cách đích. Nếu chuyển trực tiếp sang vận tốc mà không giới hạn, lệnh có thể vượt khả năng robot; chỉ từ độ lớn trường chưa thể kết luận hệ mất ổn định.
+
+Thế hút hình nón $U_{\att}=k_a r$ cho
+\begin{equation}
+F_{\att}=-k_a\frac{q-q_g}{r},\qquad r>0.
+\end{equation}
+Độ lớn không đổi ngoài đích; gradient không xác định tại $r=0$. Vì vậy phải có điều kiện dừng và luật giảm tốc thay vì tính công thức này ngay tại đích.
+
+Mô hình kết hợp dùng vùng bậc hai gần đích và vùng tuyến tính xa đích:
+\begin{equation}
+U_{\att}(q)=\begin{cases}
+\frac12 k_a r^2,&r\le d_g,\\
+k_a d_g r-\frac12 k_a d_g^2,&r>d_g.
+\end{cases}
+\end{equation}
+Lấy gradient âm thu được
+\begin{equation}
+F_{\att}(q)=\begin{cases}
+-k_a(q-q_g),&r\le d_g,\\
+-k_a d_g\dfrac{q-q_g}{r},&r>d_g.
+\end{cases}
+\label{eq:attractive}
+\end{equation}
+Cả thế năng và lực đều liên tục tại $r=d_g$; độ lớn lực bị chặn bởi $k_a d_g$. Dấu âm ở cả hai nhánh bảo đảm hướng về đích. Tính chất liên tục này chưa đủ chứng minh ổn định của thuật toán rời rạc có vật cản và chuyển chế độ.
+
+\subsection{Thế đẩy và lực đẩy truyền thống}
+
+Với mỗi vật cản, đặt $k_r>0$, $\rho_0>0$:
+\begin{equation}
+U_{\rep,i}(q)=\begin{cases}
+\frac12 k_r\left(\dfrac1{d_i}-\dfrac1{\rho_0}\right)^2,&0<d_i\le\rho_0,\\
+0,&d_i>\rho_0.
+\end{cases}
+\end{equation}
+Khi $d_i\le0$, trạng thái vi phạm miền an toàn và phải được xử lý trước khi tính nghịch đảo khoảng cách. Gradient âm cho
+\begin{equation}
+F_{\rep,i}(q)=\begin{cases}
+k_r\left(\dfrac1{d_i}-\dfrac1{\rho_0}\right)\dfrac1{d_i^2}\nabla d_i,&0<d_i\le\rho_0,\\
+0,&d_i>\rho_0.
+\end{cases}
+\label{eq:repulsive}
+\end{equation}
+Hệ số $1/2$ không còn trong lực vì đã triệt tiêu khi lấy đạo hàm bình phương. Dạng thế và lực tương ứng được trình bày trong \cite{gecui}.
+
+Trong mô hình khoảng cách trơn, lực hướng ra khỏi vật cản và bằng 0 ở biên ảnh hưởng $d_i=\rho_0$. Khi $d_i\to0^+$, lực tăng rất lớn; triển khai số cần kiểm tra trạng thái, giới hạn lệnh và kiểm tra va chạm đoạn. Tính kỳ dị của trường liên tục không tự bảo đảm an toàn cho bước cập nhật hữu hạn. $\rho_0$ là phạm vi tác động thuật toán, không phải giới hạn phát hiện cảm biến.
+
+\subsection{Tổng hợp trường và cập nhật vị trí}
+
+Với $N$ vật cản:
+\begin{equation}
+U_{\mathrm{total}}=U_{\att}+\sum_{i=1}^N U_{\rep,i},\qquad
+F_{\mathrm{APF}}=F_{\att}+\sum_{i=1}^N F_{\rep,i}.
+\end{equation}
+Lực tổng hợp bao gồm cả hút và đẩy, do đó không gọi là ``lực đẩy tổng hợp''. Đề xuất chuyển trường $F_c$ sang vận tốc tham chiếu theo
+\begin{equation}
+v_{\mathrm{ref}}=\begin{cases}
+0,&r\le\varepsilon_g,\\
+0,&\norm{F_c}\le\varepsilon_F,\\
+\min\{v_{\max},k_f\norm{F_c},k_g r\}\dfrac{F_c}{\norm{F_c}},&\text{còn lại},
+\end{cases}
+\label{eq:velocity}
+\end{equation}
+với $k_f,k_g>0$ và đơn vị được chọn phù hợp. Nhánh trường lực nhỏ kích hoạt kiểm tra kẹt khi còn xa đích; không xem đó là hoàn thành nhiệm vụ. Thành phần $k_g r$ giảm tốc gần đích, còn $v_{\max}$ chặn vận tốc.
+
+Trong mô hình robot điểm điều khiển vận tốc, ứng viên cập nhật là
+\begin{equation}
+q_{k+1}^{cand}=q_k+\Delta t\,v_{\mathrm{ref}}.
+\label{eq:euler}
+\end{equation}
+Chỉ nhận bước nếu toàn bộ đoạn $[q_k,q_{k+1}^{cand}]$ nằm trong miền tự do. Nếu không, giảm bước theo hệ số $\beta\in(0,1)$ tối đa $B_{\max}$ lần. Không có bước hợp lệ thì giữ vị trí và ghi nhận bị chặn. Cần kiểm tra cả miền làm việc. Cơ chế này là quy tắc triển khai đề xuất, chưa phải chứng minh hội tụ.
+
+\section{GNRON và cải tiến thế đẩy}
+
+GNRON (Goals Non-Reachable with Obstacles Nearby) là tình huống đích ở gần vật cản khiến trường tổng không có cực tiểu mong muốn tại đích trong mô hình thông thường. Đại lượng gây lực đẩy truyền thống là khoảng cách robot--vật cản $d_i$, khác với khoảng cách robot--đích $r$. Ge và Cui đưa khoảng cách đích vào thế đẩy nhằm xử lý GNRON; hướng cải tiến này không đồng nghĩa giải quyết mọi cực tiểu cục bộ \cite{gecui}.
+
+Xét biến thể với số mũ khoảng cách đích bằng 2. Đặt $A_i=1/d_i-1/\rho_0$, thế mới trong vùng ảnh hưởng là
+\begin{equation}
+U_{\rep,i}^{new}=\frac12 k_r A_i^2r^2,\qquad 0<d_i\le\rho_0,
+\end{equation}
+và bằng 0 ngoài vùng ảnh hưởng. Từ quy tắc đạo hàm tích:
+\begin{align}
+F_{\rep,i}^{new}&=F_{\rep,i}^{(1)}+F_{\rep,i}^{(2)},\\
+F_{\rep,i}^{(1)}&=k_r\frac{A_i r^2}{d_i^2}\nabla d_i,\\
+F_{\rep,i}^{(2)}&=-k_r A_i^2(q-q_g).
+\label{eq:gnron}
+\end{align}
+Thành phần thứ nhất hướng ra khỏi vật cản; thành phần thứ hai hướng về đích. Nếu đích có khoảng cách dương tới vật cản đã nới thì khi $q\to q_g$, cả hai thành phần tiến về 0. Điều kiện đích nằm ngoài vùng cấm là thiết yếu. Thay đổi số mũ khoảng cách làm thay đổi đơn vị và ảnh hưởng của hệ số $k_r$; không dùng lại hệ số số học của APF gốc rồi coi hai mô hình đã được chỉnh định tương đương.
+
+Mô phỏng cần kiểm tra đồng thời sai số đích, khoảng cách an toàn và độ nhạy tham số. Việc đạt cực tiểu toàn cục tại đích của hàm thế không loại trừ các điểm dừng khác trên đường đi, cũng không tự bảo đảm thuật toán rời rạc tới đích.
+
+\section{Cực tiểu cục bộ và phương án lực ảo}
+
+\subsection{Nhận diện trạng thái kẹt}
+
+Ở một cấu hình không phải đích, có thể xảy ra
+\begin{equation}
+F_{\att}(q)+\sum_iF_{\rep,i}(q)=0.
+\end{equation}
+Đây là điều kiện điểm dừng, chưa đủ phân loại cực tiểu nếu không xét lân cận. Robot cũng có thể dao động hoặc bị chặn do bước rời rạc. Vì vậy bộ phát hiện dưới đây nhận diện \emph{trạng thái kẹt thực dụng}, không tuyên bố mọi trường hợp là cực tiểu toán học.
+
+Xét cửa sổ $M=\lceil T_{stuck}/\Delta t\rceil$ bước. Kích hoạt xử lý nếu còn xa đích và một trong các dấu hiệu kéo dài trên cửa sổ: trường lực nhỏ, robot chỉ di chuyển trong vùng rất nhỏ, hoặc không có bước hợp lệ. Để phát hiện dao động, có thể dùng
+\begin{equation}
+\max_{j=k-M,\ldots,k}\norm{q_j-q_k}<\varepsilon_p,
+\qquad r_k>\varepsilon_g.
+\end{equation}
+Cần có đủ mẫu trước khi áp dụng cửa sổ; các ngưỡng phải được công bố. Theo dõi riêng mức giảm khoảng cách đích để phân tích, nhưng không coi việc khoảng cách tạm tăng khi đi vòng vật cản là thất bại.
+
+\subsection{Định nghĩa lực ảo và chọn chiều}
+
+Đề xuất hai trạng thái điều hướng: $\mathrm{NORMAL}$ và $\mathrm{ESCAPE}$. Khi vào $\mathrm{ESCAPE}$, chọn vật cản hoạt động $i^*$ có khoảng cách $d_i$ nhỏ nhất trong vùng ảnh hưởng; phá hòa bằng chỉ số cố định và giữ vật cản này trong giai đoạn vòng tránh. Nếu không có vật cản hoạt động, lực ảo không được kích hoạt; giữ an toàn và báo cần quy hoạch lại.
+
+Ma trận quay ngược chiều kim đồng hồ $90^\circ$ là
+\begin{equation}
+J=R(\pi/2)=\begin{bmatrix}0&-1\\1&0\end{bmatrix},\qquad R(-\pi/2)=-J.
+\end{equation}
+Với $F_{\rep,i^*}=[F_x,F_y]^T$, đặt
+\begin{equation}
+F_{vir}=s k_v JF_{\rep,i^*}
+=s k_v\begin{bmatrix}-F_y\\F_x\end{bmatrix}.
+\label{eq:virtual}
+\end{equation}
+Kết quả là vector $2\times1$, vuông góc với lực đẩy đã chọn nếu lực này khác 0. Ký hiệu $k_v$ được tách khỏi hệ số bước để tránh nhầm ý nghĩa.
+
+Thử hai chiều $s=\pm1$ bằng dự báo một bước có kiểm tra đoạn va chạm, sử dụng trường $\sum_iF_{\rep,i}+s k_vJF_{\rep,i^*}$. Ưu tiên ứng viên hợp lệ có khoảng cách đích dự báo nhỏ hơn; phá hòa bằng chiều $s=+1$. Giữ chiều đã chọn trong giai đoạn xử lý, không đổi liên tục theo nhiễu số. Đây là quy tắc cục bộ đề xuất, không bảo đảm chọn được đường ngắn nhất; nếu cả hai ứng viên bị chặn thì chuyển sang dừng an toàn và yêu cầu quy hoạch lại.
+
+Trong chế độ thoát kẹt, sử dụng
+\begin{equation}
+F_c=\sum_iF_{\rep,i}+F_{vir}.
+\end{equation}
+Tạm bỏ lực hút là một lựa chọn thiết kế nhằm phá thế cân bằng; phải được so sánh thực nghiệm với phương án vẫn giữ một phần lực hút. Các lực đẩy của vật cản khác vẫn được giữ để hạn chế hướng vòng tránh lao vào vật cản lân cận.
+
+\subsection{Điều kiện thoát và giới hạn áp dụng}
+
+Không dùng riêng $F_{\att}^TF_{\rep}>0$ làm điều kiện thoát: tiêu chí đó không bao phủ trường hợp lực đẩy bằng 0 và chưa chứng minh đã rời vùng kẹt. Đề xuất lưu khoảng cách đích $r_{entry}$ khi vào chế độ và trở về $\mathrm{NORMAL}$ khi đồng thời:
+\begin{enumerate}
+\item Bước dự báo theo APF bình thường hợp lệ, $\norm{F_{\mathrm{APF}}}>\varepsilon_F$ và $r_{k+1}^{cand}<r_k-\eta$ với $\eta>0$;
+\item Điều kiện trên duy trì trong $H$ chu kỳ;
+\item Đã rời vùng ảnh hưởng vật cản được chọn, hoặc $r_k<r_{entry}-\Delta r_{exit}$ với $\Delta r_{exit}>0$.
+\end{enumerate}
+Kiểm tra đạt đích luôn được ưu tiên trước. Đặt thời gian vòng tránh tối đa $T_{escape}$ và giới hạn tái kích hoạt. Hết giới hạn, mất trường lực ảo hoặc không còn bước an toàn thì dừng và báo thất bại/quy hoạch lại. Các điều kiện này hỗ trợ triển khai và chống chuyển trạng thái quá nhanh; chúng là heuristic cần đánh giá, không phải bảo đảm thoát mọi vật cản chữ U hay ngõ cụt.
+
+\subsection{Quy trình thực thi}
+
+\begin{enumerate}
+\item Kiểm tra đầu vào, nới vật cản, xác nhận điểm đầu/đích và khởi tạo trạng thái $\mathrm{NORMAL}$.
+\item Kiểm tra đạt đích và ngân sách. Nếu vi phạm miền an toàn, dừng và ghi lỗi.
+\item Tính các khoảng cách, thế và lực; cập nhật cửa sổ phát hiện kẹt.
+\item Nếu bình thường và bị kẹt, chọn vật cản, chiều vòng tránh và chuyển chế độ nếu có ứng viên hợp lệ.
+\item Tính $F_c$ theo chế độ, lấy vận tốc từ \eqref{eq:velocity}, dự báo bước theo \eqref{eq:euler}.
+\item Kiểm tra toàn đoạn, giảm bước khi cần; chỉ nhận bước an toàn. Ghi nhật ký cả bước bị từ chối.
+\item Trong chế độ vòng tránh, kiểm tra điều kiện trở lại bình thường hoặc hết thời gian; quay lại bước 2.
+\end{enumerate}
+
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[
+node distance=6mm,
+every node/.style={font=\small,align=center},
+block/.style={draw,rounded corners,text width=8.3cm,inner sep=5pt},
+test/.style={draw,diamond,aspect=3,text width=4.7cm,inner sep=1pt},
+arr/.style={-{Stealth},thick}]
+\node[block] (init) {Khởi tạo, kiểm tra bản đồ và miền an toàn};
+\node[test,below=of init] (done) {Đạt đích hoặc hết ngân sách?};
+\node[block,below=of done] (field) {Tính trường, cập nhật bộ phát hiện kẹt};
+\node[block,below=of field] (state) {Chọn NORMAL hoặc ESCAPE;\\kiểm tra điều kiện vào/thoát và thời gian};
+\node[block,below=of state] (step) {Tính vận tốc, dự báo bước,\\kiểm tra toàn đoạn và giảm bước nếu cần};
+\node[test,below=of step] (safe) {Có bước an toàn?};
+\node[block,below=of safe] (move) {Nhận bước và ghi nhật ký};
+\node[block,below=of move] (next) {Cập nhật thời gian, trạng thái và bộ đếm};
+\node[draw,rounded corners,right=18mm of done,text width=1.8cm] (stop) {Kết thúc;\\ghi lý do};
+\draw[arr] (init)--(done);
+\draw[arr] (done)--node[right]{Không}(field);
+\draw[arr] (done)--node[above]{Có}(stop);
+\draw[arr] (field)--(state);
+\draw[arr] (state)--(step);
+\draw[arr] (step)--(safe);
+\draw[arr] (safe)--node[right]{Có}(move);
+\draw[arr] (move)--(next);
+\draw[arr] (safe.east)--++(2.1,0) node[pos=0.5,above]{Không}
+|- (next.east);
+\draw[arr] (next.west)--++(-2.1,0)|-(done.west);
+\end{tikzpicture}
+\caption{Quy trình điều hướng đề xuất. Nhánh không có bước an toàn không được cập nhật vị trí; các giới hạn thời gian và số bước ngăn vòng lặp vô hạn.}
+\label{fig:flow}
+\end{figure}
+
+\section{Thiết kế mô phỏng và phương pháp đánh giá}
+
+\subsection{Các phương án và nguyên tắc so sánh}
+
+Đề xuất thực nghiệm tối thiểu gồm: A* làm đối chứng toàn cục; APF dùng thế đẩy truyền thống; APF dùng thế đẩy sửa GNRON; APF sửa GNRON có cơ chế lực ảo. Các biến thể APF dùng cùng luật giới hạn vận tốc, kiểm tra va chạm và ngưỡng dừng để tách ảnh hưởng của mô hình trường. Khi mở rộng sang Dijkstra hoặc lấy mẫu, bổ sung cấu hình riêng và không ghi kết quả khi chưa thực hiện.
+
+Mọi phương án dùng cùng hình học vật cản, kích thước robot, điểm đầu/đích và tiêu chí chấp nhận nghiệm. Dành cùng ngân sách hiệu chỉnh trên tập bản đồ hiệu chỉnh riêng; cố định tham số trước khi chạy tập đánh giá. APF gốc và thế sửa GNRON có hệ số khác đơn vị nên công bố riêng $k_r$ và miền khảo sát.
+
+Thời gian tính toán phải bao gồm các bước cần thiết để tìm nghiệm: dựng đồ thị hoặc cấu trúc mẫu, tính trường, kiểm tra va chạm và xử lý kẹt. Tách thời gian dựng hình/ghi ảnh khỏi thời gian thuật toán. Nếu sử dụng lại bản đồ hoặc mạng PRM, báo cáo cả lần đầu và truy vấn tiếp theo. So sánh đường đi thô trước; chỉ so sánh đường đã làm trơn khi công bố cùng quy trình và chi phí hậu xử lý.
+
+\subsection{Bộ kịch bản đề xuất}
+
+Đơn vị tọa độ là m; miền vật lý $\mathcal W=[0,10]\times[0,10]$, robot tròn bán kính $r_b=0.20$ và biên bổ sung $\delta=0.05$. Các mô tả sau là bản đồ thiết kế, chưa có kết quả chạy. Tất cả hình học phải được kiểm tra sau phép nới.
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.0cm}|>{\raggedright\arraybackslash}p{8.7cm}|>{\raggedright\arraybackslash}p{4.1cm}|}
+\caption{Các kịch bản mô phỏng cần triển khai}\label{tab:scenarios}\\\hline
+Mã & Hình học và nhiệm vụ & Mục đích\\\hline
+\endfirsthead
+\hline Mã & Hình học và nhiệm vụ & Mục đích\\\hline\endhead
+S0 & Không có vật cản; $q_s=(1,1)$, $q_g=(9,9)$. & Kiểm tra hướng hút, giảm tốc và sai số đích.\\\hline
+S1 & $q_s=(1,1)$, $q_g=(9,9)$; ba đĩa $(c_i,R_i)$: $((4,4),0.65)$, $((6,5),0.65)$, $((4,7),0.55)$. & Tránh nhiều vật cản, chiều dài và khoảng cách an toàn.\\\hline
+S2 & $q_s=(1,5)$, $q_g=(7,5)$; đĩa tâm $(8,5)$, bán kính $0.50$. Đích hợp lệ nhưng nằm trong vùng ảnh hưởng khi $\rho_0=1$. & Khảo sát GNRON và thế đẩy sửa đổi.\\\hline
+S3 & $q_s=(4.5,5)$, $q_g=(8.5,5)$. Chữ U gồm các hình chữ nhật $[3,6]\times[3,3.4]$, $[3,6]\times[6.6,7]$, $[5.6,6]\times[3,7]$; miệng mở bên trái. & Kiểm tra kẹt và khả năng đi ra cửa trước khi vòng tới đích.\\\hline
+S4 & $q_s=(1,5)$, $q_g=(9,5)$; hai hình chữ nhật $[3,7]\times[0,4.4]$ và $[3,7]\times[5.6,10]$. & Hành lang hẹp, dao động và độ nhạy bước.\\\hline
+S5 & $q_s=(2,5)$, $q_g=(8,5)$; vách kín $[4.8,5.2]\times[0,10]$. & Kiểm tra dừng khi không tìm được đường trong ngân sách.\\\hline
+\end{longtable}
+
+Trong S5, hình học vách kín cho phép xác nhận nhiệm vụ bị ngăn cách. Với các bản đồ khác, việc APF hết thời gian chỉ có nghĩa phương án đó chưa tìm được đường; không được suy ra môi trường vô nghiệm. Nếu một tình huống dự kiến gây kẹt không gây kẹt trong cấu hình đã chọn, phải báo cáo hiện tượng thực tế thay vì điều chỉnh kết quả theo kỳ vọng.
+
+\subsection{Tham số ban đầu và độ nhạy}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Giá trị khởi đầu đề xuất, chưa phải tham số đã tối ưu}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{5.4cm}|>{\raggedright\arraybackslash}p{8.3cm}|}\hline
+Đại lượng & Giá trị/cách chọn\\\hline
+$\Delta t$, $v_{\max}$ & $0.05$ s; $0.30$ m/s\\\hline
+$d_g$, $\rho_0$, $\varepsilon_g$ & $1.0$ m; $1.0$ m; $0.05$ m\\\hline
+$k_a$, $k_f$, $k_g$ & $1$ theo đơn vị trường đã chọn; $k_f$ quy đổi trường sang m/s; $k_g=0.8\ \mathrm{s}^{-1}$\\\hline
+$k_r$ & Khảo sát riêng cho từng thế: $0.05$, $0.2$, $1$ theo đơn vị tương ứng; chưa chốt trước chạy hiệu chỉnh\\\hline
+$k_v$ & Khảo sát $0.5$, $1$, $2$; không dùng cùng ký hiệu bước di chuyển\\\hline
+$T_{stuck}$, $\varepsilon_p$ & $1.0$ s; $0.02$ m\\\hline
+$\varepsilon_F$ & Khởi đầu $10^{-4}$ theo đơn vị trường; kiểm tra theo thang lực thực tế\\\hline
+$T_{escape}$, $H$ & $20$ s thời gian mô phỏng; $H=5$ chu kỳ\\\hline
+$\eta$, $\Delta r_{exit}$ & $10^{-4}$ m; $0.10$ m\\\hline
+$\beta$, $B_{\max}$ & $0.5$; tối đa 8 lần giảm bước\\\hline
+Ngân sách & Tối đa $12\,000$ bước, 20 lần vào chế độ thoát kẹt và 30 s tính toán thực mỗi lượt\\\hline
+Lưới A* & $h_{grid}=0.10$ m; tám hướng, kiểm tra đoạn và cấm xuyên góc\\\hline
+\end{tabular}
+\end{table}
+
+Chọn $k_f$ để $k_f k_a d_g=v_{\max}$ ở bộ tham số khởi đầu. Số bước và thời gian tính toán thực là hai ngân sách độc lập; phải ghi điều kiện nào gây dừng. Khi ghép điểm đầu/đích vào lưới, thêm hai đỉnh tọa độ chính xác và nối với các đỉnh lưới lân cận bằng đoạn hợp lệ; không âm thầm làm tròn tọa độ.
+
+Phân tích độ nhạy trước hết thay đổi $\Delta t$ và $\rho_0$ bằng $0.5$, $1$, $1.5$ lần giá trị gốc, sau đó xét $k_r,k_v$ và ngưỡng phát hiện kẹt. Không thể gọi đây là phân tích toàn diện tương tác tham số; cần ghi rõ mỗi lượt giữ cố định những biến nào. Việc đánh giá tốc độ nên dùng nhiều lần chạy sau khởi động, báo cáo trung vị và phân vị thay vì chỉ một phép đo.
+
+\subsection{Chỉ tiêu định lượng}
+
+Với dãy vị trí được chấp nhận $q_0,\ldots,q_K$, định nghĩa chiều dài đường đi:
+\begin{equation}
+L=\sum_{k=0}^{K-1}\norm{q_{k+1}-q_k},\qquad e_g=\norm{q_K-q_g}.
+\end{equation}
+Khoảng cách an toàn nhỏ nhất được tính trên các đoạn, không chỉ tại mẫu:
+\begin{equation}
+c_{\min}=\min_{k,i}\ \min_{q\in[q_k,q_{k+1}]}d_i(q),
+\end{equation}
+đồng thời kiểm tra khoảng cách tới biên miền đã co. Với bản đồ không vật cản, ghi chỉ tiêu khoảng cách vật cản là không áp dụng. Chấp nhận nghiệm khi $e_g\le\varepsilon_g$, mọi đoạn hợp lệ và không có vi phạm miền an toàn.
+
+Để mô tả mức gấp khúc, loại các đoạn có độ dài dưới ngưỡng số $\varepsilon_{seg}$, đặt $u_k=(q_{k+1}-q_k)/\norm{q_{k+1}-q_k}$ và
+\begin{equation}
+S_{turn}=\sum_{k=1}^{K-1}\left|\operatorname{atan2}
+\bigl(\det[u_{k-1},u_k],u_{k-1}^Tu_k\bigr)\right|.
+\end{equation}
+Đây là tổng biến thiên góc, không phải gia tốc hoặc jerk. Cần công bố cách lấy mẫu lại theo chiều dài cung và kiểm tra độ nhạy; không suy ra độ trơn động học chỉ từ chỉ tiêu này.
+
+Tỷ lệ thành công là $P_s=N_{success}/N_{runs}$. Với phương pháp ngẫu nhiên, đề xuất tối thiểu 30 hạt giống trên mỗi kịch bản và công bố danh sách hạt giống. Với APF xác định, chạy lại cùng điều kiện không tạo các thử nghiệm độc lập về khả năng thành công; nên bổ sung tập nhiễu điểm đầu/đích hợp lệ được tạo trước và dùng chung cho các phương án. Các lần lặp để đo thời gian phải được phân biệt với các nhiệm vụ khác nhau.
+
+Báo cáo riêng thời gian tính toán $t_{cpu}$ hoặc thời gian thực đo bằng đồng hồ đơn điệu, số bước/số đỉnh mở rộng, số lần vào chế độ thoát kẹt và lý do thất bại. Không gộp các lần không tới đích vào trung bình chiều dài của nghiệm thành công mà không nêu rõ. Thời gian mô phỏng $K\Delta t$ khác thời gian máy tính giải bài toán.
+
+\subsection{Nhật ký và biểu mẫu kết quả}
+
+Mỗi lượt chạy lưu cấu hình bản đồ, phiên bản chương trình, tham số, hạt giống (nếu có), trạng thái thuật toán và thời gian. Nhật ký từng bước gồm $q_k$, $r_k$, $\min d_i$, chuẩn trường, chế độ, vật cản được chọn, chiều vòng tránh và bước bị từ chối. Cấu hình phần cứng và phiên bản phần mềm phải được ghi để diễn giải thời gian tính toán.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Biểu mẫu tổng hợp; dấu ``--'' là chưa có dữ liệu thực nghiệm}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2cm}|>{\raggedright\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{1.7cm}|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{2.2cm}|}\hline
+Phương án & $P_s$ & $L$ (m) & $t$ (ms) & $c_{min}$ (m) & $S_{turn}$ (rad) & Lý do dừng\\\hline
+A* & -- & -- & -- & -- & -- & Chưa chạy\\\hline
+APF gốc & -- & -- & -- & -- & -- & Chưa chạy\\\hline
+APF GNRON & -- & -- & -- & -- & -- & Chưa chạy\\\hline
+APF + lực ảo & -- & -- & -- & -- & -- & Chưa chạy\\\hline
+\end{tabular}
+\end{table}
+
+Mỗi kịch bản cần có hình đường đi trên cùng bản đồ và cùng tỷ lệ trục; đánh dấu vật cản gốc, vùng đã nới, điểm đầu/đích và đoạn chuyển chế độ. Đồ thị theo thời gian nên thể hiện khoảng cách đích, khoảng cách an toàn và trạng thái vòng tránh. Chỉ sử dụng đường cong từ dữ liệu đã ghi; hình minh họa khái niệm không thay cho kết quả mô phỏng.
+
+\section{Khả năng áp dụng cho robot di động}
+
+Mô hình cập nhật tự do $x,y$ phù hợp để đánh giá hình học ban đầu nhưng chưa mô tả đầy đủ robot vi sai. Với trạng thái $(x,y,\theta)$, mô hình động học là
+\begin{equation}
+\dot x=v\cos\theta,\qquad \dot y=v\sin\theta,\qquad \dot\theta=\omega.
+\end{equation}
+Robot không có vận tốc ngang thân xe độc lập. Một hướng triển khai là dùng đường đi làm tham chiếu cho bộ bám đường, hoặc lấy $\theta_d=\operatorname{atan2}(v_{ref,y},v_{ref,x})$ rồi thiết kế luật $(v,\omega)$ có giới hạn. Khi vector tham chiếu bằng 0, phải giữ hướng hoặc dừng theo trạng thái, không tính góc từ vector không.
+
+Đánh giá mở rộng phải xét $|v|\le v_{\max}$, $|\omega|\le\omega_{\max}$, giới hạn gia tốc, sai số bám và khoảng cách an toàn của quỹ đạo thực hiện. Góc gấp khúc có thể yêu cầu giảm tốc hoặc dừng để quay. Với định vị và cảm biến có sai số, biên $\delta$ cần được lựa chọn từ đặc tính sai số và điều kiện vận hành, không chỉ lấy giá trị hình học của mô phỏng.
+
+Do chưa có kết quả chạy và dữ liệu robot trong chương này, các nội dung trên là phương án kết nối giữa quy hoạch và điều khiển. Chưa khẳng định tính thời gian thực, độ chính xác bám hoặc khả năng tránh va chạm trên phần cứng.
+
+\section{Kết luận chương}
+
+Chương đã xác định bài toán quy hoạch đường đi trong môi trường tĩnh, giới thiệu các nhóm thuật toán và phân tích APF với thế hút kết hợp, thế đẩy truyền thống, thế sửa GNRON và cơ chế lực ảo đề xuất. Các công thức được gắn với điều kiện xác định, giới hạn mô hình và kiểm tra an toàn bước rời rạc. Cơ chế thoát kẹt là heuristic cần được thực nghiệm, không được coi là thuật toán đầy đủ hay tối ưu toàn cục.
+
+Để hoàn tất phần mô phỏng theo đề cương, cần triển khai chương trình, kiểm tra các trường hợp đơn giản, cố định tham số sau hiệu chỉnh và chạy bộ kịch bản đã công bố. Sau khi có nhật ký, bổ sung hình đường đi, bảng chỉ tiêu và phân tích trường hợp thất bại. Chương đánh giá kết quả tiếp theo cần dựa trên các dữ liệu này để so sánh thuật toán và đề xuất ứng dụng, thay vì suy luận ưu thế chỉ từ mô hình thế năng.
+
+\begin{thebibliography}{9}
+\bibitem{lavalle}
+S. M. LaValle, \textit{Planning Algorithms}, Cambridge University Press, 2006. Các chương 2, 4, 5 và phần quy hoạch có ràng buộc chuyển động. Bản tác giả: \url{https://msl.cs.uiuc.edu/planning/}.
+
+\bibitem{khatib}
+O. Khatib, ``Real-Time Obstacle Avoidance for Manipulators and Mobile Robots,'' \textit{The International Journal of Robotics Research}, vol. 5, no. 1, pp. 90--98, 1986. DOI: \href{https://doi.org/10.1177/027836498600500106}{10.1177/027836498600500106}.
+
+\bibitem{gecui}
+S. S. Ge and Y. J. Cui, ``New Potential Functions for Mobile Robot Path Planning,'' \textit{IEEE Transactions on Robotics and Automation}, vol. 16, no. 5, pp. 615--620, 2000. Bản bài báo: \url{https://bpb-us-w2.wpmucdn.com/blog.nus.edu.sg/dist/f/14858/files/2021/07/TRA-potential-00.pdf}.
+
+\bibitem{karaman}
+S. Karaman and E. Frazzoli, ``Sampling-based Algorithms for Optimal Motion Planning,'' \textit{The International Journal of Robotics Research}, vol. 30, no. 7, pp. 846--894, 2011. Bản tác giả: \url{https://arxiv.org/abs/1105.1186}.
+\end{thebibliography}
+
+\end{document}
