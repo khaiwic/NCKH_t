@@ -135,7 +135,7 @@ Quy hoạch quỹ đạo chuyển dịch các mô hình hình học thuần túy
 
 \noindent\textbf{Đảm bảo độ trơn và độ bền cơ khí.}
 
-Bằng cách áp dụng các mô hình nội suy đa thức bậc cao hoặc profile vận tốc dạng chữ S (S-Curve Profile), tầng quy hoạch quỹ đạo loại bỏ các bước nhảy đột ngột của gia tốc (loại bỏ độ giật vô hạn, \(\mathrm{Jerk}=\infty\)).
+Tầng quy hoạch lựa chọn vận tốc và gia tốc phù hợp để hạn chế yêu cầu lên truyền động. Profile hình thang có cấu trúc đơn giản nhưng gia tốc còn gián đoạn tại điểm chuyển pha; profile chữ S là phương án cải tiến khi cần giới hạn độ giật và tạo chuyển tiếp gia tốc liên tục.
 
 \subsection{Khảo sát tình hình nghiên cứu trong nước và quốc tế về bài toán quy hoạch quỹ đạo robot.}
 
@@ -184,8 +184,6 @@ Trong đó, \(x,y\) là tọa độ điểm tham chiếu trên thân robot và \
 \]
 Chẳng hạn, hai hướng \(179^{\circ}\) và \(-179^{\circ}\) chỉ cách nhau \(2^{\circ}\) theo cung ngắn, trong khi phép trừ thông thường cho trị tuyệt đối \(358^{\circ}\). Sự khác biệt này ảnh hưởng trực tiếp đến nội suy hướng và lựa chọn nút gần nhất.
 
-Với tay máy phẳng hai khớp quay, có thể chọn \(q=(\theta_1,\theta_2)\). Nếu cả hai khớp quay không giới hạn thì cấu trúc không gian là \(S^{1}\times S^{1}\); nếu có chặn cơ khí, miền tìm kiếm phải thu hẹp theo giới hạn từng khớp. Một điểm trong không gian này xác định tư thế của cả hai khâu, chứ không chỉ vị trí đầu công tác. Hai cấu hình khuỷu trên và khuỷu dưới có thể đưa đầu công tác tới cùng một vị trí nhưng tạo ra hai vùng chiếm chỗ khác nhau.
-
 \textbf{Phân biệt cấu hình và trạng thái:} Cấu hình chưa mô tả đầy đủ khả năng chuyển động trong tương lai khi bài toán có giới hạn gia tốc hoặc lực. Khi đó, cần mở rộng sang trạng thái, chẳng hạn \(z=(q,\dot q)\), hoặc \(z=(x,y,\theta,v,\omega)\) đối với mô hình xe có xét biến thiên vận tốc. Hai robot ở cùng vị trí và cùng hướng nhưng có vận tốc khác nhau sẽ cần khoảng dừng khác nhau. Vì vậy, tìm đường hình học trên \(C\) và quy hoạch có ràng buộc động lực học là hai mức mô hình hóa khác nhau \cite{lavalle-planning-2006}.
 
 \textbf{Vai trò đối với lập kế hoạch chuyển động:} Khi chuyển các vật cản sang không gian cấu hình, toàn bộ robot có thể được đại diện bằng một điểm \(q\). Thuật toán tìm một đường liên tục \(\gamma:[0,1]\to C\), nối \(q_{\mathrm{start}}\) với \(q_{\mathrm{goal}}\), rồi kiểm tra đường này có thuộc miền tự do hay không. Đối với xe phi holonomic, điều kiện đó còn phải kết hợp với ràng buộc vận tốc; một đường liên tục không va chạm vẫn có thể yêu cầu chuyển động ngang mà xe không thực hiện được.
@@ -200,15 +198,6 @@ với \(\ell_{\theta}>0\) là độ dài quy đổi góc sang ảnh hưởng hì
 \subsubsection*{b. Không gian làm việc}
 
 \textbf{Không gian làm việc (Workspace)} \(W\) là không gian vật lý trong đó robot hoạt động, có thể được biểu diễn trong hai hoặc ba chiều tùy theo bài toán. Không gian này bao gồm các vùng trống và các vùng bị chiếm bởi vật cản. Việc mô tả không gian làm việc là cơ sở để xác định vị trí robot, bố trí vật cản và kiểm tra va chạm trong quá trình quy hoạch chuyển động.
-
-Đối với tay máy hai khâu có chiều dài \(l_1,l_2\), ánh xạ động học thuận từ cấu hình sang vị trí đầu công tác là
-\[
-  p=f(q)=\begin{bmatrix}
-    l_1\cos\theta_1+l_2\cos(\theta_1+\theta_2)\\
-    l_1\sin\theta_1+l_2\sin(\theta_1+\theta_2)
-  \end{bmatrix}.
-\]
-Nếu bỏ qua vật cản và giới hạn góc khớp, khoảng cách từ gốc tới đầu công tác thỏa mãn \(|l_1-l_2|\leq\|p\|\leq l_1+l_2\). Công thức cho thấy miền với tới phụ thuộc hình học cơ cấu. Khi có vật cản, một vị trí nằm trong miền với tới vẫn có thể không tiếp cận được từ cấu hình xuất phát bằng một chuyển động an toàn.
 
 Với xe di động, một điểm \((x,y)\) nằm giữa hành lang chưa đủ chứng minh xe đi qua được. Cùng một tâm xe nhưng hai góc hướng khác nhau có thể tạo ra một tư thế lọt hành lang và một tư thế chạm tường. Bản đồ 2D vì vậy phải đi kèm mô hình kích thước robot hoặc được chuyển thành bản đồ đã mở rộng vật cản.
 
@@ -263,16 +252,7 @@ Kiểm tra riêng hai đầu một đoạn nối không bảo đảm phần gi�
 \end{minipage}
 \end{center}
 
-Với robot gồm \(m\) bộ phận, miền cấm tổng hợp có thể viết
-\[
-  \begin{aligned}
-    C_{\mathrm{obs}}={}&\bigcup_{i=1}^{m}
-      \{q\in C\mid A_i(q)\cap O\neq\varnothing\}\\
-    &\cup\bigcup_{(i,j)\in P}
-      \{q\in C\mid A_i(q)\cap A_j(q)\neq\varnothing\},
-  \end{aligned}
-\]
-trong đó \(P\) chỉ chứa những cặp cần kiểm tra. Các bộ phận lắp ghép có tiếp xúc được thiết kế sẵn phải được xử lý bằng mô hình phù hợp, tránh coi mọi tiếp xúc giữa hai khâu kề nhau là lỗi. Với xe ba bánh có khung cố định, kiểm tra thân xe với môi trường thường là trọng tâm; với tay máy, tự va chạm có thể loại bỏ nhiều cấu hình dù đầu công tác vẫn ở vị trí hợp lệ.
+Trong bảng, \(A_i(q)\) là miền chiếm chỗ của bộ phận thứ \(i\), còn \(O\) là tập vật cản. Tự va chạm cần được xét với các cơ cấu nhiều khâu như tay máy. Đối với xe ba bánh có khung cố định, đề tài tập trung kiểm tra thân xe với môi trường, có tính đến kích thước xe và khoảng dự phòng an toàn.
 
 \noindent\textbf{Kỹ thuật mở rộng vật cản bằng tổng Minkowski.}
 
@@ -332,7 +312,7 @@ Một mô hình biên thường gặp là
 \]
 Nếu robot đang chạy khi nhận mục tiêu mới, vận tốc đầu phải lấy theo trạng thái thực tại thời điểm chuyển tiếp. Đặt vận tốc tham chiếu về không tức thời có thể tạo lệnh giảm tốc không khả thi. Do đó, cập nhật mục tiêu phải đi kèm một đoạn nối thỏa mãn trạng thái hiện tại.
 
-\textbf{Ứng dụng và tiêu chí đánh giá:} Gắp--đặt, hàn điểm, chuyển giữa các trạm và tiếp cận vị trí sạc. Chất lượng được đánh giá qua sai số đích, thời gian hoàn thành, khoảng cách tới vật cản và mức đáp ứng giới hạn vận tốc. Với tay máy nhiều khớp, cần đồng bộ thời gian kết thúc; cho từng khớp chạy nhanh nhất một cách độc lập có thể khiến chuyển động tổng thể thiếu phối hợp \cite{lynch-park-modern-robotics}.
+\textbf{Ứng dụng và tiêu chí đánh giá:} Với xe di động, bài toán thường gặp là chuyển giữa các trạm hoặc tiếp cận vị trí sạc; với tay máy là gắp--đặt và hàn điểm. Chất lượng được đánh giá qua sai số đích, thời gian hoàn thành, khoảng cách tới vật cản và mức đáp ứng giới hạn vận tốc \cite{lynch-park-modern-robotics}.
 
 \subsubsection*{b. Chuyển động bám theo đường đi liên tục (Continuous Path / Path Following Motion -- CP)}
 
@@ -344,7 +324,7 @@ Nếu robot đang chạy khi nhận mục tiêu mới, vận tốc đầu phải
 \]
 Robot có thể nằm đúng trên đường nhưng đi chậm hơn lịch, khi đó sai lệch hình học bằng không còn sai số bám quỹ đạo khác không. Khi đánh giá cần chọn chỉ tiêu phù hợp với yêu cầu nhiệm vụ.
 
-\textbf{Ứng dụng và yêu cầu:} Hàn hồ quang, cắt, phun sơn và robot đi theo tuyến. Với tay máy, đường trong không gian thao tác phải được chuyển sang chuyển động khớp bằng động học ngược; cần bảo đảm nghiệm biến thiên liên tục và tránh kỳ dị. Với xe, phải liên hệ hướng thân xe với tiếp tuyến và kiểm tra độ cong, tốc độ quay cũng như giới hạn bánh xe. Bởi vậy, CP không đồng nghĩa với việc mọi loại robot đều giải cùng một bài toán động học ngược.
+\textbf{Ứng dụng và yêu cầu:} Bám đường được sử dụng khi xe đi theo tuyến hoặc tay máy thực hiện hàn, cắt, phun sơn. Với xe ba bánh vi sai, cần liên hệ hướng thân xe với tiếp tuyến đường và kiểm tra độ cong, tốc độ quay cùng giới hạn vận tốc hai bánh.
 
 \subsubsection*{c. Chuyển động qua chuỗi điểm nút (Multipoint / Via-Points Trajectory)}
 
@@ -368,50 +348,38 @@ Nếu yêu cầu tiếp xúc êm, còn cần ràng buộc vận tốc tương đ
 
 Độ trễ cảm biến, thời gian tính toán và giới hạn gia tốc quyết định khả năng đón bắt. Khi dự đoán đích không đáng tin cậy, chỉ nên lập kế hoạch trong một khoảng dự báo phù hợp và tính lại theo trạng thái mới. Đây là yêu cầu khác với bám một quỹ đạo tham chiếu cố định: điều khiển bám thông thường không nhất thiết có một vật thể đích đang chuyển động trong môi trường.
 
-\subsection{Phân loại theo đối tượng cơ cấu: Robot tay máy (Manipulator – Joint Space) và Robot di động (Mobile Robot – SE(2)/SE(3) Space).}
+\subsection{Phân loại theo đối tượng cơ cấu: Robot tay máy và robot di động.}
 
-\subsubsection*{a. Tay máy công nghiệp (Serial \& Parallel Manipulators -- 6-DOF / 7-DOF)}
+Đối tượng cơ cấu quyết định cách biểu diễn cấu hình và các ràng buộc của bài toán. Với tay máy, quỹ đạo thường được biểu diễn bằng tọa độ khớp \(q=(q_1,\ldots,q_n)\), cần xét giới hạn khớp và va chạm giữa các khâu. Với robot di động, quỹ đạo mô tả chuyển động của thân robot trong môi trường, có xét kích thước và khả năng chuyển động của cơ cấu \cite{lynch-park-modern-robotics}.
 
-Tay máy được mô tả bằng tọa độ khớp \(q=(q_1,\ldots,q_n)\), trong đó có thể kết hợp khớp quay và khớp tịnh tiến. Một quỹ đạo cần thỏa mãn giới hạn vị trí, vận tốc, gia tốc khớp và tránh va chạm của toàn bộ các khâu. Với cơ cấu song song, các vòng động học còn tạo quan hệ liên kết giữa biến khớp; không thể xem mọi tọa độ là độc lập tùy ý.
+\begin{center}
+\begin{minipage}{\linewidth}
+  \centering
+  \refstepcounter{table}\label{tab:robot-planning-comparison}%
+  \tablename~\thetable: Đặc điểm quy hoạch theo nhóm cơ cấu robot\par\smallskip
+  \small
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{@{}p{0.20\linewidth}p{0.49\linewidth}p{0.25\linewidth}@{}}
+    \toprule
+    \textbf{Nhóm robot} & \textbf{Yêu cầu quy hoạch chủ yếu} & \textbf{Phạm vi trong đề tài}\\
+    \midrule
+    Tay máy & Phối hợp chuyển động khớp, đáp ứng giới hạn vị trí, vận tốc, gia tốc và tránh va chạm. & Khảo sát để phân loại bài toán.\\
+    Robot di động bánh xe & Tìm đường tránh vật cản, xét ràng buộc chuyển động và giới hạn truyền động. & Trọng tâm mô phỏng và đề xuất ứng dụng.\\
+    Robot bay & Quy hoạch trong không gian 3D, xét giới hạn lực đẩy và chuyển động thân. & Giới thiệu khái quát.\\
+    Robot chân bước & Phối hợp thân--chân, lựa chọn tiếp xúc và duy trì cân bằng. & Giới thiệu khái quát.\\
+    \bottomrule
+  \end{tabular}
+\end{minipage}
+\end{center}
 
-Quan hệ vận tốc đầu công tác và vận tốc khớp có dạng \(V=J(q)\dot q\). Kỳ dị được nhận biết qua việc hạng của Jacobian giảm so với hạng cực đại của nó; biểu thức \(\det J=0\) chỉ phù hợp khi \(J\) vuông. Khi tiến gần kỳ dị, một vận tốc đầu công tác yêu cầu có thể dẫn tới vận tốc khớp rất lớn hoặc không thực hiện được. Với tay máy dư bậc tự do, có thể có nhiều chuyển động khớp tạo cùng chuyển động đầu công tác, từ đó xuất hiện khả năng chọn nghiệm để tránh vật cản hoặc giữ khoảng cách với giới hạn khớp \cite{lynch-park-modern-robotics}.
-
-Tìm đường trong không gian khớp thuận tiện cho kiểm tra giới hạn khớp, nhưng không tự bảo đảm đầu công tác đi theo đường thẳng trong không gian thao tác. Ngược lại, một đường thẳng của đầu công tác có thể đi qua vùng không với tới hoặc bắt buộc đổi nhánh nghiệm. Sự lựa chọn không gian quy hoạch vì vậy cần xuất phát từ yêu cầu công nghệ cụ thể.
-
-\subsubsection*{b. Robot di động bánh xe (AGV / AMR)}
-
-Robot bánh xe được phân biệt theo khả năng tạo vận tốc tức thời. Cơ cấu đa hướng được bố trí phù hợp có thể tạo chuyển động phẳng theo ba thành phần vận tốc thân xe; xe vi sai và xe lái kiểu ô tô chịu ràng buộc không trượt ngang. Với mô hình vi sai lý tưởng,
+Xe ba bánh vi sai của đề tài có hai bánh chủ động độc lập và một bánh tự lựa đỡ khung. Tư thế được mô tả bởi \(q=(x,y,\theta)\), còn ngõ vào là vận tốc tịnh tiến \(v\) và vận tốc quay \(\omega\):
 \[
   \dot x=v\cos\theta,\qquad
-  \dot y=v\sin\theta,\qquad \dot\theta=\omega,
+  \dot y=v\sin\theta,\qquad \dot\theta=\omega.
 \]
-suy ra \(\dot x\sin\theta-\dot y\cos\theta=0\). Xe có ba biến tư thế nhưng chỉ có hai ngõ vào vận tốc độc lập \(v,\omega\). Điều này không làm mất khả năng tới các vị trí trên mặt phẳng bằng một chuỗi thao tác; nó hạn chế hướng chuyển động tức thời \cite{lynch-park-modern-robotics}.
+Xe không thể dịch chuyển ngang tức thời nhưng có thể đổi hướng bằng vận tốc hai bánh; trong mô hình lý tưởng, xe quay tại chỗ khi hai bánh quay ngược chiều với cùng độ lớn.
 
-\textbf{Phân biệt giới hạn quay vòng:} Xe Ackermann với chiều dài cơ sở \(L_a\) và góc lái cực đại \(\delta_{\max}\) có bán kính quay tối thiểu theo mô hình xe đạp
-\[
-  R_{\min}=\frac{L_a}{\tan\delta_{\max}}.
-\]
-Trong khi đó, xe vi sai lý tưởng có thể quay tại chỗ khi hai bánh quay ngược chiều, nên không có cùng giới hạn bán kính dương do góc lái. Khả năng quay thực tế còn phụ thuộc vùng quét thân xe, bánh tự lựa, ma sát và giới hạn truyền động. Không nên áp dụng trực tiếp mô hình xe ô tô cho mọi robot phi holonomic.
-
-Đường Dubins phù hợp với mô hình xe chỉ tiến và bị chặn độ cong; Reeds--Shepp cho phép thêm chuyển động lùi. Clothoid có độ cong biến thiên tuyến tính theo chiều dài cung, còn Bézier và B-Spline là công cụ biểu diễn đường cong. Các đường này chỉ phù hợp khi điều kiện mô hình và ràng buộc cơ cấu được kiểm tra, chứ không phải cứ chọn một đường trơn là xe bám được \cite{lavalle-planning-2006}.
-
-Đối với robot ba bánh của đề tài, hai bánh chủ động quyết định chuyển động, bánh tự lựa đỡ khung xe. Bộ quy hoạch cần tạo \(v(t),\omega(t)\), sau đó quy đổi thành vận tốc bánh trái và phải theo bán kính bánh và khoảng cách hai bánh. Kiểm tra giới hạn ở từng bánh giúp phát hiện trường hợp vận tốc tâm xe còn nhỏ nhưng bánh phía ngoài cua đã vượt khả năng truyền động.
-
-\subsubsection*{c. Robot bay (Unmanned Aerial Vehicles -- UAV / Quadrotors)}
-
-Quadrotor có sáu bậc tự do tư thế nhưng trong mô hình thông dụng chỉ tạo được lực đẩy tổng và ba mô-men điều khiển độc lập. Chuyển động ngang đòi hỏi nghiêng thân để đổi hướng lực đẩy, nên vị trí và hướng nghiêng liên hệ qua động lực học. Đây là ví dụ cho thấy một đường trong không gian 3D chưa đủ xác định một chuyển động khả thi.
-
-Tính phẳng vi phân cho phép khai thác các biến đầu ra \((x,y,z,\psi)\) và các đạo hàm của chúng để tái dựng trạng thái, ngõ vào trong miền mô hình phù hợp. Một hướng tạo chuyển động êm là tối ưu bình phương đạo hàm bậc bốn của vị trí theo thời gian (minimum snap). Tuy nhiên, quỹ đạo còn phải đáp ứng giới hạn lực đẩy, góc nghiêng và tốc độ quay; tránh vật cản cũng cần xét kích thước và tư thế thân máy bay \cite{bry-flatness-flight}.
-
-So với xe trong đề tài, robot bay đòi hỏi mô hình động lực học và đánh giá khả thi phức tạp hơn. Nhóm này được đưa vào hệ thống phân loại nhằm làm rõ tính đa dạng của bài toán, không thuộc phần cài đặt và thực nghiệm của đề tài.
-
-\subsubsection*{d. Robot chân bước \& robot hình người (Legged \& Humanoid Robots)}
-
-Quy hoạch cho robot chân bước phải xác định cả chuyển động thân và chuỗi tiếp xúc: chân nào chống, chân nào vung và thời điểm đổi pha. Mỗi pha có tập ràng buộc khác nhau, tạo thành hệ động lực học lai. Một bước chân tránh được vật cản vẫn có thể không khả thi nếu lực tiếp xúc yêu cầu vượt giới hạn ma sát hoặc làm mất cân bằng.
-
-Trong mô hình đơn giản với các tiếp xúc đồng phẳng, có thể dùng điều kiện ZMP nằm trong miền hỗ trợ để hỗ trợ kiểm tra cân bằng động; tính khả thi tiếp xúc còn liên quan tới lực ma sát và mô-men tại bàn chân \cite{caron-contact-stability-2015}. Với cân bằng tĩnh trên mặt phẳng ngang, hình chiếu khối tâm phải nằm trong miền hỗ trợ. Không thể đồng nhất điều kiện tĩnh này với một điều kiện đầy đủ cho mọi chuyển động động lực học.
-
-Như vậy, cùng một nhiệm vụ vượt vật cản có thể dẫn tới các biến quyết định khác nhau: xe cần một chuyển động lăn khả thi, tay máy cần phối hợp khớp, robot chân bước cần thêm chuỗi tiếp xúc. Sự khác biệt này giải thích vì sao đề tài giới hạn triển khai vào xe vi sai thay vì dùng một mô hình chung cho tất cả cơ cấu.
+Bộ quy hoạch cần tạo đường đi và quy luật \(v(t),\omega(t)\) phù hợp, sau đó quy đổi sang vận tốc bánh trái và phải. Quỹ đạo phải được kiểm tra theo kích thước thân xe, khoảng hở vật cản và giới hạn từng bánh. Các nhóm cơ cấu còn lại được giữ ở mức tổng quan để làm rõ sự khác biệt giữa các dạng bài toán.
 
 \subsection{Phân loại theo môi trường hoạt động: Môi trường tĩnh, môi trường động và môi trường không xác định.}
 
@@ -538,7 +506,7 @@ Trong đề tài, tránh va chạm và đáp ứng giới hạn chuyển động
 \]
 Chuỗi này phải sử dụng cùng hệ tọa độ và đơn vị với bộ điều khiển. Chất lượng tìm đường, chất lượng gán thời gian và sai số bám được đánh giá riêng để xác định đúng nguồn sai lệch.
 
-\textbf{Các phương pháp khảo sát:} Nhóm đồ thị gồm Dijkstra, A*; nhóm lấy mẫu gồm PRM, RRT, RRT*; nhóm trường lực gồm APF và phương án khắc phục cực tiểu cục bộ. Phần tạo chuyển động xem xét nội suy đa thức, profile vận tốc hình thang, profile chữ S và làm mượt bằng đường cong tham số. Các phương pháp không nhất thiết giải cùng một bài toán ở cùng cấp; cần xác định rõ vai trò trước khi so sánh.
+\textbf{Các phương pháp khảo sát:} Nhóm đồ thị gồm Dijkstra, A*; nhóm lấy mẫu gồm PRM, RRT, RRT*; nhóm trường lực gồm APF và phương án khắc phục cực tiểu cục bộ. Phần tạo chuyển động chọn profile vận tốc hình thang để gán thời gian và đường Bézier để làm mượt. Profile chữ S và B-Spline được giới thiệu ngắn để đối chiếu. Các phương pháp được phân biệt theo vai trò trước khi so sánh.
 
 \subsection{Mục tiêu nghiên cứu}
 
@@ -553,9 +521,9 @@ Kết quả cần làm rõ mối liên hệ giữa thuật toán và điều ki�
 \begin{itemize}
   \item \textbf{Hệ thống hóa khái niệm và mô hình bài toán:} Phân biệt đường đi, quỹ đạo và điều khiển bám; xây dựng biểu diễn cấu hình, vùng cấm và khoảng dự phòng. Sản phẩm cần có là các định nghĩa nhất quán, điều kiện đầu cuối và mô hình kiểm tra va chạm dùng chung cho các thuật toán.
   \item \textbf{Phân tích ràng buộc của robot vi sai:} Thiết lập quan hệ giữa vận tốc thân xe và vận tốc bánh, làm rõ ràng buộc không trượt ngang và khả năng quay tại chỗ. Qua đó xác định vì sao một đường hình học hợp lệ có thể cần làm mượt hoặc giảm tốc mới thực hiện được.
-  \item \textbf{Xây dựng các profile chuyển động:} Khảo sát đa thức bậc ba, bậc năm, vận tốc hình thang và chữ S; đối chiếu điều kiện biên, mức liên tục và giới hạn vận tốc, gia tốc, jerk. Các ví dụ sử dụng cùng điều kiện dịch chuyển khi mục đích là so sánh tính chất profile.
+  \item \textbf{Xây dựng quy luật vận tốc:} Tập trung vào profile hình thang với giới hạn vận tốc và gia tốc; đối chiếu ngắn với profile chữ S về tính liên tục của gia tốc và giới hạn độ giật. Nội suy đa thức được khảo sát như một phương pháp tạo quỹ đạo liên quan.
   \item \textbf{Cài đặt và phân tích các nhóm thuật toán tìm đường:} Mô tả đầu vào, đầu ra, quy tắc mở rộng và điều kiện dừng của Dijkstra, A*, PRM, RRT, RRT* và APF. Làm rõ những trường hợp thất bại và ý nghĩa của các bảo đảm lý thuyết khi triển khai với tài nguyên hữu hạn.
-  \item \textbf{Kết nối tìm đường với tạo quỹ đạo:} Chuyển chuỗi nút thành đường cong phù hợp, kiểm tra lại va chạm và gán quy luật thời gian. Đầu ra cần đủ thông tin cho điều khiển bám, không dừng ở một hình vẽ đường đi trên bản đồ.
+  \item \textbf{Kết nối tìm đường với tạo quỹ đạo:} Làm mượt chuỗi nút bằng Bézier, kiểm tra lại va chạm và gán thời gian theo profile hình thang có xét giới hạn tại đoạn cong. Đầu ra cần đủ thông tin cho điều khiển bám, không dừng ở một hình vẽ đường đi trên bản đồ.
   \item \textbf{Thiết lập quy trình so sánh định lượng:} Dùng các kịch bản chung, cùng hình học robot và cùng quy tắc chấp nhận nghiệm; báo cáo chiều dài, thời gian tính toán, tỉ lệ thành công, khoảng cách an toàn và độ trơn sau xử lý. Với phương pháp ngẫu nhiên, cần nhiều lần chạy và ghi tham số để đánh giá độ biến thiên.
   \item \textbf{Đề xuất và kiểm chứng triển khai thực nghiệm:} Xây dựng giao diện tham chiếu, ước lượng chuyển động từ encoder và điều khiển tốc độ bánh trên mô hình ba bánh theo nội dung Chương IV. Việc kết luận về độ chính xác bám, độ lặp lại hoặc tránh vật cản thực tế chỉ thực hiện khi có nhật ký và phép đo đối chứng phù hợp.
 \end{itemize}
@@ -707,7 +675,7 @@ Với \(\omega_{\text{phải}}=v_{\text{phải}}/r\) và \(\omega_{\text{trái}}
   \begin{bmatrix}v\\\omega\end{bmatrix}.
 \]
 
-\subsubsection{Bánh tự lựa (Caster Wheel)}
+\subsubsection{Bánh tự lựa (Castor Wheel)}
 
   \begin{center}
     \begin{minipage}{\linewidth}
@@ -718,26 +686,6 @@ Với \(\omega_{\text{phải}}=v_{\text{phải}}/r\) và \(\omega_{\text{trái}}
   \end{center}
 
 Bánh xe tự lựa có khả năng xoay quanh một trục thẳng đứng; trục quay này không đi qua điểm tiếp xúc của bánh xe với mặt đất. Tại điểm tiếp xúc với mặt đất (vị trí \(B\)), bánh xe được nối với trục quay thẳng đứng (vị trí \(A\)) thông qua một thanh cứng \(AB\) có chiều dài cố định là \(d\). Mặt phẳng của bánh xe luôn được duy trì thẳng hàng với đoạn \(AB\) trong mọi thời điểm. Ví dụ: bánh xe của ghế di động trong văn phòng.
-
-Tương tự như bánh xe tiêu chuẩn bẻ lái được, bánh xe tự lựa có hai tham số biến thiên theo thời gian: góc quay \(\varphi(t)\) của bánh xe và góc lái \(\beta(t)\), hay hướng của thanh nối \(AB\). Trong hình học bánh tự lựa, \(l\) là khoảng cách từ điểm tham chiếu \(P\) đến điểm gắn \(A\), \(\alpha\) xác định hướng của đoạn \(PA\), \(d\) là độ lệch \(AB\) và \(r\) là bán kính bánh tự lựa. Các ký hiệu hình học này được xét riêng cho bánh tự lựa.
-
-\textbf{Phương trình ràng buộc lăn (rolling constraint):}
-\[
-  \begin{bmatrix}
-    \sin(\alpha+\beta) & -\cos(\alpha+\beta) & -l\cos\beta
-  \end{bmatrix}
-  R(\theta)\dot{\xi}_I-r\dot{\varphi}=0.
-\]
-
-\textbf{Phương trình ràng buộc trượt (sliding constraint):}
-\[
-  \begin{bmatrix}
-    \cos(\alpha+\beta) & \sin(\alpha+\beta) & d+l\sin\beta
-  \end{bmatrix}
-  R(\theta)\dot{\xi}_I+d\dot{\beta}=0.
-\]
-
-Cấu trúc hình học của bánh xe tự lựa ảnh hưởng lớn đến sliding constraint vì lực ngang tác dụng lên bánh xe xảy ra tại điểm gắn bánh xe với khung robot (điểm \(A\)) thay vì tại điểm tiếp xúc với mặt đất. Sự chênh lệch vị trí này khiến cho giả định về việc chuyển động ngang bằng \(0\) trở nên sai lệch. Vì vậy, bất kỳ chuyển động nào vuông góc với mặt phẳng bánh xe đều phải được bù bằng một chuyển động xoay tương ứng của trục thẳng đứng.
 
 \subsection{\texorpdfstring{Phân tích Ràng buộc Phi Holonomic(\(\dot{y}\cos \theta -\dot{x}\sin \theta =0\)) và giới hạn bán kính quay vòng cực tiểu.}{Phân tích Ràng buộc Phi Holonomic(ycosθ-xsinθ=0) và giới hạn bán kính quay vòng cực tiểu.}}
 
@@ -847,6 +795,8 @@ Dao động của khung gầm có dải tần số rộng, kích thích tần s�
 
 \section{Các Phương pháp Tạo Profile Vận tốc 1D (Trajectory Generation)}
 
+Đề tài chọn profile vận tốc hình thang làm phương án gán thời gian chính cho xe ba bánh vi sai vì cấu trúc đơn giản, thuận tiện xác định thời gian tăng tốc và giảm tốc. Nội suy đa thức được giới thiệu như cơ sở liên quan; profile chữ S dùng để đối chiếu về độ trơn và mức độ phức tạp khi tính toán.
+
 \subsection{Phương pháp Nội suy Đa thức Bậc 3 (Cubic) và Đa thức Bậc 5 (Quintic Polynomial) qua các điểm nút vị trí - thời gian.}
 
 \subsubsection*{a. Mô hình động lực học của xe.}
@@ -904,19 +854,19 @@ Dạng ma trận
 \end{matrix} \right.
 \]
 
-\subsection{Profile Vận tốc Hình thang (Trapezoidal / LSPB Profile) — Khai triển hệ phương trình phân đoạn gia tốc - đều - giảm tốc.}
+\subsection{Profile vận tốc hình thang: Phương pháp gán thời gian chính}
 
 \subsubsection*{a. Khái niệm}
 
-Profile vận tốc hình thang là quy luật quỹ đạo 1D chia toàn bộ quá trình dịch chuyển từ \(q_{0}\) đến \(q_{f}\), trong khoảng thời gian \(t\in \left[ 0,t_{f} \right]\) thành 3 giai đoạn nối tiếp nhau: Tăng tốc, gia tốc không đổi, và gả, tốc.
+Profile vận tốc hình thang là quy luật quỹ đạo một chiều (1D), chia toàn bộ quá trình dịch chuyển từ vị trí \(q_{0}\) đến vị trí \(q_{f}\), trong khoảng thời gian \(t\in \left[ 0,t_{f} \right]\), thành ba giai đoạn nối tiếp: tăng tốc, chuyển động với vận tốc không đổi và giảm tốc.
 
 \subsubsection*{b. Khai triển}
 
-Giả sử: xuất phát và kết thúc tại trạng thái nghỉ (\(v_{0}=0\) tại \(t=0\); \(v_{f}=0\) tại \(t=t_{f}\)).
+Xét chuyển động theo chiều dương \(q_f>q_0\), xuất phát và kết thúc tại trạng thái nghỉ (\(v_0=v_f=0\)). Gia tốc tăng và giảm có cùng độ lớn \(a>0\). Khi áp dụng dọc đường đã làm mượt, \(q\) biểu diễn quãng đường tích lũy từ đầu tuyến.
 
 \subsubsection*{Giai đoạn 1: Tăng tốc đều (\(0\leq t\leq t_{b}\))}
 
-Ở pha này, gia tốc được duy trì ở mức cực đại hằng số, làm vận tốc tăng tuyến tính và vị trí biến thiên theo dạng hàm bậc hai:
+Ở pha này, gia tốc được giữ tại mức thiết kế \(a\), làm vận tốc tăng tuyến tính và vị trí biến thiên theo hàm bậc hai:
 
 \[
 \ddot{q}\left( t \right)=a
@@ -982,129 +932,42 @@ Hệ thống hãm phanh với gia tốc không đổi mang dấu âm (\(-a\)), v
 q\left( t \right)=q_{f}-\frac{1}{2}a{\left( t_{f}-t \right)}^{2}
 \]
 
-\subsection{Profile Vận tốc Đường cong chữ S (S-Curve 7 đoạn) — Giải thuật kiểm soát và triệt tiêu xung Jerk.}
+\subsubsection*{c. Chọn thời gian và vận tốc đỉnh}
 
-Trong kỹ thuật điều khiển chuyển động chính xác cao, hạn chế lớn nhất của profile vận tốc hình thang (Trapezoidal / LSPB) là gia tốc biến thiên đột ngột dạng hàm bước nhảy, làm phát sinh xung độ giật vô hạn (\(j\left( t \right)=\frac{da}{dt}\to \pm \infty \)) tại các mốc chuyển pha. Độ giật vô hạn này gây xung mô-men tác động trực tiếp lên hộp giảm tốc, kích thích rung động tự do của khung gầm và gây trượt vi sai bánh xe.
-
-Profile đường cong chữ S (S-Curve / Jerk-bounded profile) giải quyết triệt để vấn đề này bằng cách khống chế độ giật trong một ngưỡng giới hạn vật lý định mức \(|j\left( t \right)|\leq j_{\mathrm{max}}\), từ đó đảm bảo gia tốc biến thiên liên tục, quỹ đạo đạt cấp mượt động học \(C^{2}\).
-
-\subsubsection*{1. Cấu trúc 7 Pha Động học của Profile Chữ S}
-
-Quá trình chuyển động từ vị trí xuất phát \(q_{0}\) đến đích \(q_{f}\) ở trạng thái nghỉ (\(v_{0}=v_{f}=0\)) được phân rã thành 7 giai đoạn giải tích nối tiếp nhau:
-
-% TODO: Thay khung dưới bằng hình gia tốc a(t) và vận tốc v(t) của S-Curve.
-% Sơ đồ ký tự trong bản Word được giữ trong các dòng chú thích bên dưới.
-
-%       Gia tốc a(t)                            Vận tốc v(t)
-
-%           ▲                                       ▲
-
-%    +a_max ┼───┐  (Pha 2)                   v_max  ┼──────────┐ (Pha 4)
-
-%           │  / \                                  │        .´ │`.
-
-%           │ /   \                                 │      .´   │  `.
-
-%         0 ┼/─────\─────────/─────\──► t         0 ┼─────´─────┴────`──► t
-
-%           │ (1)  (3)      /  (5)  \               │   (Pha 1-3)  (Pha 5-7)
-
-%   -a_max  │              └───┬─────┘              └─────────────────────►
-
-%           ▼                (Pha 6)
-
-% Khi có ảnh, thay khung trên bằng:
-  \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.95\linewidth]{s-curve.png}
-    \caption{Gia tốc và vận tốc của profile chữ S.}
-    \label{fig:s-curve}
-  \end{figure}
-
-\begin{itemize}
-
-\item \textbf{Pha 1: Tăng gia tốc (Jerk dương hằng số} \(+j_{\mathrm{max}}\)\textbf{):} Gia tốc tăng tuyến tính từ \(0\) lên \(+a_{\mathrm{max}}\), làm vận tốc bắt đầu uốn cong parabol hướng lên.
-
-\item \textbf{Pha 2: Gia tốc hằng (}\(j=0\)\textbf{):} Duy trì gia tốc cực đại \(+a_{\mathrm{max}}\), vận tốc tăng tuyến tính theo thời gian.
-
-\item \textbf{Pha 3: Giảm gia tốc (Jerk âm hằng số} \(-j_{\mathrm{max}}\)\textbf{):} Gia tốc giảm tuyến tính từ \(+a_{\mathrm{max}}\) về \(0\), vận tốc tiệm cận mượt mà tới vận tốc danh định \(v_{\mathrm{max}}\).
-
-\item \textbf{Pha 4: Chuyển động đều (}\(j=0,a=0\)\textbf{):} Hệ thống duy trì vận tốc không đổi \(v_{\mathrm{max}}\), gia tốc triệt tiêu hoàn toàn.
-
-\item \textbf{Pha 5: Bắt đầu hãm phanh (Jerk âm hằng số} \(-j_{\mathrm{max}}\)\textbf{):} Gia tốc âm xuất hiện và giảm dần từ \(0\) xuống \(-a_{\mathrm{max}}\), vận tốc bắt đầu uốn cong hướng xuống.
-
-\item \textbf{Pha 6: Giảm tốc hằng (}\(j=0\)\textbf{):} Duy trì hãm phanh với gia tốc âm không đổi \(-a_{\mathrm{max}}\), vận tốc giảm tuyến tính.
-
-\item \textbf{Pha 7: Triệt tiêu gia tốc (Jerk dương hằng số} \(+j_{\mathrm{max}}\)\textbf{):} Gia tốc tăng từ \(-a_{\mathrm{max}}\) về lại \(0\), đưa vận tốc tiệm cận êm ái về \(0\) tại đúng tọa độ đích \(q_{f}\).
-
-\end{itemize}
-
-\subsubsection*{2. Khai triển Toán học Từng Giai đoạn}
-
-Việc xây dựng profile chữ S được thực hiện từ quy luật biến thiên của độ giật, sau đó xác định lần lượt gia tốc, vận tốc và vị trí. Thay vì làm gia tốc thay đổi tức thời, phương pháp này dành một khoảng thời gian chuyển tiếp để tăng hoặc giảm gia tốc. Cấu trúc bảy pha vì vậy thể hiện cách tổ chức quá trình khởi động, di chuyển và dừng theo một quy luật có kiểm soát \cite[Mục 9.1--9.2]{lynch-park-modern-robotics}.
-
-Trong trường hợp đối xứng đang xét, robot bắt đầu và kết thúc ở trạng thái nghỉ, gia tốc tại hai đầu bằng không, đồng thời sử dụng cùng giới hạn gia tốc và độ giật cho quá trình tăng tốc và giảm tốc. Gọi \(T_j\) là thời gian của mỗi pha thay đổi gia tốc, \(T_a\) là thời gian duy trì gia tốc dương không đổi và \(T_v\) là thời gian chuyển động đều. Thời gian duy trì gia tốc âm, ký hiệu \(T_d\), bằng \(T_a\) theo giả thiết đối xứng. Tổng thời gian chuyển động được viết gọn thành
+Gọi \(D=q_f-q_0>0\), \(v_{\max}>0\) là giới hạn vận tốc và chọn \(a\leq a_{\max}\). Nếu \(D\geq v_{\max}^2/a\), profile đạt vận tốc đỉnh \(V=v_{\max}\), với
 \[
-  T=4T_j+2T_a+T_v.
+  t_b=\frac{V}{a},\qquad
+  t_f=\frac{D}{V}+t_b.
 \]
-Quan hệ này cho thấy thời gian hành trình gồm bốn khoảng chuyển tiếp gia tốc, hai khoảng duy trì gia tốc và một khoảng chuyển động đều. Một số khoảng có thể bằng không nếu quãng đường hoặc giới hạn vận tốc không cho phép hình thành đầy đủ cả bảy pha.
+Nếu \(D<v_{\max}^2/a\), không đủ quãng đường cho pha chạy đều; profile trở thành tam giác, với
+\[
+  V=\sqrt{aD},\qquad t_b=\frac{V}{a},\qquad t_f=2t_b.
+\]
+Các quan hệ này xét chuyển động một chiều giữa hai trạng thái nghỉ. Với đường cong, cần giảm vận tốc theo độ cong và giới hạn từng bánh, đồng thời bố trí lại các pha tăng--giảm tốc. Gia tốc của profile hình thang vẫn có bước nhảy tại điểm chuyển pha nên phương pháp này chưa khống chế độ giật \cite[Mục 9.1--9.2]{lynch-park-modern-robotics}.
 
-Về mặt toán học, gia tốc được xác định bằng cách tích phân độ giật; tiếp tục tích phân gia tốc thu được vận tốc và tích phân vận tốc thu được vị trí. Mỗi pha bắt đầu từ vị trí, vận tốc và gia tốc ở cuối pha trước. Cách kế thừa điều kiện biên này bảo đảm các đoạn chuyển động nối tiếp nhau, tránh việc đặt lại vận tốc hoặc gia tốc khi đổi pha.
+\subsection{Đối chiếu với profile vận tốc chữ S}
 
-Trong ba pha đầu, robot chuyển từ trạng thái nghỉ sang trạng thái chạy ổn định. Ở pha thứ nhất, độ giật dương làm gia tốc tăng đều theo thời gian, khiến vận tốc tăng dần với mức tăng ngày càng lớn. Khi đạt mức gia tốc đã lựa chọn, hệ thống chuyển sang pha thứ hai và giữ gia tốc không đổi; khi đó vận tốc tăng tuyến tính. Đến pha thứ ba, độ giật đổi sang dấu âm để đưa gia tốc trở về không. Robot vẫn tăng vận tốc trong pha này, nhưng mức tăng nhỏ dần cho tới khi đạt vận tốc đỉnh của hành trình.
+Profile chữ S bổ sung các khoảng chuyển tiếp gia tốc để giới hạn độ giật
+\[
+  j(t)=\frac{da(t)}{dt},\qquad |j(t)|\leq j_{\max}.
+\]
+Nhờ đó, gia tốc biến thiên liên tục thay vì có bước nhảy như profile hình thang. Với chuyển động đối xứng từ nghỉ đến nghỉ, cấu trúc đầy đủ gồm bảy pha: tăng gia tốc, giữ gia tốc dương, giảm gia tốc về không, chạy đều, tăng mức hãm, giữ gia tốc âm và đưa gia tốc về không \cite[Mục 9.1--9.2]{lynch-park-modern-robotics}. Một số pha có thể có thời lượng bằng không khi quãng đường ngắn.
 
-Pha thứ tư là khoảng chuyển động đều. Gia tốc và độ giật đều bằng không, vận tốc được giữ ổn định và vị trí thay đổi tuyến tính theo thời gian. Vận tốc đỉnh có thể bằng giới hạn cho phép khi quãng đường đủ dài. Nếu quãng đường ngắn, khoảng chuyển động đều có thể bị rút ngắn hoặc không xuất hiện; khi đó vận tốc đỉnh phải được lựa chọn phù hợp với quãng đường tăng tốc và hãm còn lại.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\linewidth]{s-curve.png}
+  \caption{Gia tốc và vận tốc của profile chữ S dùng để đối chiếu.}
+  \label{fig:s-curve}
+\end{figure}
 
-Ba pha cuối thực hiện quá trình giảm tốc theo trình tự đối xứng với ba pha đầu. Ở pha thứ năm, độ giật âm làm gia tốc chuyển dần từ không sang giá trị âm, nhờ đó robot bắt đầu giảm vận tốc một cách từ từ. Pha thứ sáu duy trì gia tốc âm không đổi để tiếp tục hãm. Trong pha thứ bảy, độ giật dương đưa gia tốc âm trở về không, đồng thời vận tốc giảm về không tại vị trí kết thúc đã xác định.
+So với hình thang, profile chữ S tạo chuyển tiếp gia tốc êm hơn nhưng cần thêm giới hạn độ giật và tính thời lượng các pha. Quỹ đạo vị trí liên tục đến gia tốc, thuộc lớp \(C^2\); độ giật vẫn có thể đổi đột ngột tại điểm nối nên không mặc nhiên đạt \(C^3\). Hiệu quả giảm rung hoặc giảm trượt phải được kiểm chứng trên robot.
 
-Nhìn theo dạng hàm, các pha có độ giật không đổi khác không tạo ra gia tốc tuyến tính, vận tốc bậc hai và vị trí bậc ba theo thời gian cục bộ. Các pha có gia tốc không đổi tạo ra vận tốc tuyến tính và vị trí bậc hai; riêng pha chuyển động đều có vị trí tuyến tính. Đặc điểm này cho phép biểu diễn toàn bộ hành trình bằng các đoạn đa thức bậc thấp, trong khi vẫn giữ được tính liên tục của vị trí, vận tốc và gia tốc tại các điểm nối.
+Trong đề tài, profile hình thang là phương án gán vận tốc chính vì ít tham số và thuận tiện triển khai. Profile chữ S chỉ dùng để đối chiếu đặc tính chuyển động và định hướng cải tiến khi có yêu cầu khống chế độ giật.
 
-\subsubsection*{3. Giải thuật Xác định Thông số Thời gian (Parameter Synthesis)}
-
-Mục đích của việc xác định thông số thời gian là phân bố thời lượng cho từng pha sao cho robot hoàn thành đúng độ dịch chuyển mà không vượt các giới hạn vận tốc, gia tốc và độ giật. Các giá trị cực đại là giới hạn được phép sử dụng, không phải mức bắt buộc phải đạt trong mọi hành trình. Quãng đường càng ngắn thì khả năng đạt đồng thời các giới hạn này càng giảm.
-
-Quy trình dưới đây xét chuyển động một chiều giữa hai trạng thái nghỉ, với gia tốc đầu và cuối bằng không, giới hạn tăng tốc và giảm tốc đối xứng. Độ dịch chuyển được xét theo độ lớn; chiều chuyển động được gán sau khi xác định quy luật. Nếu trạng thái ban đầu đang có vận tốc, hoặc khả năng tăng tốc và hãm khác nhau, việc phân bố thời gian cần được xây dựng lại theo các điều kiện biên tương ứng.
-
-\subsubsection*{Bước 1: Kiểm tra khả năng đạt gia tốc cực đại \(a_{\mathrm{max}}\)}
-
-Trước hết, cần xác định liệu robot có thể tăng gia tốc tới giới hạn cho phép rồi đưa gia tốc trở về không mà vẫn giữ vận tốc trong giới hạn hay không. Thời gian chuyển tiếp phụ thuộc vào tốc độ thay đổi gia tốc được cho phép: giới hạn độ giật càng nhỏ thì quá trình hình thành cùng một mức gia tốc càng kéo dài.
-
-Nếu giới hạn vận tốc đủ lớn, robot có thể đạt gia tốc cực đại và duy trì mức này trong một khoảng thời gian trước khi giảm gia tốc về không. Khoảng duy trì được lựa chọn theo phần vận tốc còn cần tích lũy sau hai pha chuyển tiếp. Trong trường hợp biên, robot chỉ vừa chạm mức gia tốc cực đại rồi chuyển ngay sang giảm gia tốc, không có khoảng duy trì riêng.
-
-Nếu giới hạn vận tốc thấp, robot có thể tích lũy đủ vận tốc ngay khi gia tốc còn chưa đạt giá trị cực đại. Khi đó, cần giảm gia tốc đỉnh và bỏ pha duy trì gia tốc hằng. Theo giả thiết đối xứng, pha duy trì giảm tốc hằng ở nửa sau hành trình cũng được loại bỏ. Profile vẫn giữ các khoảng tăng và giảm gia tốc có kiểm soát, nhưng số pha có thời lượng khác không ít hơn bảy.
-
-Kết quả của bước này là một phương án tăng tốc và giảm tốc dự kiến để đạt giới hạn vận tốc mà không vi phạm giới hạn gia tốc, độ giật. Đây mới là kiểm tra theo các giới hạn chuyển động; phương án còn phải được đối chiếu với quãng đường thực tế ở bước tiếp theo.
-
-\subsubsection*{Bước 2: Kiểm tra khả năng đạt vận tốc cực đại \(v_{\mathrm{max}}\)}
-
-Sau khi xác định các khoảng tăng tốc và giảm tốc dự kiến, cần tính phần quãng đường mà hai quá trình này sử dụng. Nếu độ dịch chuyển yêu cầu lớn hơn phần quãng đường đó, robot có thể đạt vận tốc cực đại và dành quãng đường còn lại cho chuyển động đều. Thời lượng pha chuyển động đều được xác định từ quãng đường còn lại và vận tốc duy trì.
-
-Nếu quãng đường yêu cầu vừa đủ cho tăng tốc và hãm, robot chỉ đạt vận tốc đỉnh tại thời điểm chuyển tiếp giữa hai quá trình, không có pha chạy đều. Nếu quãng đường ngắn hơn, vận tốc đỉnh phải được giảm xuống để robot vẫn dừng đúng vị trí đích. Việc giảm tốc cần được tính ngay từ khi lập quỹ đạo, bởi quá trình hãm cũng bao gồm thời gian hình thành và giải phóng gia tốc âm.
-
-Khi phải giảm vận tốc đỉnh, có hai dạng chuyển động cần phân biệt. Với quãng đường còn tương đối lớn, robot vẫn có thể đạt gia tốc cực đại nhưng thời gian duy trì gia tốc được rút ngắn. Với quãng đường rất ngắn, robot không đạt cả gia tốc cực đại lẫn vận tốc cực đại; các khoảng duy trì gia tốc và chuyển động đều đều biến mất. Profile khi đó còn bốn pha thay đổi gia tốc, nối trực tiếp quá trình tăng tốc với quá trình hãm.
-
-Sau khi phân bố lại thời gian, cần kiểm tra toàn bộ quỹ đạo: thời lượng các pha phải không âm, vị trí kết thúc phải phù hợp với yêu cầu, vận tốc và gia tốc cuối phải trở về không, đồng thời các giới hạn chuyển động phải được giữ trong suốt hành trình. Kiểm tra này giúp phát hiện việc chọn sai dạng profile, đặc biệt ở các trường hợp chuyển tiếp giữa hành trình dài và hành trình ngắn.
-
-\subsubsection*{4. Đánh giá Đặc tính và Ý nghĩa Triển khai Phần cứng}
-
-Đặc điểm cơ bản của profile chữ S bảy pha là tính liên tục đến gia tốc, tương ứng với quỹ đạo vị trí thuộc lớp \(C^{2}\). Tại điểm nối, vị trí, vận tốc và gia tốc của hai pha liền kề trùng nhau. Tuy nhiên, độ giật vẫn có thể đổi giá trị đột ngột giữa các pha, nên quỹ đạo không mặc nhiên đạt liên tục bậc ba. Vì vậy, cần phân biệt giới hạn độ lớn của độ giật với yêu cầu làm độ giật liên tục.
-
-So với profile hình thang, việc hình thành và giải phóng gia tốc trong một khoảng thời gian hữu hạn giúp giảm mức thay đổi đột ngột của yêu cầu chuyển động. Điều này có lợi đối với cơ cấu có độ mềm, độ rơ hoặc tải dễ dao động. Hiệu quả giảm rung còn phụ thuộc độ cứng, ma sát, tần số riêng và đặc tính của bộ điều khiển; chỉ sử dụng profile chữ S chưa đủ để khẳng định rung động đã được triệt tiêu hoàn toàn.
-
-Đối với robot bánh xe vi sai, chuyển tiếp gia tốc êm hơn có thể giảm biến thiên nhanh của yêu cầu mô-men lên hai động cơ. Khi kết hợp với giới hạn gia tốc phù hợp, điều này hỗ trợ hạn chế nguy cơ trượt bánh và giúp phản hồi encoder phản ánh chuyển động lăn tốt hơn. Dù vậy, độ tin cậy của Odometry vẫn chịu ảnh hưởng bởi mặt sàn, tải, sai lệch kích thước bánh và điều kiện tiếp xúc; không thể bảo đảm không trượt chỉ bằng cách giới hạn độ giật.
-
-Giới hạn độ giật càng chặt thì thời gian chuyển tiếp để đạt cùng một mức gia tốc càng dài. Với hành trình ngắn, robot có thể phải sử dụng vận tốc đỉnh thấp hơn. Do đó, lựa chọn thông số là sự cân bằng giữa thời gian hoàn thành, độ êm và khả năng đáp ứng của hệ truyền động. Tăng các giới hạn để rút ngắn thời gian chỉ phù hợp khi động cơ, nguồn và điều kiện bám đường đáp ứng được yêu cầu mới.
-
-Trong triển khai số, có thể tách việc xác định thời lượng các pha khỏi việc cập nhật giá trị tham chiếu theo chu kỳ. Sau khi các mốc chuyển pha được thiết lập, mỗi chu kỳ chỉ cần xác định pha đang hoạt động và tính vị trí, vận tốc, gia tốc từ đoạn đa thức tương ứng. Cách tổ chức này phù hợp với các bộ điều khiển nhúng, đồng thời cần xử lý chính xác thời điểm đổi pha để tránh sai lệch tích lũy hoặc vượt quá điểm kết thúc.
-
-Thời gian tính toán thực tế phụ thuộc vi điều khiển, cách biểu diễn số, chương trình và các tác vụ chạy đồng thời. Khả năng đáp ứng chu kỳ điều khiển phải được xác nhận bằng đo đạc trên hệ thống sử dụng. Khi áp dụng cho xe ba bánh của đề tài, quỹ đạo tham chiếu còn cần được quy đổi và kiểm tra theo giới hạn từng bánh, kết hợp với phản hồi tốc độ để đánh giá mức bám của phần cứng.
-
-
-% Mục 2.4 được bố trí thành năm trang theo các nhóm nội dung.
 \clearpage
 \section{Kỹ thuật Làm mượt Đường đi Hình học (Path Smoothing)}
 
-Làm mượt đường đi thay các góc gãy của kết quả tìm kiếm bằng đoạn chuyển tiếp phù hợp với chuyển động robot. Đây là bước xử lý hình học; sau đó cần gán quy luật thời gian để tạo quỹ đạo tham chiếu \cite{lynch-park-modern-robotics}. Phần này xét đường phẳng \(\mathbf{p}(u)=[x(u),y(u)]^T\); dấu phẩy chỉ đạo hàm theo tham số \(u\), còn dấu chấm chỉ đạo hàm theo thời gian.
+Làm mượt đường đi thay các góc gãy của kết quả tìm kiếm bằng đoạn chuyển tiếp phù hợp với chuyển động robot. Đề tài chọn Bézier để thiết kế đoạn bo góc; B-Spline được giới thiệu ngắn nhằm đối chiếu khả năng chỉnh sửa đường. Sau bước hình học, profile vận tốc hình thang được dùng để gán thời gian \cite{lynch-park-modern-robotics}. Phần này xét đường phẳng \(\mathbf{p}(u)=[x(u),y(u)]^T\); dấu phẩy chỉ đạo hàm theo \(u\), còn dấu chấm chỉ đạo hàm theo thời gian.
 
 \subsection{Khuyết tật hình học gãy khúc của thuật toán tìm đường dạng lưới và lấy mẫu ngẫu nhiên.}
 
@@ -1128,8 +991,7 @@ Tại góc gãy, robot không thể vừa bám chính xác vừa duy trì tốc 
 
 Đường mới phải giữ điểm đầu, điểm đích, hướng yêu cầu và các điểm tác vụ bắt buộc; đồng thời bảo đảm khoảng hở, hạn chế độ cong và tránh vòng lặp. Có thể bỏ các nút dư bằng nối tắt nếu toàn bộ đoạn nối an toàn. Sau làm mượt phải kiểm tra lại va chạm theo kích thước thân xe. Nếu không có đoạn chuyển tiếp phù hợp, cần đổi tuyến hoặc dùng thao tác dừng--xoay có kiểm tra.
 
-\newpage
-\subsection{Khai triển toán học đường cong tham số: Thuật toán Bézier Curve và B-Spline Curve bậc cao.}
+\subsection{Làm mượt bằng Bézier và đối chiếu với B-Spline}
 
 \subsubsection*{a. Đường cong Bézier và đa thức Bernstein}
 
@@ -1145,7 +1007,7 @@ Hướng tiếp tuyến đầu phụ thuộc đoạn \(\mathbf P_0\mathbf P_1\),
 
 \subsubsection*{b. Bézier bậc 5 và ghép các đoạn chuyển tiếp}
 
-Bézier bậc 5 có sáu điểm điều khiển, cho phép đặt vị trí cùng đạo hàm bậc nhất và bậc hai ở cả hai đầu. Các quan hệ tại đầu đoạn có dạng
+Bézier bậc 5 được chọn để xây dựng đoạn chuyển tiếp vì sáu điểm điều khiển cho phép đặt vị trí cùng đạo hàm bậc nhất và bậc hai ở cả hai đầu. Các quan hệ tại đầu đoạn có dạng
 \begin{equation}
   \mathbf p'(0)=5(\mathbf P_1-\mathbf P_0),\qquad
   \mathbf p''(0)=20(\mathbf P_2-2\mathbf P_1+\mathbf P_0).
@@ -1157,22 +1019,13 @@ Khi ghép hai đoạn, liên tục \(C^0\) yêu cầu chung vị trí; \(C^1\) y
 
 Đối với bo góc giữa hai đoạn thẳng, có thể chọn độ cong đầu cuối bằng không để chuyển tiếp êm về hình học. Tuy vậy, bậc cao không tự bảo đảm bán kính cua đủ lớn hoặc tránh được vật cản; các điểm điều khiển vẫn phải được lựa chọn trong miền an toàn.
 
-\newpage
-\subsubsection*{c. Đường B-Spline và công thức truy hồi Cox--de Boor}
+\subsubsection*{c. Đối chiếu ngắn với B-Spline}
 
-B-Spline phù hợp với đường dài gồm nhiều đoạn vì bậc đường cong được chọn độc lập với số điểm điều khiển. Đường được biểu diễn bằng tổng có trọng số \(\mathbf p(u)=\sum_i N_{i,p}(u)\mathbf P_i\), trong đó \(p\) là bậc, còn \(N_{i,p}\) là hàm cơ sở xác định trên vector nút không giảm. Công thức Cox--de Boor xây dựng hàm cơ sở bậc cao từ bậc thấp:
-\begin{equation}
-  N_{i,p}(u)=\frac{u-u_i}{u_{i+p}-u_i}N_{i,p-1}(u)
-  +\frac{u_{i+p+1}-u}{u_{i+p+1}-u_{i+1}}N_{i+1,p-1}(u).
-  \label{eq:smooth-bspline}
-\end{equation}
-Hàm cơ sở bậc không bằng một trên khoảng nút tương ứng và bằng không ở ngoài; hạng có mẫu số bằng không được quy ước đóng góp không. Với đường kẹp hai đầu, nút đầu và cuối lặp \(p+1\) lần để đường đi qua hai điểm điều khiển biên \cite{shene-bspline-notes}.
-
-Tại nút trong có bội \(k\leq p\), mức liên tục được bảo đảm là \(C^{p-k}\). Vì vậy, B-Spline bậc 3 với nút đơn đạt \(C^2\), còn bậc 5 với nút đơn đạt \(C^4\). Tăng bội nút làm giảm mức liên tục. Tính cục bộ giúp việc chỉnh một điểm điều khiển chỉ ảnh hưởng một vùng của đường, thuận tiện hơn khi sửa tuyến dài.
+B-Spline thuận tiện với đường dài vì chỉnh một điểm điều khiển chỉ ảnh hưởng một vùng cục bộ; bậc đường cong không phụ thuộc trực tiếp số điểm điều khiển. Mức liên tục phụ thuộc bậc và bội nút, chẳng hạn B-Spline bậc 3 với nút trong đơn đạt \(C^2\) \cite{shene-bspline-notes}. So với B-Spline, các đoạn Bézier phù hợp với cách bo từng góc của chuỗi nút và dễ xác định điều kiện đầu--cuối. Vì vậy, đề tài tập trung khai triển Bézier; B-Spline được giữ làm phương án đối chiếu.
 
 \subsubsection*{d. Lựa chọn điểm điều khiển và bảo toàn miền tự do}
 
-Bézier thích hợp với đoạn chuyển tiếp ngắn; B-Spline phù hợp khi cần chỉnh sửa cục bộ trên nhiều đoạn. Không nên mặc nhiên coi chuỗi nút tìm đường là các điểm mà đường cong chắc chắn đi qua. Các vị trí tác vụ bắt buộc cần được đặt thành ràng buộc riêng.
+Với Bézier, chuỗi nút tìm đường được dùng để chọn vị trí bắt đầu và kết thúc các đoạn bo góc. Không nên mặc nhiên coi mọi nút là điểm đường cong chắc chắn đi qua; các vị trí tác vụ bắt buộc cần được đặt thành ràng buộc riêng.
 
 Nếu các điểm điều khiển có ảnh hưởng nằm trong cùng một hành lang lồi an toàn, tính bao lồi giúp giữ đoạn cong trong hành lang đó. Chỉ kiểm tra từng điểm điều khiển ở ngoài vật cản là chưa đủ, vì đường nối giữa chúng vẫn có thể cắt vật cản. Hành lang cần tính đến kích thước xe và khoảng dự phòng; nếu không có chứng nhận bao lồi, phải kiểm tra đường cong bằng chia nhỏ hoặc kiểm tra va chạm thích hợp.
 
@@ -1184,7 +1037,6 @@ Nếu các điểm điều khiển có ảnh hưởng nằm trong cùng một h�
   \end{minipage}
 \end{center}
 
-\newpage
 \subsection{\texorpdfstring{Đảm bảo tính liên tục độ cong (\(G^{2}/C^{2}\)) tương thích với ràng buộc động học của robot 3 bánh.}{Đảm bảo tính liên tục độ cong (G2/C2) tương thích với ràng buộc động học của robot 3 bánh.}}
 
 \subsubsection*{a. Phân biệt liên tục tham số và liên tục hình học}
@@ -1213,7 +1065,6 @@ Cách dựng này đáp ứng ràng buộc không trượt ngang của mô hình
 
 Xe ba bánh dùng hai bánh chủ động để tạo chuyển động, bánh tự lựa hỗ trợ cân bằng. Khả năng quay tại chỗ không thay thế yêu cầu làm mượt khi cần chạy liên tục. Với pha quay tại chỗ, vận tốc tịnh tiến bằng không nhưng tốc độ quay có thể khác không; pha này phải mô tả riêng. Nhiệm vụ đi lùi hoặc đổi chiều cũng cần phân chia các pha và xác định lại quan hệ giữa hướng thân với hướng đi.
 
-\newpage
 \subsubsection*{c. Ràng buộc tốc độ bánh xe, gia tốc và độ biến thiên độ cong}
 
 Theo mô hình vi sai, tốc độ mỗi bánh phụ thuộc đồng thời vận tốc tâm xe và độ cong. Khi vào cua, bánh ngoài quay nhanh hơn bánh trong; vì vậy tốc độ tâm xe nhỏ chưa đủ bảo đảm cả hai động cơ đều nằm trong giới hạn. Cần xét thêm tốc độ quay thân xe và gia tốc ngang, vốn tăng theo bình phương vận tốc khi độ cong không đổi.
@@ -1222,9 +1073,11 @@ Theo mô hình vi sai, tốc độ mỗi bánh phụ thuộc đồng thời vậ
 
 \subsubsection*{d. Kết hợp với quy luật thời gian và quy trình áp dụng}
 
-Sau khi chốt hình học, quy luật thời gian xác định robot đi qua từng vị trí lúc nào và nhanh đến mức nào. Profile chữ S có thể dùng cho chuyển động dọc đường, nhưng phải điều chỉnh theo giới hạn cục bộ tại các đoạn cong. Giới hạn jerk của chuyển động dọc đường chưa tự bảo đảm mọi thành phần gia tốc và jerk trên mặt phẳng đều phù hợp.
+Sau khi chốt đường Bézier, cần chuyển tham số hình học sang quãng đường tích lũy \(q\), chẳng hạn tính bằng chia nhỏ đường cong. Profile hình thang gán quy luật \(q(t)\), từ đó xác định vị trí tham chiếu trên đường. Không áp trực tiếp profile vận tốc dọc đường lên tham số \(u\), vì \(\|\mathbf p'(u)\|\) thường không cố định.
 
-Quy trình áp dụng gồm tìm đường và loại nút dư; xác định điểm bắt buộc cùng hành lang an toàn; dựng Bézier hoặc B-Spline; kiểm tra tiếp tuyến, độ cong và va chạm; sau đó gán thời gian có xét tăng tốc, giảm tốc. Cuối cùng, sinh tham chiếu vị trí, hướng, vận tốc và tốc độ quay, quy đổi sang lệnh hai bánh và kiểm tra trước khi đưa tới bộ bám.
+Vận tốc dọc đường phải được điều chỉnh theo độ cong và giới hạn từng bánh; trước đoạn cua cần bố trí giảm tốc phù hợp. Chỉ giới hạn vận tốc và gia tốc dọc đường chưa bảo đảm mọi thành phần gia tốc của xe và hai bánh đều nằm trong giới hạn.
+
+Quy trình áp dụng gồm tìm đường và loại nút dư; xác định điểm bắt buộc cùng hành lang an toàn; dựng các đoạn Bézier; kiểm tra tiếp tuyến, độ cong và va chạm; sau đó gán thời gian bằng các pha tăng tốc, chạy đều và giảm tốc của profile hình thang. Cuối cùng, sinh tham chiếu vị trí, hướng, vận tốc và tốc độ quay, quy đổi sang lệnh hai bánh và kiểm tra trước khi đưa tới bộ bám.
 
 Chất lượng được đánh giá qua chiều dài đường, khoảng hở nhỏ nhất, độ cong lớn nhất, tốc độ/gia tốc bánh xe và thời gian hành trình. Đường mượt chỉ được chấp nhận khi đồng thời an toàn về hình học và phù hợp với khả năng chuyển động của robot.
 
@@ -1241,21 +1094,15 @@ Chất lượng được đánh giá qua chiều dài đường, khoảng hở n
 
 \section{Nhóm Thuật toán Tìm đường Dựa trên Đồ thị (Graph-based Planning)}
 
-Trong nhóm phương pháp này, môi trường chuyển động được biểu diễn bằng đồ thị \(G=(\mathcal{V},\mathcal{E})\), trong đó \(\mathcal{V}\) là tập đỉnh đại diện cho các trạng thái hợp lệ và \(\mathcal{E}\) là tập cạnh đại diện cho các chuyển động được phép. Đặt \(V=|\mathcal{V}|\), \(E=|\mathcal{E}|\); mỗi cạnh \((u,v)\) có trọng số không âm \(w(u,v)\). Bài toán tìm đường từ đỉnh xuất phát \(s\) đến đỉnh đích \(t\) được viết dưới dạng
-\begin{equation}
-  P^{*}=\operatorname*{arg\,min}_{P:s\leadsto t} J(P),
-  \qquad J(P)=\sum_{(u,v)\in P}w(u,v).
-  \label{eq:graph-path-cost}
-\end{equation}
-Nếu trọng số là chiều dài đoạn nối, nghiệm là đường ngắn nhất trên đồ thị. Khi trọng số chứa thêm chi phí địa hình hoặc khoảng cách đến vật cản, nghiệm tối ưu được hiểu theo hàm chi phí đã chọn, không nhất thiết có chiều dài hình học nhỏ nhất.
+Đối với xe ba bánh vi sai của đề tài, tìm đường trên đồ thị được sử dụng để xác định tuyến di chuyển từ vị trí xuất phát đến đích trên bản đồ có vật cản. Bản đồ được chia thành các ô lưới, trong đó những ô tự do lân cận được nối với nhau sau khi xét kích thước thân xe và khoảng dự phòng an toàn. Hai thuật toán Dijkstra và A* được khảo sát để tìm đường theo chi phí đã chọn \cite[Chương 2]{lavalle-planning-2006}.
 
-Đối với robot di động trong mặt phẳng, một cách xây dựng đồ thị là chia bản đồ thành các ô lưới và nối những ô tự do lân cận. Trước khi tìm đường, cần tính đến kích thước robot bằng cách mở rộng vật cản theo hình học thân xe và khoảng dự phòng an toàn. Với mô hình robot tròn có bán kính \(r\), vùng cấm cho tâm robot có thể được xây dựng bằng tổng Minkowski giữa vật cản và đĩa bán kính \(r\). Khi đó, kiểm tra một điểm tâm xe có ý nghĩa đối với cả thân xe. Với robot có hình dạng phụ thuộc hướng, có thể dùng mô hình bao tròn bảo thủ hoặc đưa góc hướng vào trạng thái. Các cơ sở tìm kiếm trên đồ thị được trình bày trong \cite[Chương 2]{lavalle-planning-2006}.
+Đường đi thu được là cơ sở cho bước làm mượt và gán quy luật vận tốc. Trước khi đưa vào điều khiển xe, cần kiểm tra lại va chạm, ràng buộc chuyển động vi sai và giới hạn vận tốc, gia tốc của từng bánh để bảo đảm quỹ đạo có thể thực hiện được.
 
 \subsection{Thuật toán Dijkstra}
 
 \subsubsection*{a. Nguyên lý mở rộng đỉnh và cập nhật chi phí}
 
-Dijkstra giải bài toán đường đi ngắn nhất với trọng số cạnh không âm. Thuật toán duy trì \(g(v)\), là chi phí tốt nhất hiện biết từ \(s\) đến đỉnh \(v\), cùng con trỏ \(\operatorname{parent}(v)\) để truy vết đường đi. Ban đầu, \(g(s)=0\), còn \(g(v)=+\infty\) với mọi \(v\neq s\). Ở mỗi vòng lặp, đỉnh chưa chốt có chi phí nhỏ nhất được lấy ra để mở rộng. Với một đỉnh lân cận \(v\) của đỉnh đang xét \(u\), phép nới lỏng cạnh (relaxation) thực hiện theo quy tắc
+Dijkstra giải bài toán đường đi ngắn nhất với trọng số cạnh không âm. Gọi \(s\), \(t\) lần lượt là đỉnh xuất phát và đích, \(w(u,v)\) là chi phí cạnh nối \(u\) với \(v\). Thuật toán duy trì \(g(v)\), là chi phí tốt nhất hiện biết từ \(s\) đến đỉnh \(v\), cùng con trỏ \(\operatorname{parent}(v)\) để truy vết đường đi. Ban đầu, \(g(s)=0\), còn \(g(v)=+\infty\) với mọi \(v\neq s\). Ở mỗi vòng lặp, đỉnh chưa chốt có chi phí nhỏ nhất được lấy ra để mở rộng. Với một đỉnh lân cận \(v\) của đỉnh đang xét \(u\), phép nới lỏng cạnh (relaxation) thực hiện theo quy tắc
 \begin{equation}
   \text{nếu } g(u)+w(u,v)<g(v),\quad
   \begin{cases}
@@ -1277,15 +1124,9 @@ Trình tự xử lý có thể mô tả như sau:
 
 \subsubsection*{b. Hàng đợi ưu tiên và độ phức tạp}
 
-Hàng đợi ưu tiên (Priority Queue) lưu các đỉnh chờ xét và cho phép lấy ra đỉnh có \(g\) nhỏ nhất. Nếu dùng heap nhị phân, thao tác lấy phần tử nhỏ nhất và giảm khóa có chi phí \(O(\log V)\). Trong thực hành, có thể đưa bản ghi mới vào heap mỗi khi tìm được chi phí tốt hơn; khi lấy ra, cần so sánh khóa lưu trong bản ghi với \(g(v)\) hiện tại để loại bỏ dữ liệu cũ. Cách này đơn giản hơn thao tác giảm khóa nhưng có thể lưu nhiều bản ghi cho một đỉnh.
+Gọi \(V\), \(E\) là số đỉnh và số cạnh. Hàng đợi ưu tiên lưu các đỉnh chờ xét và lấy ra đỉnh có chi phí \(g\) nhỏ nhất. Nếu cài đặt bằng cách thêm bản ghi mới mỗi khi chi phí được cải thiện, cần bỏ qua bản ghi lỗi thời khi lấy ra.
 
-Độ phức tạp phụ thuộc cấu trúc dữ liệu được sử dụng:
-\begin{itemize}
-  \item \textbf{Mảng nhãn và danh sách kề:} Mỗi lần chọn đỉnh nhỏ nhất phải quét tối đa \(V\) đỉnh. Có tối đa \(V\) lần chọn và tổng cộng \(E\) cạnh được xét, nên thời gian là \(O(V^{2}+E)\).
-  \item \textbf{Heap nhị phân có giảm khóa và danh sách kề:} Thời gian là \(O((V+E)\log V)\), phù hợp với đồ thị thưa như lưới có số láng giềng bị chặn.
-  \item \textbf{Heap Fibonacci:} Giới hạn lý thuyết là \(O(E+V\log V)\), nhưng cấu trúc phức tạp hơn và không nhất thiết đem lại lợi ích trong một cài đặt quy mô nhỏ \cite{lavalle-planning-2006}.
-\end{itemize}
-Với heap có giảm khóa, tổng bộ nhớ cho đồ thị và dữ liệu tìm kiếm là \(O(V+E)\). Cách đưa bản ghi trùng vào heap có thể cần tới \(O(E)\) bản ghi trong một đồ thị đơn. Như vậy, \(O(V^{2}+E)\) là giới hạn của cách chọn đỉnh bằng mảng, không phải giới hạn áp dụng cho mọi cài đặt sử dụng hàng đợi ưu tiên.
+Với danh sách kề, chọn đỉnh bằng mảng có thời gian \(O(V^{2}+E)\); dùng heap nhị phân có giảm khóa cho thời gian \(O((V+E)\log V)\) và tổng bộ nhớ \(O(V+E)\) \cite{lavalle-planning-2006}. Các giới hạn này phụ thuộc cách cài đặt; trong mô phỏng cần đo thời gian thực tế và ghi số đỉnh đã mở rộng trên cùng bản đồ.
 
 \begin{center}
   \begin{minipage}{\linewidth}
@@ -1355,37 +1196,37 @@ A* dừng khi đỉnh đích được lấy ra hợp lệ khỏi tập mở. Sau
   \end{center}
 \end{minipage}\par\medskip
 
-Với heuristic hữu ích, A* thường giảm số đỉnh phải mở rộng so với Dijkstra, nhưng không có bảo đảm mức giảm cố định trên mọi bản đồ. Trong trường hợp xấu, thuật toán vẫn có thể xét phần lớn đồ thị. Với heuristic nhất quán và heap nhị phân có giảm khóa, thời gian tìm kiếm trên đồ thị hữu hạn được chặn bởi \(O((V+E)\log V)\). Kết quả của A* vẫn cần qua bước làm mượt và tạo profile vận tốc; nếu sử dụng trạng thái chỉ gồm \((x,y)\), các ràng buộc hướng và động học của xe chưa tự động được bảo đảm.
+Heuristic hữu ích thường giúp A* mở rộng ít đỉnh hơn Dijkstra, nhưng mức giảm phụ thuộc bản đồ; trường hợp xấu vẫn có thể xét phần lớn đồ thị. Chi phí tính toán phụ thuộc cả heuristic và cách tổ chức hàng đợi. Khi so sánh, cần ghi thời gian xử lý và số đỉnh mở rộng. Đường tìm được vẫn cần làm mượt và gán vận tốc; trạng thái chỉ gồm \((x,y)\) chưa tự bảo đảm ràng buộc hướng và động học của xe.
 
 \section{Nhóm Thuật toán Lấy mẫu Ngẫu nhiên (Sampling-based Planning)}
 
-Các phương pháp lấy mẫu xây dựng biểu diễn hữu hạn của không gian cấu hình bằng những trạng thái được chọn theo một quy tắc lấy mẫu. Gọi \(\mathcal{C}_{\mathrm{free}}\) là miền cấu hình không va chạm, \(q_s\) và \(q_g\) là cấu hình đầu và đích. Mỗi mẫu phải được kiểm tra tính hợp lệ; mỗi cạnh nối giữa hai mẫu phải được kiểm tra trên toàn bộ chuyển động do bộ lập kế hoạch cục bộ tạo ra. Vì vậy, việc hai đầu mút nằm trong miền tự do không đủ để kết luận cạnh nối an toàn.
+Các phương pháp lấy mẫu biểu diễn không gian cấu hình bằng một tập hữu hạn trạng thái. Gọi \(\mathcal{C}_{\mathrm{free}}\) là miền không va chạm, \(q_s\), \(q_g\) là cấu hình đầu và đích. Cần kiểm tra từng mẫu và toàn bộ chuyển động nối do bộ lập kế hoạch cục bộ tạo ra; hai đầu mút hợp lệ chưa bảo đảm cạnh nối an toàn.
 
-Trong mô phỏng hình học cho robot di động, có thể bắt đầu từ \(q=(x,y)\) trên bản đồ đã mở rộng vật cản. Đối với bài toán xét cả hướng thân xe, trạng thái có thể là \(q=(x,y,\theta)\). Khoảng cách giữa hai trạng thái khi đó phải xử lý tính tuần hoàn của góc và cân đối đơn vị giữa vị trí và hướng. Nếu cần thỏa mãn ràng buộc phi holonomic, bộ nối cục bộ phải sinh chuyển động khả thi thay vì tùy ý nội suy thẳng trong không gian trạng thái.
+Với xe ba bánh vi sai, mô phỏng hình học có thể dùng \(q=(x,y)\) trên bản đồ đã mở rộng vật cản, hoặc \(q=(x,y,\theta)\) khi xét hướng xe. Khoảng cách trạng thái phải xét tính tuần hoàn của góc và cân đối đơn vị vị trí--hướng. Bộ nối phải sinh chuyển động thỏa ràng buộc phi holonomic khi đưa ràng buộc này vào bài toán.
 
 \subsection{Thuật toán PRM (Probabilistic Roadmaps)}
 
 \subsubsection*{a. Giai đoạn học và xây dựng mạng lưới}
 
-PRM xây dựng một mạng đường đi có thể tái sử dụng cho nhiều cặp xuất phát--đích trong cùng môi trường tĩnh. Theo phương pháp gốc, thuật toán gồm giai đoạn học và giai đoạn truy vấn \cite{kavraki-prm-1996}. Trong giai đoạn học, các cấu hình hợp lệ được lưu thành tập đỉnh \(\mathcal{V}_R\), còn các chuyển động nối hợp lệ được lưu thành tập cạnh \(\mathcal{E}_R\), tạo thành roadmap \(G_R=(\mathcal{V}_R,\mathcal{E}_R)\).
+PRM gồm giai đoạn học và truy vấn, xây dựng mạng đường đi dùng lại cho nhiều cặp xuất phát--đích trong môi trường tĩnh \cite{kavraki-prm-1996}. Các cấu hình và chuyển động nối hợp lệ tạo thành tập đỉnh \(\mathcal{V}_R\), tập cạnh \(\mathcal{E}_R\) của roadmap \(G_R=(\mathcal{V}_R,\mathcal{E}_R)\).
 
 Quá trình xây dựng roadmap gồm:
 \begin{enumerate}[label=\arabic*.]
-  \item Lấy mẫu \(q\) trong miền cấu hình. Loại các mẫu va chạm hoặc vi phạm giới hạn của robot; giữ lại mẫu trong \(\mathcal{C}_{\mathrm{free}}\).
-  \item Tìm các mẫu lân cận theo bán kính kết nối hoặc theo số láng giềng được chọn. Quy tắc này ảnh hưởng đến mức liên thông và chi phí xây dựng mạng.
-  \item Với từng cặp ứng viên, gọi bộ lập kế hoạch cục bộ. Trong mô hình điểm hình học, đường nối có thể là
+  \item Lấy mẫu \(q\) trong \(\mathcal{C}_{\mathrm{free}}\), loại mẫu va chạm hoặc vi phạm giới hạn robot.
+  \item Tìm láng giềng theo bán kính hoặc số lượng, cân đối mức liên thông và chi phí xây dựng.
+  \item Dùng bộ lập kế hoạch cục bộ nối từng cặp ứng viên. Với mô hình điểm hình học:
   \[
     q(\lambda)=(1-\lambda)q_i+\lambda q_j,
     \qquad 0\leq\lambda\leq1.
   \]
-  Chỉ thêm cạnh nếu toàn bộ đường nối không va chạm. Với robot có ràng buộc động học, thay đoạn thẳng bằng chuyển động phù hợp với mô hình xe.
-  \item Gán trọng số cho cạnh, chẳng hạn chiều dài đường nối, và tiếp tục bổ sung mẫu đến khi đạt giới hạn số mẫu hoặc ngân sách tính toán.
+  Chỉ thêm cạnh không va chạm; nếu xét ràng buộc động học, thay đoạn thẳng bằng chuyển động phù hợp.
+  \item Gán trọng số cạnh, chẳng hạn chiều dài, rồi bổ sung mẫu đến giới hạn số mẫu hoặc ngân sách tính toán.
 \end{enumerate}
-Trong mô hình hình học đối xứng, roadmap thường là đồ thị vô hướng. Nếu một chuyển động hợp lệ theo chiều đi nhưng không hợp lệ theo chiều ngược lại, phải biểu diễn bằng cạnh có hướng. Khi kiểm tra va chạm bằng các điểm rời rạc trên cạnh, bước kiểm tra phải đủ nhỏ theo độ phân giải bản đồ và kích thước vật cản, hoặc sử dụng phép kiểm tra liên tục; lấy mẫu quá thưa có thể bỏ sót một vật cản nằm giữa hai điểm kiểm tra.
+Roadmap hình học đối xứng thường vô hướng; chuyển động chỉ hợp lệ một chiều cần cạnh có hướng. Kiểm tra va chạm phải liên tục hoặc có bước đủ nhỏ theo độ phân giải bản đồ và kích thước vật cản, tránh bỏ sót vật cản giữa các điểm kiểm tra.
 
 \subsubsection*{b. Giai đoạn truy vấn đường đi}
 
-Khi nhận \(q_s\) và \(q_g\), thuật toán kiểm tra hai cấu hình, thêm chúng vào roadmap và thử kết nối với các đỉnh lân cận bằng cùng bộ lập kế hoạch cục bộ. Sau đó, Dijkstra hoặc A* được dùng để tìm đường trong mạng. Nếu tìm thấy, chuỗi cạnh được ghép thành đường đi từ đầu đến đích. Nếu không tìm thấy, có thể tăng số mẫu hoặc mở rộng tập kết nối rồi truy vấn lại; một lần truy vấn thất bại trên roadmap hữu hạn chưa chứng minh môi trường không có đường đi.
+Kiểm tra \(q_s\), \(q_g\), thêm vào roadmap và nối với láng giềng bằng cùng bộ lập kế hoạch cục bộ. Dijkstra hoặc A* tìm chuỗi cạnh từ đầu đến đích. Nếu thất bại, có thể bổ sung mẫu hoặc mở rộng kết nối rồi truy vấn lại; thất bại trên mạng hữu hạn chưa chứng minh môi trường không có đường đi.
 
 \noindent\begin{minipage}{\linewidth}
   \begin{center}
@@ -1394,58 +1235,58 @@ Khi nhận \(q_s\) và \(q_g\), thuật toán kiểm tra hai cấu hình, thêm 
   \end{center}
 \end{minipage}\par\medskip
 
-Giai đoạn học chỉ xây dựng mạng lưới, không phải huấn luyện một mô hình học máy. Lợi ích của PRM xuất hiện rõ khi chi phí xây dựng mạng được phân bổ cho nhiều truy vấn trong bản đồ ít thay đổi. Khi vật cản thay đổi, những cạnh và đỉnh bị ảnh hưởng phải được kiểm tra lại trước khi tiếp tục sử dụng.
+Giai đoạn học là xây dựng mạng, không phải huấn luyện học máy. PRM có lợi khi dùng chung mạng cho nhiều truy vấn trên bản đồ ít thay đổi; nếu vật cản thay đổi, phải kiểm tra lại các đỉnh và cạnh bị ảnh hưởng.
 
 \subsubsection*{c. Đặc điểm và giới hạn}
 
-Khó khăn của lấy mẫu đều là các hành lang hẹp chiếm một phần nhỏ thể tích không gian tự do, nên ít mẫu rơi vào vùng cần thiết. Tăng mật độ mẫu hoặc lấy mẫu có thiên hướng gần vùng khó có thể cải thiện khả năng kết nối, nhưng cũng làm tăng số lần kiểm tra va chạm. Số láng giềng quá nhỏ có thể làm mạng rời rạc, còn kết nối quá nhiều làm tăng chi phí xây dựng.
+Hành lang hẹp chiếm ít thể tích tự do nên khó được lấy mẫu đều. Tăng mật độ hoặc lấy mẫu thiên hướng gần vùng khó cải thiện kết nối nhưng tăng kiểm tra va chạm. Quá ít láng giềng làm mạng rời rạc; quá nhiều làm tăng chi phí xây dựng.
 
-Tính đầy đủ xác suất có nghĩa là xác suất tìm được đường tiến tới \(1\) khi số mẫu tăng, nếu bài toán có đường khả thi với khoảng hở phù hợp và các giả thiết về lấy mẫu, kết nối được thỏa mãn. Đây không phải bảo đảm thành công với một số mẫu hữu hạn. PRM thông thường cũng không tự động có tính tối ưu tiệm cận; muốn khẳng định tính chất này phải dùng biến thể và quy tắc kết nối tương ứng, chẳng hạn PRM* \cite{karaman-frazzoli-2011}. Trong đề tài, PRM thích hợp để đánh giá khả năng tái sử dụng mạng đường đi trong môi trường tĩnh và ảnh hưởng của số mẫu đối với tỷ lệ thành công.
+Với đường khả thi có khoảng hở phù hợp và quy tắc lấy mẫu, kết nối thỏa giả thiết lý thuyết, xác suất PRM tìm được đường tiến tới \(1\) khi số mẫu tăng vô hạn. Điều này không bảo đảm thành công với hữu hạn mẫu. PRM thường cũng không tự động tối ưu tiệm cận như biến thể PRM* \cite{karaman-frazzoli-2011}. Đề tài tập trung đánh giá khả năng tái sử dụng mạng và ảnh hưởng của số mẫu đến tỷ lệ thành công.
 
 \subsection{\texorpdfstring{Thuật toán RRT và RRT*}{Thuật toán RRT và RRT*}}
 
 \subsubsection*{a. Cơ chế phát triển cây RRT}
 
-RRT (Rapidly-exploring Random Tree) phát triển một cây tìm kiếm có gốc tại \(q_s\). Khác với PRM xây dựng một mạng dùng cho nhiều truy vấn, RRT cơ bản mở rộng cây để giải một truy vấn cụ thể. Tại mỗi vòng lặp, thuật toán lấy một cấu hình ngẫu nhiên \(q_{\mathrm{rand}}\), tìm đỉnh gần nhất \(q_{\mathrm{near}}\) trong cây rồi thử tiến một đoạn về phía mẫu. Cơ chế này tạo thiên hướng khám phá các vùng chưa được cây bao phủ \cite{lavalle-rrt-1998}.
+RRT (Rapidly-exploring Random Tree) phát triển cây gốc \(q_s\) cho một truy vấn, khác với mạng nhiều truy vấn của PRM. Mỗi vòng lặp lấy mẫu \(q_{\mathrm{rand}}\), tìm đỉnh gần nhất \(q_{\mathrm{near}}\) rồi thử tiến về phía mẫu, tạo thiên hướng khám phá vùng chưa được cây bao phủ \cite{lavalle-rrt-1998}.
 
-Trong mô hình hình học Euclidean, phép mở rộng có độ dài tối đa \(\eta>0\) được viết là
+Trong mô hình Euclidean, phép mở rộng dài tối đa \(\eta>0\) là
 \begin{equation}
   q_{\mathrm{new}}=q_{\mathrm{near}}
     +\min\!\left(1,\frac{\eta}{\|q_{\mathrm{rand}}-q_{\mathrm{near}}\|}\right)
       (q_{\mathrm{rand}}-q_{\mathrm{near}}).
   \label{eq:rrt-steer}
 \end{equation}
-Mẫu trùng với đỉnh gần nhất được bỏ qua để tránh phép chia cho \(0\). Nếu chuyển động từ \(q_{\mathrm{near}}\) đến \(q_{\mathrm{new}}\) hợp lệ, đỉnh mới được thêm vào cây và nhận \(q_{\mathrm{near}}\) làm cha; nếu không, lần mở rộng bị loại.
+Bỏ mẫu trùng đỉnh gần nhất để tránh chia cho \(0\). Chỉ khi chuyển động tới \(q_{\mathrm{new}}\) hợp lệ mới thêm đỉnh này vào cây, nhận \(q_{\mathrm{near}}\) làm cha.
 
-Thuật toán lặp đến khi một đỉnh có thể nối hợp lệ tới đích hoặc đạt ngân sách tính toán. Trong không gian liên tục, xác suất lấy đúng một điểm đích riêng lẻ thường bằng \(0\), nên có thể dùng một vùng đích có dung sai hoặc chủ động thử nối tới \(q_g\). Nếu dùng vùng đích, phải báo cáo dung sai và không coi điểm trong vùng là chính xác bằng \(q_g\). Một tỷ lệ lấy mẫu hướng đích có thể giúp tìm lời giải sớm hơn, đồng thời cần duy trì việc lấy mẫu trên toàn miền để tiếp tục khám phá.
+Lặp đến khi nối hợp lệ tới đích hoặc hết ngân sách. Xác suất lấy đúng một điểm đích trong không gian liên tục thường bằng \(0\), nên dùng vùng đích có dung sai hoặc chủ động nối tới \(q_g\). Phải báo cáo dung sai, phân biệt điểm trong vùng với đúng đích. Lấy mẫu hướng đích có thể giúp tìm lời giải sớm nhưng cần duy trì khám phá toàn miền.
 
-RRT cơ bản thường tìm được một đường khả thi trước khi đầu tư vào tối ưu hóa đường đi. Do mỗi đỉnh mới nối theo quy tắc gần nhất, đường kết quả có thể dài và gấp khúc. Việc tiếp tục tăng số mẫu của RRT cơ bản không bảo đảm chi phí hội tụ về tối ưu \cite{karaman-frazzoli-2011}.
+RRT cơ bản ưu tiên tìm đường khả thi; quy tắc nối gần nhất có thể tạo đường dài, gấp khúc. Tăng số mẫu không bảo đảm chi phí hội tụ về tối ưu \cite{karaman-frazzoli-2011}.
 
 \subsubsection*{b. Chọn nút cha và nối lại nhánh trong RRT*}
 
-RRT* bổ sung hai thao tác: chọn cha có chi phí tốt nhất (Choose Parent) và nối lại nhánh (Rewire). Gọi \(C(q)\) là chi phí từ gốc cây đến \(q\), \(c(u,v)\) là chi phí đường nối cục bộ hợp lệ. Sau khi tạo \(q_{\mathrm{new}}\), thuật toán tìm tập láng giềng \(\mathcal{N}_N\) quanh đỉnh mới. Một dạng bán kính được sử dụng trong mô hình hình học là
+RRT* bổ sung chọn cha tốt nhất (Choose Parent) và nối lại nhánh (Rewire). Gọi \(C(q)\) là chi phí từ gốc đến \(q\), \(c(u,v)\) là chi phí nối cục bộ hợp lệ. Tập láng giềng \(\mathcal{N}_N\) quanh \(q_{\mathrm{new}}\) có thể được xác định bằng bán kính hình học
 \begin{equation}
   r_N=\min\!\left\{\eta,\gamma\left(\frac{\log N}{N}\right)^{1/d}\right\},
   \qquad N\geq2,
   \label{eq:rrtstar-radius}
 \end{equation}
-trong đó \(N\) là số đỉnh hiện tại, \(d\) là số chiều không gian cấu hình và \(\gamma\) phải đủ lớn theo các giả thiết của phân tích lý thuyết. Khi khởi tạo cây với một đỉnh, thuật toán sử dụng kết nối từ đỉnh gần nhất làm bước khởi đầu. Quy tắc bán kính phải được hiểu trong mô hình không gian và phép nối cụ thể, không áp dụng nguyên trạng cho mọi hệ có ràng buộc động học \cite{karaman-frazzoli-2011}.
+với \(N\) là số đỉnh, \(d\) là số chiều cấu hình và \(\gamma\) đủ lớn theo giả thiết lý thuyết. Cây một đỉnh khởi đầu bằng kết nối gần nhất. Quy tắc bán kính cần phù hợp với không gian và bộ nối, nhất là khi xét ràng buộc động học \cite{karaman-frazzoli-2011}.
 
-\textbf{Choose Parent:} Từ tập láng giềng và đỉnh gần nhất đã có kết nối hợp lệ, chọn cha sao cho
+\textbf{Choose Parent:} Xét các láng giềng và đỉnh gần nhất có kết nối hợp lệ, chọn
 \begin{equation}
   q_{\mathrm{parent}}=
     \operatorname*{arg\,min}_{q\in\mathcal{A}}
     \bigl[C(q)+c(q,q_{\mathrm{new}})\bigr],
   \label{eq:rrtstar-parent}
 \end{equation}
-với \(\mathcal{A}\) là tập ứng viên có chuyển động nối tới \(q_{\mathrm{new}}\) được kiểm tra hợp lệ. Đỉnh gần nhất được giữ làm phương án dự phòng nếu không có láng giềng nào đem lại chi phí tốt hơn.
+với \(\mathcal{A}\) gồm các ứng viên nối hợp lệ tới \(q_{\mathrm{new}}\). Giữ đỉnh gần nhất làm dự phòng nếu láng giềng không cho chi phí tốt hơn.
 
-\textbf{Rewire:} Với một đỉnh lân cận \(q\), nếu chuyển động từ \(q_{\mathrm{new}}\) tới \(q\) hợp lệ và
+\textbf{Rewire:} Với láng giềng \(q\), nếu chuyển động từ \(q_{\mathrm{new}}\) tới \(q\) hợp lệ và
 \begin{equation}
   C(q_{\mathrm{new}})+c(q_{\mathrm{new}},q)<C(q),
   \label{eq:rrtstar-rewire}
 \end{equation}
-thì thay cha cũ của \(q\) bằng \(q_{\mathrm{new}}\). Sau khi nối lại, cần cập nhật chi phí của các đỉnh hậu duệ bị ảnh hưởng và duy trì cấu trúc cây không có chu trình. Với mô hình chuyển động có hướng, tính hợp lệ của cạnh đi tới đỉnh mới và cạnh đi từ đỉnh mới phải được kiểm tra riêng.
+thì đổi cha của \(q\) thành \(q_{\mathrm{new}}\), cập nhật chi phí hậu duệ và tránh chu trình. Với chuyển động có hướng, kiểm tra riêng tính hợp lệ của cạnh đi tới và đi từ đỉnh mới.
 
 \noindent\begin{minipage}{\linewidth}
   \begin{center}
@@ -1454,16 +1295,11 @@ thì thay cha cũ của \(q\) bằng \(q_{\mathrm{new}}\). Sau khi nối lại, 
   \end{center}
 \end{minipage}\par\medskip
 
-\subsubsection*{c. Tính tối ưu tiệm cận và ý nghĩa triển khai}
+\subsubsection*{c. Kết luận về tính tối ưu và ý nghĩa triển khai}
 
-Nếu \(J_N\) là chi phí lời giải tốt nhất sau quá trình mở rộng và \(J^{*}\) là chi phí tối ưu của bài toán, tính tối ưu tiệm cận được biểu diễn bởi
-\begin{equation}
-  \mathbb{P}\!\left(\lim_{N\to\infty}J_N=J^{*}\right)=1.
-  \label{eq:rrtstar-optimality}
-\end{equation}
-Đối với RRT*, khẳng định này gắn với các giả thiết về miền tự do, đường khả thi có khoảng hở thích hợp, hàm chi phí, quy tắc lấy mẫu, bán kính kết nối và bộ nối cục bộ. Nó không có nghĩa đường tìm được sau một số mẫu hữu hạn đã tối ưu, cũng không xác định một thời gian chờ cố định để đạt sai số mong muốn \cite{karaman-frazzoli-2011}.
+RRT* có tính tối ưu tiệm cận: khi số mẫu tăng vô hạn, chi phí lời giải tốt nhất hội tụ về tối ưu với xác suất \(1\), dưới các giả thiết về miền tự do, khoảng hở đường khả thi, hàm chi phí, lấy mẫu, kết nối và bộ nối cục bộ \cite{karaman-frazzoli-2011}. Tính chất này không bảo đảm lời giải tối ưu sau hữu hạn mẫu hoặc trong một thời gian cố định.
 
-So với RRT, RRT* phải xét thêm các láng giềng và kiểm tra nhiều kết nối, nên chất lượng đường đi được đánh đổi với thời gian tính toán. Tìm láng giềng, kiểm tra va chạm và cập nhật cây đều ảnh hưởng đến thời gian thực tế. Khi so sánh trong mô phỏng, cần dùng cùng bản đồ và ngân sách tính toán, chạy nhiều lần với các hạt giống ngẫu nhiên khác nhau, đồng thời báo cáo tỷ lệ thành công và chi phí lời giải. Đường gấp khúc tìm được vẫn phải được xử lý để đáp ứng giới hạn vận tốc, gia tốc và độ cong của robot.
+RRT* cần thêm thời gian xét láng giềng và cập nhật cây. Vì vậy, mô phỏng phải dùng cùng bản đồ, ngân sách tính toán, chạy nhiều hạt giống và báo cáo tỷ lệ thành công, chi phí lời giải. Đường tìm được vẫn cần xử lý để đáp ứng giới hạn chuyển động của xe.
 
 \section{Nhóm Thuật toán Dựa trên Trường Lực (Potential Field Planning)}
 
@@ -1584,7 +1420,13 @@ Ngoài khoảng tác động, thế sửa đổi bằng \(0\). Khi đích có kh
 \end{equation}
 Thành phần đầu đẩy robot ra khỏi vật cản; thành phần thứ hai có hướng tới đích do \(\nabla d_g\) hướng từ đích ra robot. Tại đích, sử dụng biểu thức theo vectơ hoặc giá trị giới hạn bằng \(\mathbf{0}\), tránh tính một vectơ đơn vị bằng cách chia cho \(d_g=0\). Biện pháp này chỉ xét đích nằm trong miền tự do; không thể biến một đích ở trong vùng cấm thành vị trí tiếp cận an toàn.
 
-\hinhminhhoa[Cực tiểu cục bộ và hiện tượng GNRON]{Hình minh họa hai tình huống: robot mắc tại cực tiểu trước vật cản chữ U và robot không tới được đích gần vật cản do GNRON}
+\begin{center}
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Hinh_3_6_Cuc_tieu_cuc_bo_GNRON.png}
+    \chuthichhinh[fig:cuc-tieu-cuc-bo-gnron]{Cực tiểu cục bộ và hiện tượng GNRON}
+  \end{minipage}
+\end{center}
 
 \subsubsection*{c. Giải pháp bổ sung lực ảo điều hướng}
 
@@ -1601,7 +1443,13 @@ Hai giá trị \(\sigma\) biểu diễn hai chiều vòng quanh vật cản. Hư
 
 Quy trình dự kiến gồm phát hiện mắc kẹt, chọn vật cản gần đang chi phối, thử hai hướng thoát và kiểm tra tính khả thi của các bước ứng viên. Có thể ưu tiên hướng có khoảng hở tốt hơn hoặc phù hợp với đường tham chiếu toàn cục. Sau khi chọn, giữ hướng vòng trong một khoảng xử lý để hạn chế đổi chiều liên tục. Khi robot đã tiến bộ trở lại và thoát vùng bẫy, giảm rồi ngừng thành phần lực ảo; nếu không cải thiện trong ngân sách cho phép thì đổi điểm dẫn đường hoặc yêu cầu lập kế hoạch lại.
 
-\hinhminhhoa[Lực ảo tiếp tuyến hỗ trợ thoát cực tiểu cục bộ]{Hình minh họa lực hút, lực đẩy và lực ảo tiếp tuyến giúp robot đổi hướng vòng qua vật cản khi bị mắc kẹt}
+\begin{center}
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Hinh_3_7_Luc_ao_tiep_tuyen.png}
+    \chuthichhinh[fig:luc-ao-tiep-tuyen]{Lực ảo tiếp tuyến hỗ trợ thoát cực tiểu cục bộ}
+  \end{minipage}
+\end{center}
 
 Lực ảo có thể phá vỡ trạng thái cân bằng nhưng cũng có thể dẫn robot sang một vùng khó khác. Khi thêm thành phần tiếp tuyến, trường điều hướng không nhất thiết còn là âm gradient của một hàm thế vô hướng, nên không thể dùng trực tiếp lập luận thế giảm đơn điệu của APF ban đầu. Mọi bước chuyển động vẫn cần giới hạn tốc độ, kiểm tra va chạm và theo dõi tiến triển tới đích.
 
@@ -1632,9 +1480,10 @@ Lực ảo có thể phá vỡ trạng thái cân bằng nhưng cũng có thể 
 % Phông ký hiệu kỹ thuật có sẵn trên máy biên dịch.
 \setmonofont{Consolas}
 
-Chương này trình bày phương án tích hợp các thuật toán đã nghiên cứu lên robot vi sai ba bánh sử dụng ESP32-C3-MINI, mạch công suất TB6612, hai động cơ DC giảm tốc GA12-N20 có encoder Hall và bánh xe cao su đường kính \(44\,\mathrm{mm}\). Nội dung tập trung vào xây dựng phản hồi vận tốc, ước lượng tư thế, điều khiển bám đường và tổ chức thí nghiệm để đánh giá khả năng thực thi quỹ đạo.
-
-Thông số linh kiện trong chương được ghi theo cấu hình được cung cấp; các giá trị tính toán từ thông số danh định được phân biệt với kết quả đo. Hiện chưa có nhật ký chạy thử, kích thước đầy đủ của khung xe hoặc dữ liệu định vị đối chứng. Vì vậy, phần thực nghiệm trình bày quy trình, tiêu chí và bảng ghi kết quả; các ô ``Chưa đo'' cần được thay bằng số liệu thực tế trước khi đưa ra kết luận định lượng.
+Chương này trình bày tích hợp thuật toán trên xe ba bánh vi sai dùng ESP32-C3-MINI, TB6612,
+hai động cơ GA12-N20 có encoder Hall và bánh xe đường kính \(44\,\mathrm{mm}\), tập trung vào phản hồi vận tốc,
+ước lượng tư thế, bám đường và quy trình thí nghiệm. Thông số danh định được phân biệt với kết quả đo;
+dữ liệu thực nghiệm cần được bổ sung trước khi kết luận định lượng.
 
 \section{Thiết kế Hệ thống Phần cứng Robot 3 Bánh Thực nghiệm}
 
@@ -1711,7 +1560,13 @@ Vòng vận tốc chạy theo chu kỳ đặt trước \(T_s\); vòng bám đư�
 
 Tần số PWM, độ phân giải duty, \(T_s\), chu kỳ bám đường và thời gian hết hạn lệnh là các tham số cấu hình phải ghi trong từng lượt thử. Chúng chưa được coi là số liệu đã chốt. Khi mất lệnh, dữ liệu tư thế quá cũ hoặc phát hiện lỗi đếm xung, chương trình chuyển về trạng thái dừng đã thiết kế; cách dừng được kiểm tra cùng driver và tải thực tế.
 
-\hinhminhhoa[Sơ đồ kết nối phần cứng điều khiển và truyền động]{Sơ đồ kết nối ESP32-C3-MINI, TB6612, hai động cơ N20, encoder Hall A/B, các nhánh nguồn và đường truyền dữ liệu tới máy tính}
+\begin{center}
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Hinh_4_2_Ket_noi_phan_cung.png}
+    \chuthichhinh[fig:ket-noi-phan-cung]{Sơ đồ kết nối phần cứng điều khiển và truyền động}
+  \end{minipage}
+\end{center}
 
 \subsection{Xây dựng thuật toán tính toán Odometry (Dead Reckoning) thời gian thực dựa trên đọc ngắt xung Encoder.}
 
@@ -1794,7 +1649,13 @@ Quy trình hiệu chuẩn gồm đi thẳng một quãng đo chuẩn để sửa
 
 Kiến trúc đề xuất gồm hai cấp: vòng ngoài tạo vận tốc thân xe \((v_c,\omega_c)\) từ đường tham chiếu và tư thế ước lượng; vòng trong điều khiển vận tốc từng bánh bằng PWM. Bộ quy hoạch, làm mượt và gán thời gian cung cấp dữ liệu tham chiếu; bộ bám không có nhiệm vụ tự tìm một đường tránh vật cản mới. Khi đường hiện tại không còn hợp lệ, phải dừng hoặc yêu cầu quy hoạch lại.
 
-\hinhminhhoa[Kiến trúc điều khiển bám đường và tốc độ hai bánh]{Sơ đồ điều khiển hai cấp: quy hoạch và làm mượt, Pure Pursuit, chuyển đổi vận tốc hai bánh, hai bộ PID, TB6612 và phản hồi encoder/Odometry}
+\begin{center}
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Hinh_4_3_Kien_truc_dieu_khien.png}
+    \chuthichhinh[fig:kien-truc-dieu-khien]{Kiến trúc điều khiển bám đường và tốc độ hai bánh}
+  \end{minipage}
+\end{center}
 
 \subsection{\texorpdfstring{Thuật toán điều khiển hình học Pure Pursuit: Xác định tọa độ điểm nhìn trước \((L_{\mathrm{fw}})\) và công thức chuyển đổi bán kính cong sang tốc độ góc mong muốn \(\omega_c\).}{Thuật toán điều khiển hình học Pure Pursuit: Điểm nhìn trước và tốc độ góc mong muốn}}
 
@@ -1856,47 +1717,39 @@ Cách giảm chung này giữ tỷ lệ quay--tiến của lệnh tức thời. 
 
 Pure Pursuit trong cấu hình này chủ yếu bám hình học của đường. Nếu tốc độ được điều chỉnh theo tiến triển thực tế hoặc phải dừng do vật cản, robot có thể tới cùng vị trí ở thời điểm khác lịch tham chiếu ban đầu. Vì vậy, sai số bám đường và sai số bám theo thời gian phải được đánh giá riêng; không khẳng định thuật toán cơ bản bảo đảm đồng bộ thời gian với toàn bộ quỹ đạo.
 
-\subsection{\texorpdfstring{Thiết kế bộ điều khiển PID vận tốc vòng kín (Closed-loop Speed Controller) điều chế PWM cho từng động cơ bánh trái/phải (\(v_{L},v_{R}\)).}{Thiết kế bộ điều khiển PID vận tốc vòng kín (Closed-loop Speed Controller) điều chế PWM cho từng động cơ bánh trái/phải (vL,vR).}}
+\subsection{\texorpdfstring{Bộ điều khiển PI/PID vận tốc vòng kín và giới hạn PWM cho hai bánh \((v_L,v_R)\)}{Bộ điều khiển PI/PID vận tốc vòng kín và giới hạn PWM cho hai bánh (vL,vR)}}
 
-\subsubsection*{a. Cấu trúc điều khiển rời rạc}
+\subsubsection*{a. Cấu trúc PI/PID cơ bản và giới hạn đầu ra}
 
-Hai bộ điều khiển nhận vận tốc dài tham chiếu \(v_i^{\mathrm{ref}}\) và vận tốc đo \(\widehat{v}_i\), với \(i\in\{L,R\}\). Sai số trong chu kỳ thứ \(k\) là
+Mỗi bánh sử dụng một bộ điều khiển vận tốc vòng kín. Với \(i\in\{L,R\}\), gọi \(v_{i,k}^{\mathrm{ref}}\) là vận tốc dài tham chiếu và \(\widehat{v}_{i,k}\) là vận tốc ước lượng từ encoder tại chu kỳ \(k\). Sai số được xác định bởi
 \begin{equation}
   e_{i,k}=v_{i,k}^{\mathrm{ref}}-\widehat{v}_{i,k}.
 \end{equation}
-Cấu trúc PID sử dụng thành phần tỷ lệ, tích phân và vi phân; tích phân cần xử lý bão hòa đầu ra để tránh tích lũy quá mức \cite{ros-control-pid}. Phương án đề xuất cho robot là PID có nhánh bù thuận và đạo hàm trên tín hiệu đo đã lọc:
+Với khoảng thời gian lấy mẫu \(\Delta t_k>0\), dạng rời rạc cơ bản của bộ điều khiển PID gồm thành phần tỷ lệ, tích phân và vi phân \cite{ros-control-pid}:
 \begin{equation}
-  u_{i,k}^{*}=K_{\mathrm{ff},i}v_{i,k}^{\mathrm{ref}}
-       +K_{P,i}e_{i,k}+I_{i,k}-K_{D,i}d_{i,k},
+  S_{i,k}=S_{i,k-1}+e_{i,k}\Delta t_k,
 \end{equation}
 \begin{equation}
-  d_{i,k}=\rho_i d_{i,k-1}
-    +(1-\rho_i)\frac{\widehat{v}_{i,k}-\widehat{v}_{i,k-1}}{\Delta t_k},
-  \quad 0\leq\rho_i<1,
+  u_{i,k}^{*}=K_{P,i}e_{i,k}+K_{I,i}S_{i,k}
+    +K_{D,i}\frac{e_{i,k}-e_{i,k-1}}{\Delta t_k}.
 \end{equation}
-\begin{equation}
-  u_{i,k}=\operatorname{clip}(u_{i,k}^{*},-u_{\max,i},u_{\max,i}).
-\end{equation}
-Trong đó, \(u\) là duty có dấu đã chuẩn hóa, với \(0<u_{\max,i}\leq1\); dấu quyết định chiều quay và trị tuyệt đối quyết định duty PWM. Nếu chưa xác định được nhánh bù thuận, đặt \(K_{\mathrm{ff},i}=0\). Nếu tín hiệu đo còn nhiều nhiễu, có thể bắt đầu từ PI bằng cách đặt \(K_{D,i}=0\), sau đó đánh giá nhu cầu bổ sung vi phân.
+Trong đó, \(S_{i,k}\) là tổng tích lũy sai số; \(K_{P,i}\), \(K_{I,i}\) và \(K_{D,i}\) lần lượt là các hệ số tỷ lệ, tích phân và vi phân. Bộ điều khiển PI thu được khi đặt \(K_{D,i}=0\). PI được chọn làm cấu hình khởi đầu để khảo sát đáp ứng tốc độ; việc sử dụng thêm thành phần vi phân cần dựa trên kết quả thử nghiệm, do phép sai phân có thể làm tăng ảnh hưởng của nhiễu đo.
 
-Một cách chống bão hòa tích phân bằng hồi tiếp sai lệch đầu ra là
+Lệnh điều khiển được giới hạn trước khi đưa tới driver:
 \begin{equation}
-  I_{i,k+1}=\operatorname{clip}\!\left(
-    I_{i,k}+\Delta t_k\left[
-      K_{I,i}e_{i,k}+\frac{u_{i,k}-u_{i,k}^{*}}{T_{t,i}}
-    \right],I_{\min,i},I_{\max,i}\right),
-  \quad T_{t,i}>0.
-  \label{eq:exp-pid-antiwindup}
+  u_{i,k}=\operatorname{clip}
+    \left(u_{i,k}^{*},-u_{\max,i},u_{\max,i}\right),
+  \qquad 0<u_{\max,i}\leq1.
 \end{equation}
-Thành phần hiệu chỉnh chỉ kéo tích phân về phía đầu ra đang thực hiện khi có bão hòa. Các giới hạn duty, tích phân và tốc độ thay đổi lệnh phải được xác định cùng tải thực tế; phép điều chế PWM không đồng nghĩa với một điện áp trung bình hoàn toàn tuyến tính ở mọi chế độ của driver.
+Hàm \(\operatorname{clip}(x,a,b)\) giữ \(x\) trong khoảng \([a,b]\). Đại lượng \(u_{i,k}\) là duty có dấu đã chuẩn hóa: dấu quy định chiều quay, còn trị tuyệt đối quy định duty PWM. Giới hạn \(u_{\max,i}\) được lựa chọn theo điều kiện nguồn, động cơ, driver và tải thử. Giới hạn đầu ra không tự ngăn tích phân tiếp tục tích lũy khi bão hòa; hiện tượng này cần được theo dõi trong quá trình hiệu chỉnh.
 
 \subsubsection*{b. Ghép với TB6612 và hiệu chỉnh tham số}
 
-Mỗi kênh TB6612 được gán cho một động cơ, sau đó kiểm tra dấu PWM, dấu encoder và chiều tiến để bảo đảm phản hồi âm. Chế độ dừng, phanh và chờ được tách thành trạng thái rõ ràng; không coi mọi lệnh duty bằng \(0\) đều tương đương với thả trôi. Khi đổi chiều, lệnh được giảm có kiểm soát trước khi đảo dấu; không dùng đảo chiều đột ngột như cách hiệu chỉnh sai số tốc độ thông thường.
+Mỗi kênh TB6612 điều khiển một động cơ. Trước khi đóng vòng, cần kiểm tra chiều quay, dấu encoder và dấu lệnh để bảo đảm phản hồi âm. Lệnh PWM được chuyển thành tín hiệu điều khiển theo chế độ làm việc của driver; trạng thái dừng và phanh cần được xác định rõ trong chương trình.
 
-Quy trình hiệu chỉnh đề xuất bắt đầu từ đo quan hệ duty--tốc độ của từng bánh dưới tải để nhận biết vùng chết và mức bão hòa. Sau đó tăng dần \(K_P\), bổ sung \(K_I\) để giảm sai số xác lập, và chỉ dùng \(K_D\) khi có lợi sau khi lọc vận tốc. Hai bên có thể cần hệ số khác nhau do ma sát, tải hoặc động cơ khác nhau. Việc đánh giá gồm đáp ứng khởi động, thay đổi tốc độ, giảm về \(0\) và đảo chiều ở mức đã giới hạn.
+Quy trình hiệu chỉnh đề xuất bắt đầu với \(K_I=K_D=0\), tăng dần \(K_P\) để khảo sát đáp ứng, sau đó bổ sung \(K_I\) nhằm giảm sai số xác lập. Hai bánh được hiệu chỉnh riêng vì có thể khác nhau về ma sát và đặc tính động cơ. Các phép thử gồm khởi động, thay đổi tốc độ đặt và giảm tốc về không; chỉ tiêu theo dõi gồm thời gian xác lập, độ quá điều chỉnh, sai số xác lập, dao động vận tốc và mức bão hòa PWM. Các hệ số cụ thể chỉ được chốt sau khi có dữ liệu đáp ứng.
 
-Từng cấu hình được ghi các chỉ tiêu thời gian xác lập theo một dải dung sai đã chọn, độ quá điều chỉnh, sai số xác lập, độ nhiễu vận tốc và tỷ lệ thời gian bão hòa PWM. Khi đổi trạng thái dừng/chạy, cần khởi tạo hoặc giữ trạng thái tích phân theo quy tắc nhất quán để tránh bước nhảy điều khiển. Các giá trị \(K_P,K_I,K_D,T_t,\rho\) chưa được gán trước khi có dữ liệu đáp ứng.
+Trong phạm vi trình bày hiện tại, cấu trúc được giới hạn ở PI/PID cơ bản và phép giới hạn đầu ra. Các thành phần bổ sung như bù thuận, lọc đạo hàm hoặc chống bão hòa tích phân chỉ được khai triển khi có mã cài đặt tương ứng hoặc kết quả thực nghiệm chứng minh sự cần thiết. Khi bổ sung, cần nêu rõ cấu hình và căn cứ đánh giá; chưa có dữ liệu thì chưa kết luận các thành phần này cải thiện đáp ứng.
 
 \section{Kết quả Thực nghiệm Thực tế và Đánh giá Sai số}
 
@@ -1910,7 +1763,7 @@ Một lượt thử gồm khởi tạo tư thế, kiểm tra dữ liệu, phát 
 
 Đặt đường tham chiếu có chiều dài \(\ell_s\) trong vùng sàn phẳng được đo kích thước. Thực hiện lượt khởi đầu thẳng hàng để khảo sát sai lệch hai truyền động, rồi các lượt có lệch ngang hoặc lệch hướng ban đầu được xác định trước để khảo sát khả năng trở lại đường. Giữ nguyên tải, thông số PID, khoảng nhìn trước và giới hạn tốc độ trong các lượt cần so sánh.
 
-Tốc độ dọc đường dùng profile tăng--giữ--giảm đã giới hạn ở Chương 2. Theo dõi vận tốc đặt/đo của từng bánh, duty PWM, tư thế Odometry và vị trí đối chứng. Dấu hiệu robot lệch liên tục về một phía cần được phân tích cùng bán kính lăn, hệ số truyền động và sai số định vị; không mặc nhiên sửa mọi sai lệch bằng cách tăng hệ số bám đường.
+Tốc độ dọc đường dùng profile hình thang đã giới hạn ở Chương 2. Theo dõi vận tốc đặt/đo của từng bánh, duty PWM, tư thế Odometry và vị trí đối chứng. Dấu hiệu robot lệch liên tục về một phía cần được phân tích cùng bán kính lăn, hệ số truyền động và sai số định vị; không mặc nhiên sửa mọi sai lệch bằng cách tăng hệ số bám đường.
 
 \subsubsection*{b. Đường cong chữ S}
 
@@ -1925,7 +1778,13 @@ Biên độ \(A\) và chiều dài \(\ell_s\) được chọn sau khi đo mặt 
 
 Các lượt khảo sát thay đổi từng yếu tố như mức tốc độ, tham số nhìn trước hoặc lựa chọn làm mượt, trong khi giữ các yếu tố khác cố định. Chỉ tiêu cần ghi gồm sai số ngang, sai số hướng, sai số dừng cuối, tốc độ/gia tốc bánh và thời gian hoàn thành. Nếu so sánh đường gấp khúc với đường mượt, phải nêu rõ phương án gấp khúc có dừng--xoay ở góc hay không, vì hai cách thực hiện có thể khác đáng kể về thời gian.
 
-\hinhminhhoa[Bố trí thí nghiệm bám đường thẳng và đường cong chữ S]{Sơ đồ bố trí đường thẳng và đường cong chữ S trong phòng thí nghiệm, điểm đầu/cuối, các vị trí đo đối chứng và ảnh robot khi chạy thử}
+\begin{center}
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Hinh_4_4_Bo_tri_thi_nghiem.png}
+    \chuthichhinh[fig:bo-tri-thi-nghiem]{Bố trí thí nghiệm bám đường thẳng và đường cong chữ S}
+  \end{minipage}
+\end{center}
 
 \subsection{Kịch bản thực nghiệm 2: Tự hành tính toán và quy hoạch quỹ đạo né vật cản thực tế trong không gian phòng thí nghiệm.}
 
@@ -2026,7 +1885,13 @@ Nếu thống kê chỉ dùng các lượt thành công, phải ghi rõ điều 
 
 Bộ hình kết quả nên gồm đường tham chiếu và đường đo trên mặt phẳng, đồ thị \(e_x,e_y,e_{\theta},e_{\perp}\), vận tốc hai bánh đặt/đo và duty PWM theo thời gian. Đánh dấu các thời điểm bão hòa, mất mẫu, đổi trạng thái hoặc dừng. Từ các đồ thị mới phân tích được sai số chủ yếu do định vị, bám đường, vòng tốc độ, độ trễ hay điều kiện tiếp xúc; chưa có dữ liệu thì chưa xếp hạng thuật toán hoặc khẳng định mức cải thiện.
 
-\hinhminhhoa[Đồ thị quỹ đạo, sai số bám và đáp ứng truyền động]{Đồ thị kết quả cần bổ sung: đường tham chiếu và đường đo thực tế; sai số vị trí/hướng; vận tốc hai bánh đặt--đo và PWM theo thời gian}
+\begin{center}
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Hinh_4_5_Do_thi_minh_hoa.png}
+    \chuthichhinh[fig:do-thi-quy-dao-sai-so]{Đồ thị quỹ đạo, sai số bám và đáp ứng truyền động}
+  \end{minipage}
+\end{center}
 
 \section{Đề xuất Hướng Ứng dụng Thực tế và Mở rộng Đề tài}
 
@@ -2038,35 +1903,15 @@ Mô hình ESP32-C3-MINI, TB6612 và động cơ N20 phù hợp để xây dựng
 
 Trước khi mở rộng ứng dụng, cần chứng minh độ lặp lại dưới các mức tải và trạng thái nguồn, khả năng dừng đúng vùng, phản ứng khi mất lệnh và độ tin cậy của truyền thông. Chuyển sang một nền tảng mang tải lớn hơn cũng đòi hỏi thiết kế lại truyền động, nguồn và khung; kết quả của mô hình N20 chỉ là cơ sở tham khảo cho việc lựa chọn kiến trúc và thuật toán.
 
-\subsection{Hướng mở rộng nghiên cứu: Tích hợp hệ điều hành Robot ROS2, bản đồ hóa và định vị đồng thời (SLAM) cùng thuật toán quy hoạch quỹ đạo trong môi trường động thời gian thực.}
+\subsection{Hướng phát triển: Tích hợp micro-ROS trên ESP32-C3-MINI, SLAM và quy hoạch quỹ đạo thời gian thực}
 
-\subsubsection*{a. Tích hợp ROS 2 và phân chia nhiệm vụ}
+Trên cơ sở mô hình hiện tại, đề tài có thể phát triển theo hướng kết nối bộ điều khiển ESP32-C3-MINI với hệ sinh thái ROS 2 thông qua micro-ROS \cite{micro-ros-espidf}. Vi điều khiển dự kiến tiếp tục đảm nhiệm đọc encoder, điều khiển tốc độ động cơ và xuất PWM; máy tính hoặc máy tính nhúng đảm nhiệm các tác vụ định vị và quy hoạch. Việc tích hợp cần được khảo sát về tài nguyên phần cứng, độ trễ truyền thông và khả năng duy trì chu kỳ điều khiển, đồng thời có cơ chế dừng khi mất kết nối hoặc lệnh điều khiển quá hạn.
 
-Phương án mở rộng đặt ROS 2 trên máy tính hoặc máy tính nhúng, trong khi ESP32-C3 tiếp tục xử lý encoder, PID và PWM. Giao tiếp hai phía mang lệnh vận tốc cùng dấu thời gian và số thứ tự; phản hồi mang số đếm, tư thế hoặc vận tốc, trạng thái lỗi và thông tin thời gian. Cần tránh để cả hai phía cùng tích phân hoặc xuất một phép biến đổi tọa độ theo các quy tắc khác nhau.
+Một hướng mở rộng khác là bổ sung LiDAR hoặc camera, kết hợp dữ liệu encoder và cảm biến quán tính để nghiên cứu bản đồ hóa và định vị đồng thời (SLAM). Khối SLAM dự kiến được triển khai trên máy tính hoặc máy tính nhúng để xây dựng bản đồ và ước lượng tư thế robot, hỗ trợ điều hướng trong môi trường chưa biết trước. Nội dung này cần được thực hiện từng bước, từ lựa chọn và hiệu chuẩn cảm biến đến đánh giá độ tin cậy định vị trong điều kiện phòng thí nghiệm.
 
-Có thể tham khảo \texttt{diff\_drive\_controller} của \texttt{ros2\_control} cho việc chuyển lệnh vận tốc thân xe thành lệnh bánh và tính Odometry từ phản hồi phần cứng \cite{ros-diff-drive-controller}. Nếu PID vẫn chạy trên ESP32-C3, lớp ghép phần cứng phải thống nhất đơn vị, chiều quay và cách đọc trạng thái; sử dụng thành phần phần mềm có sẵn không thay thế bước hiệu chuẩn robot.
+Từ dữ liệu bản đồ và tư thế, có thể tiếp tục khảo sát quy hoạch quỹ đạo thời gian thực nhằm cập nhật đường đi khi xuất hiện vật cản. Các phương pháp như DWA, TEB hoặc MPC là những lựa chọn cho nghiên cứu tiếp theo, tùy khả năng tính toán và yêu cầu chuyển động của mô hình. Việc lựa chọn cần xét đồng thời giới hạn vận tốc, gia tốc, khoảng cách tới vật cản và thời gian xử lý; khả năng đáp ứng thời gian thực phải được kiểm chứng bằng thực nghiệm.
 
-Các hệ tọa độ dự kiến tổ chức theo chuỗi \texttt{map}\(\rightarrow\)\texttt{odom}\(\rightarrow\)\texttt{base\_link}, cùng các phép biến đổi cố định tới cảm biến. Theo REP-105, \texttt{odom} duy trì chuyển động liên tục cục bộ nhưng có thể trôi, còn \texttt{map} cung cấp tham chiếu toàn cục và có thể có hiệu chỉnh gián đoạn \cite{ros-rep-105}. Bộ bám cần nhận tư thế đúng hệ và đúng thời điểm để tránh nhầm một hiệu chỉnh bản đồ với chuyển động tức thời của robot.
-
-\subsubsection*{b. Bổ sung định vị và xây dựng bản đồ}
-
-Hướng nghiên cứu tiếp theo là bổ sung LiDAR hoặc camera, kết hợp encoder với cảm biến quán tính khi có để cải thiện ước lượng chuyển động. Cảm biến mới cần được hiệu chuẩn vị trí lắp, đồng bộ thời gian và đánh giá nhiễu trước khi hợp nhất. SLAM có thể được khảo sát để xây dựng bản đồ trong khu vực chưa biết; với bản đồ đã có, bài toán tiếp theo là định vị và điều hướng trên bản đồ đó.
-
-Việc bổ sung SLAM không tự loại bỏ mọi lỗi bám. Cần đánh giá riêng độ tin cậy định vị, sai số đường đi và đáp ứng truyền động; đồng thời ghi nhận các tình huống mất quan sát hoặc hiệu chỉnh tư thế lớn. Kết quả được so sánh với cấu hình encoder cơ sở trong cùng điều kiện thử để xác định lợi ích của cảm biến và thuật toán bổ sung.
-
-\subsubsection*{c. Quy hoạch trong môi trường động}
-
-Đối với vật cản di động, hệ thống cần nhận biết vật cản theo thời gian, cập nhật vùng chiếm chỗ và kiểm tra chuyển động dự kiến của thân xe. Bộ quy hoạch toàn cục xác định hướng hành trình, còn bộ xử lý cục bộ đánh giá đoạn chuyển động gần và yêu cầu giảm tốc, dừng hoặc lập lại kế hoạch khi cần. Các phương pháp như DWA, TEB hoặc MPC là hướng khảo sát tiếp, chưa được coi là đã triển khai trên phần cứng hiện tại.
-
-Thí nghiệm mở rộng cần ghi tuổi dữ liệu cảm biến, độ trễ xử lý, tần số cập nhật và thời gian dừng thực tế. Một điều kiện sơ bộ để chọn khoảng phát hiện là
-\begin{equation}
-  d_{\mathrm{detect}}>v\tau_{\mathrm{sys}}
-     +\frac{v^2}{2a_{\mathrm{brake}}}+d_{\mathrm{margin}},
-  \qquad a_{\mathrm{brake}}>0,
-\end{equation}
-với giả thiết vật cản đứng yên, tốc độ ban đầu \(v\), độ trễ tổng \(\tau_{\mathrm{sys}}\) và khả năng giảm tốc không đổi \(a_{\mathrm{brake}}\). Các tham số phải được đo; với vật cản chuyển động cần xét thêm tốc độ tiếp cận tương đối và độ không chắc chắn dự đoán. Công thức này chỉ hỗ trợ thiết kế khoảng dự phòng, chưa phải bảo đảm tránh va chạm cho mọi tình huống.
-
-Để hoàn thiện phần thực nghiệm, cần đo hình học và số đếm hiệu dụng, hiệu chỉnh vòng tốc độ, thực hiện các kịch bản đã đề xuất và bổ sung số liệu vào bảng kết quả. Kết luận về hiệu quả thực nghiệm chỉ được hoàn thiện sau khi có dữ liệu đối chứng và nhật ký đầy đủ.
+Các nội dung trên được xác định là hướng phát triển, chưa được triển khai và kiểm chứng trong phạm vi đề tài hiện tại. Lộ trình đề xuất là hoàn thiện điều khiển và đánh giá mô hình cơ sở, sau đó tích hợp micro-ROS, bổ sung SLAM và cuối cùng thử nghiệm quy hoạch trong môi trường động. Hiệu quả của từng bước cần được so sánh với cấu hình ban đầu qua sai số bám, độ trễ và tỷ lệ hoàn thành nhiệm vụ.
 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Tài liệu tham khảo}
@@ -2130,7 +1975,6 @@ Kevin M. Lynch và Frank C. Park,
 \textit{Modern Robotics: Mechanics, Planning, and Control}, Cambridge University Press.
 Tài liệu bổ trợ của tác giả tại Northwestern University:
 \href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/2-5-task-space-and-workspace/}{Mục 2.5: Không gian làm việc};
-\href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/5-3-singularities/}{Mục 5.3: Kỳ dị};
 \href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/9-1-and-9-2-point-to-point-trajectories-part-1-of-2/}{Mục 9.1--9.2: Đường đi và quy luật thời gian};
 \href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/9-1-and-9-2-point-to-point-trajectories-part-2-of-2/}{Mục 9.1--9.2: Các dạng quy luật thời gian và profile chữ S};
 \href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/9-4-time-optimal-time-scaling-part-1-of-3/}{Mục 9.4: Quy luật thời gian tối ưu};
@@ -2156,26 +2000,14 @@ các mục Operating Range, H-SW Control Function và Electrical Characteristics
 ros-controls, \textit{control\_toolbox -- PID Controller}, tài liệu ROS 2 Control,
 \href{https://control.ros.org/jazzy/doc/control_toolbox/doc/index.html}{Phương trình PID và các chiến lược chống bão hòa tích phân}.
 
-\bibitem{ros-diff-drive-controller}
-ros-controls, \textit{diff\_drive\_controller}, tài liệu ROS 2 Control,
-\href{https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html}{Giao diện điều khiển robot vi sai và phản hồi Odometry}.
+\bibitem{micro-ros-espidf}
+micro-ROS, \textit{micro-ROS component for ESP-IDF},
+\href{https://github.com/micro-ROS/micro_ros_espidf_component}{Thành phần tích hợp micro-ROS cho ESP-IDF, các vi điều khiển được hỗ trợ và kết nối micro-ROS Agent}.
 
 \bibitem{ros-rep-105}
 Wim Meeussen, \textit{REP-105: Coordinate Frames for Mobile Platforms}, ROS Enhancement Proposals,
 \href{https://github.com/ros-infrastructure/rep/blob/master/rep-0105.rst}{Định nghĩa các hệ map, odom và base\_link}.
 
-
-\bibitem{bry-flatness-flight}
-Adam Bry, Charles Richter, Abraham Bachrach và Nicholas Roy,
-\textit{Aggressive Flight of Fixed-Wing and Quadrotor Aircraft in Dense Indoor Environments}.
-\href{https://groups.csail.mit.edu/rrg/papers/BryIJRR15.pdf}{Bản thảo tại MIT},
-phần quy hoạch quỹ đạo dựa trên tính phẳng vi phân và tối ưu đa thức.
-
-\bibitem{caron-contact-stability-2015}
-Stéphane Caron, Quang-Cuong Pham và Yoshihiko Nakamura,
-``Stability of Surface Contacts for Humanoid Robots: Closed-Form Formulae of the Contact Wrench Cone for Rectangular Support Areas'',
-2015, arXiv:1501.04719.
-\href{https://arxiv.org/abs/1501.04719}{Bản thảo của các tác giả}.
 
 % Bổ sung các tài liệu tham khảo tiếp theo bằng lệnh \bibitem{ma-tai-lieu}.
 \end{thebibliography}
