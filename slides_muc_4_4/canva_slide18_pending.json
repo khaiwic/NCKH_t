@@ -1,0 +1,18 @@
+{
+  "targetDesignId": "DAHZSXjF0xQ",
+  "targetPage": 18,
+  "expectedPages": 19,
+  "originalBlankPageId": "PBcC3jnxKvCrMCnz",
+  "draftDesignId": "DAHZf3UE4pI",
+  "draftTransactionId": "7416823303146148878",
+  "draftEditUrl": "https://www.canva.com/d/djGZql1_d51eEF9",
+  "preview": {
+    "width": -1,
+    "height": -1,
+    "url": "https://export-download.canva.com/2cfa1a8d-f9cc-436b-91d6-8e37b19893cf/0/0001-1259276712463603135.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH4R7NKVBA%2F20261030%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20261030T062154Z&X-Amz-Expires=40183&X-Amz-Signature=df6ed5457acbdaed4e8cb39269229a7925f1c5c624dd6bc66d836bcce4771b45&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Fri%2C%2030%20Oct%202026%2017%3A31%3A37%20GMT"
+  },
+  "pending": null,
+  "status": "completed",
+  "finalPageId": "PBwTP3lNFDZTBdlm",
+  "finalDesignUrl": "https://canva.link/81t52elss9bjvxn"
+}

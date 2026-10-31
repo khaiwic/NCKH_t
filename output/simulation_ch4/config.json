@@ -1,0 +1,87 @@
+{
+  "data_type": "desktop numerical simulation, not hardware measurements",
+  "seed": 20261031,
+  "runs_per_scenario": 30,
+  "wheel_radius_m": 0.022,
+  "wheelbase_m": 0.135,
+  "encoder_counts_per_output_revolution": 1400,
+  "supply_label_V": 7.4,
+  "supply_note": "Label only: no identification of motor gain from voltage/current.",
+  "world_m": [
+    4.0,
+    2.4
+  ],
+  "grid_m": 0.05,
+  "start_m": [
+    0.3,
+    1.2
+  ],
+  "goal_m": [
+    3.3,
+    1.2
+  ],
+  "obstacle_xyxy_m": [
+    1.4,
+    0.85,
+    2.0,
+    1.55
+  ],
+  "assumed_body_disc_radius_m": 0.11,
+  "planner_extra_clearance_m": 0.15,
+  "minimum_smoothed_extra_clearance_m": 0.1,
+  "bezier_corner_trim_m": 0.15,
+  "path_sample_m": 0.005,
+  "vmax_m_s": 0.25,
+  "accel_m_s2": 0.2,
+  "wheel_reference_limit_m_s": 0.35,
+  "omega_limit_rad_s": 1.5,
+  "lookahead_m": 0.2,
+  "dt_s": 0.01,
+  "plant_substep_s": 0.0025,
+  "outer_period_s": 0.05,
+  "encoder_speed_window_s": 0.05,
+  "PI_Kp_duty_per_m_s": 2.0,
+  "PI_Ki_duty_per_m": 8.0,
+  "PID_Kd": 0.0,
+  "duty_limit": 0.8,
+  "assumed_motor_max_rad_s": 25.0,
+  "assumed_motor_tau_s": 0.12,
+  "radius_relative_uniform_half_range": 0.01,
+  "wheelbase_relative_uniform_half_range": 0.01,
+  "motor_gain_relative_uniform_half_range": 0.05,
+  "motor_tau_relative_uniform_half_range": 0.15,
+  "initial_y_uniform_half_range_m": 0.02,
+  "initial_heading_uniform_half_range_rad": 0.05,
+  "wheel_slip_uniform_range": [
+    0.0,
+    0.02
+  ],
+  "slip_sine_amplitude": 0.002,
+  "slip_sine_frequency_Hz": 0.7,
+  "controller_position_stop_m": 0.015,
+  "controller_heading_stop_rad": 0.025,
+  "controller_settle_s": 0.5,
+  "success_ground_truth_position_m": 0.05,
+  "success_ground_truth_heading_rad": 0.1,
+  "success_ground_truth_max_cross_track_m": 0.15,
+  "timeout_s": 35.0,
+  "assumptions": [
+    "Circular body envelope, first-order wheel-speed dynamics; no identified electrical/torque model.",
+    "Independent fixed perturbations per run, matched between the two scenarios.",
+    "True wheel radius/base/gain/tau differ from controller nominal parameters.",
+    "Encoder quantization and unobserved wheel slip; exact known initial pose.",
+    "Controller uses encoder odometry only; ground truth never enters feedback.",
+    "Signed normalized PWM, PI without feed-forward, derivative or anti-windup.",
+    "Static known obstacle; no sensor, SLAM, online obstacle detection or replanning.",
+    "No battery sag, gear backlash, caster dynamics, floor contact forces or current estimation."
+  ],
+  "software": {
+    "python": "3.14.8",
+    "numpy": "2.5.3"
+  },
+  "source_sha256": "6aac47ed97ab791b9ef7f9e9b025eaf457804ed9f52b8d0dccf9ac720b30d0f4",
+  "path_lengths_m": {
+    "straight": 3.0,
+    "obstacle": 3.4119835065568447
+  }
+}

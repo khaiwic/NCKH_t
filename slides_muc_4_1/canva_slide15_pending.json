@@ -1,0 +1,20 @@
+{
+  "targetDesignId": "DAHZSXjF0xQ",
+  "targetPage": 15,
+  "expectedPages": 19,
+  "originalBlankPageId": "PBDrnHTPhlMyKtzq",
+  "draftDesignId": "DAHZfgYEYk0",
+  "draftTransactionId": "589366264868715799",
+  "draftEditUrl": "https://www.canva.com/d/wnmt4wxLr8qB7xX",
+  "preview": {
+    "width": -1,
+    "height": -1,
+    "url": "https://export-download.canva.com/87380559-9dfd-419d-b2e8-33c0c81091ed/0/0001-776265649967611538.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH4R7NKVBA%2F20261030%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20261030T044136Z&X-Amz-Expires=40818&X-Amz-Signature=ee584d89d0042af5fbe3fdf4b18c97b3563ba41510d57769844dfa53fe6617c7&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Fri%2C%2030%20Oct%202026%2016%3A01%3A54%20GMT"
+  },
+  "pending": null,
+  "userImage": "C:/Users/ADMIN/Documents/NCKH/slides_muc_4_1/anh_robot_nguoi_dung.png",
+  "userImageAssetId": "MAHZfnYYlbY",
+  "status": "completed",
+  "finalPageId": "PBlmD93R0pL8ZF8T",
+  "finalDesignUrl": "https://canva.link/81t52elss9bjvxn"
+}

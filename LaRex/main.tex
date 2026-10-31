@@ -82,7 +82,7 @@
 \clearpage
 \pagenumbering{arabic}
 
-\chapter{TỔNG QUAN VỀ ĐỀ TÀI VÀ HỆ THỐNG HÓA CÁC DẠNG BÀI TOÁN QUY HOẠCH QUỸ ĐẠO}
+\chapter{TỔNG QUAN VỀ ĐỀ TÀI}
 
 \section{Đặt vấn đề và Tính cấp thiết của đề tài}
 
@@ -1455,33 +1455,107 @@ Lực ảo có thể phá vỡ trạng thái cân bằng nhưng cũng có thể 
 
 Đối với đề tài robot ba bánh, một kiến trúc có thể khảo sát là dùng A*, PRM hoặc RRT* để tạo đường toàn cục, sau đó dùng APF để điều chỉnh hướng chuyển động cục bộ theo các điểm dẫn đường. Cách kết hợp này phải được đánh giá bằng các kịch bản có hành lang hẹp, vật cản chữ U và đích gần vật cản. Các kết quả về tỷ lệ thành công, chiều dài đường đi và thời gian xử lý chỉ được kết luận sau mô phỏng hoặc thực nghiệm; phần lý thuyết ở đây không giả định sẵn hiệu quả của phương án.
 
-\section{Xây dựng Kịch bản Mô phỏng và Đánh giá So sánh Đa Thuật toán}
+% Mục 3.4: ba trang A4 dọc; mỗi tiểu mục bắt đầu trên một trang.
+\clearpage
+\section{Xây dựng kịch bản mô phỏng và đánh giá so sánh đa thuật toán}
+\label{sec:mo-phong-so-sanh}
 
-\subsection{Thiết lập môi trường mô phỏng trên nền tảng Python/MATLAB: Bản đồ không vật cản, Bản đồ mê cung tĩnh ô lưới, Bản đồ mật độ chướng ngại vật cao.}
+\subsection{Thiết lập môi trường mô phỏng trên nền tảng Colab: Bản đồ lưới(Grid Map)}
 
-\subsection{Bảng ma trận so sánh định lượng đa kịch bản giữa A*, PRM, RRT*, APF theo 4 chỉ số cốt lõi:}
+Google Colab được lựa chọn để xây dựng mô phỏng bằng Python vì cho phép chạy notebook trên trình duyệt, thuận tiện lưu mã nguồn, hiển thị đường đi và chia sẻ cấu hình thí nghiệm \cite{google-colab-faq}. NumPy dùng để biểu diễn bản đồ và xử lý tọa độ; Matplotlib dùng để vẽ lưới và kết quả; mô-đun \texttt{heapq} hỗ trợ hàng đợi ưu tiên cho Dijkstra và A*. Mô phỏng sử dụng CPU, không yêu cầu GPU; phiên bản thư viện và cấu hình phiên chạy cần được lưu cùng dữ liệu.
 
-\begin{itemize}
+Môi trường được biểu diễn bằng ma trận nhị phân \(M\) có kích thước \(H\times W\), gồm các ô vuông cạnh \(\Delta\) mét, bố trí như ô bàn cờ. Quy ước \textbf{ô trắng là ô có thể đi}, tương ứng \(M_{ij}=0\); \textbf{ô đen là ô tường hoặc vật cản}, tương ứng \(M_{ij}=1\). Các ô không bắt buộc xen kẽ màu. Điểm xuất phát \(S\) và điểm đích \(G\) đều thuộc ô trắng. Với gốc tọa độ tại góc dưới trái, tâm ô cột \(j\), hàng \(i\), đánh số từ \(0\), được quy đổi thành \((x,y)=((j+1/2)\Delta,(i+1/2)\Delta)\).
 
-\item Chiều dài đường đi (m).
+\begin{center}
+\setlength{\unitlength}{0.40cm}
+\begin{picture}(12,12)
+  % Vật cản minh họa, không phải dữ liệu kết quả mô phỏng.
+  \put(3,0){\rule{0.40cm}{3.2cm}}
+  \put(3,10){\rule{0.40cm}{0.8cm}}
+  \put(7,4){\rule{0.40cm}{3.2cm}}
+  \put(7,0){\rule{0.40cm}{0.8cm}}
+  \put(8,4){\rule{1.2cm}{0.40cm}}
+  \multiput(0,0)(1,0){13}{\line(0,1){12}}
+  \multiput(0,0)(0,1){13}{\line(1,0){12}}
+  \put(0,0){\makebox(1,1){\small S}}
+  \put(11,11){\makebox(1,1){\small G}}
+\end{picture}
+\chuthichhinh[fig:gridmap-colab]{Minh họa Grid Map: ô trắng có thể đi, ô đen là tường}
+\end{center}
 
-\item Thời gian xử lý tính toán CPU (ms).
+Dijkstra và A* dùng lưới 8 hướng, với chi phí \(\Delta\) cho bước ngang/dọc và \(\sqrt{2}\Delta\) cho bước chéo; cấm đi chéo xuyên góc tường. PRM, RRT* và APF dùng cùng bản đồ hình học; mọi đoạn nối đều phải được kiểm tra va chạm. Vật cản được mở rộng theo bán kính bao thân xe cộng khoảng dự phòng trước khi lập kế hoạch, để đường của tâm xe không đi quá sát tường.
 
-\item Độ trơn của quỹ đạo (Tích phân độ cong \(\int \kappa {\left( s \right)}^{2}ds\)).
+Ba nhóm kịch bản gồm: không vật cản, mê cung tĩnh và mật độ vật cản cao. Trong từng kịch bản, giữ nguyên bản đồ, độ phân giải và cặp \(S,G\) cho năm thuật toán. PRM và RRT* được chạy lặp với các hạt giống ngẫu nhiên đã lưu; mọi phương pháp dùng cùng thời hạn xử lý và điều kiện đạt đích. Đây là thiết kế thí nghiệm; các chỉ số chỉ được điền sau khi thực sự chạy mô phỏng.
 
-\item Tỷ lệ thành công tránh va chạm (\%).
+\newpage
+\subsection{So sánh Dijkstra, A*, PRM, RRT* và APF theo bốn tiêu chí đánh giá}
 
-\end{itemize}
+Bảng~\ref{tab:so-sanh-nam-thuat-toan} đối chiếu đặc tính dự kiến theo bốn tiêu chí đã xác định. Các nhận xét là cơ sở lựa chọn phương pháp và tổ chức phép đo, chưa phải kết quả định lượng của Colab \cite{lavalle-planning-2006,karaman-frazzoli-2011,khatib-apf-1986}.
 
-\subsection{Bàn luận kết quả và lựa chọn bộ giải thuật quy hoạch tối ưu để triển khai xuống hệ thống phần cứng thực tế.}
+\begin{center}
+\begingroup
+\singlespacing
+\fontsize{11}{13.2}\selectfont
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.16}
+\refstepcounter{table}\label{tab:so-sanh-nam-thuat-toan}
+\tablename~\thetable: So sánh các thuật toán trên cùng Grid Map\par\smallskip
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.10\linewidth}
+  >{\raggedright\arraybackslash}p{0.205\linewidth}
+  >{\raggedright\arraybackslash}p{0.205\linewidth}
+  >{\raggedright\arraybackslash}p{0.205\linewidth}
+  >{\raggedright\arraybackslash}p{\dimexpr0.285\linewidth-32pt\relax}@{}}
+\toprule
+\textbf{Thuật toán} & \textbf{Chiều dài đường đi (m)} & \textbf{Thời gian CPU (ms)} & \textbf{Độ trơn: \(\int\kappa^2ds\)} & \textbf{Thành công tránh va chạm (\%)}\\
+\midrule
+Dijkstra & Ngắn nhất trên đồ thị nếu trọng số là độ dài. & Có thể mở rộng nhiều ô; phụ thuộc kích thước lưới. & Đường gấp khúc; cần làm mượt trước khi tính độ cong. & Tìm được đường nếu tồn tại trên lưới và đủ thời gian.\\
+\midrule
+A* & Cùng chi phí tối ưu với Dijkstra khi heuristic phù hợp. & Heuristic tốt thường giảm số ô mở rộng. & Vẫn có góc gãy; không tự bảo đảm đường trơn. & Đầy đủ trên lưới hữu hạn với cài đặt đúng và đủ thời gian.\\
+\midrule
+PRM & Ngắn nhất trên roadmap khi dùng Dijkstra; chưa tối ưu toàn miền. & Tốn công xây roadmap; có thể dùng lại cho nhiều truy vấn. & Các cạnh thẳng tạo góc tại nút nối. & Phụ thuộc số mẫu, kết nối và độ hẹp hành lang.\\
+\midrule
+RRT* & Cải thiện nhờ nối lại cây; tối ưu tiệm cận dưới các giả thiết. & Phụ thuộc số mẫu; thêm chi phí tìm lân cận và nối lại. & Bộ nối thẳng vẫn tạo góc; cần làm mượt. & Đầy đủ xác suất dưới các giả thiết; hữu hạn mẫu vẫn có thể thất bại.\\
+\midrule
+APF & Không bảo đảm ngắn nhất; phụ thuộc trường thế và tham số. & Mỗi bước thường đơn giản; mắc kẹt có thể làm hết thời hạn. & Có thể đổi hướng êm, nhưng vẫn dao động gần tường. & Có thể mắc cực tiểu cục bộ; không bảo đảm tới đích.\\
+\bottomrule
+\end{tabular}
+\endgroup
+\end{center}
 
-\chapter{TRIỂN KHAI THỰC NGHIỆM TRÊN XE 3 BÁNH, ĐÁNH GIÁ KẾT QUẢ VÀ ĐỀ XUẤT ỨNG DỤNG}
+\noindent\textbf{Cách lượng hóa các tiêu chí.} Với \(\mathbf p_i\) là điểm đường đi theo đơn vị mét và \(n\) đoạn nối, chiều dài được tính bằng
+\[
+L=\sum_{i=0}^{n-1}\|\mathbf p_{i+1}-\mathbf p_i\|.
+\]
+Thời gian CPU đo bằng \texttt{time.process\_time()}, đổi sang ms, không gồm vẽ hình và đọc tệp. PRM phải báo cáo riêng thời gian xây roadmap và truy vấn; nhiệm vụ mới tính cả hai. Các lần đo dùng cùng phiên Colab; tốc độ của board phải được đo riêng.
+
+Độ trơn \(J_\kappa=\int_0^L\kappa(s)^2\,ds\) càng nhỏ càng ít tích lũy độ cong. Đường gấp khúc không khả vi tại góc, nên chỉ tính chỉ số sau cùng một quy trình làm mượt, lấy mẫu và kiểm tra va chạm lại; lưu cả chiều dài trước/sau xử lý. Chỉ số này không thay thế giới hạn độ cong cực đại.
+
+Tỷ lệ thành công là \(P=100n_{\mathrm{đạt}}/n_{\mathrm{thử}}\). Một lượt đạt phải tới vùng đích trong thời hạn và không va chạm trên toàn đường cuối cùng. Báo cáo trung bình, độ lệch chuẩn trên các lượt thành công và tỷ lệ thành công trên toàn bộ lượt thử; không gán độ dài bằng \(0\) cho lượt thất bại.
+
+\newpage
+\subsection{Bàn luận và lựa chọn Dijkstra để triển khai trên board thực tế}
+
+Với mục tiêu xây dựng mô hình xe ba bánh chạy trên bản đồ tĩnh, quy mô nhỏ và đã biết trước, đề tài lựa chọn \textbf{Dijkstra làm thuật toán tìm đường toàn cục để triển khai trên board ESP32-C3-MINI}. Quyết định này dựa trên sự phù hợp với phạm vi thực nghiệm và khả năng kiểm chứng từng bước; không xem Dijkstra là phương pháp nhanh nhất cho mọi bản đồ.
+
+\noindent\textbf{Dễ lập trình và chuyển từ mô phỏng sang phần cứng.} Dijkstra gồm các thao tác rõ ràng: lấy ô có chi phí nhỏ nhất, cập nhật láng giềng và truy vết đường. Bản đồ có thể lưu bằng mảng một chiều; mỗi ô có chi phí, chỉ số ô cha và cờ trạng thái. Cấu trúc này thuận tiện chuyển từ Python sang C/C++, quan sát biến khi chạy thử và kiểm tra từng đoạn đường trên mô hình.
+
+\noindent\textbf{Ít tham số và thuận tiện thực nghiệm lặp lại.} Thuật toán không cần hàm heuristic như A*, số lượng mẫu và bán kính kết nối như PRM/RRT*, hoặc hệ số hút--đẩy như APF. Khi bản đồ, trọng số, thứ tự xét láng giềng và quy tắc xử lý đồng hạng được cố định, kết quả có tính lặp lại. Nhờ đó, có thể dùng cùng tuyến tham chiếu để khảo sát ảnh hưởng của PID, sai số encoder và tốc độ chạy xe.
+
+\noindent\textbf{Có nghiệm đối chứng rõ ràng trên lưới.} Với trọng số cạnh không âm, Dijkstra tìm đường có tổng chi phí nhỏ nhất khi đích được lấy ra hợp lệ; nếu hàng đợi rỗng thì không có đường trên đồ thị đã xây dựng. Đặc điểm này giúp phân biệt lỗi bản đồ, lỗi tìm đường và lỗi bám đường. Khi dùng trọng số độ dài, kết quả còn là mốc kiểm tra chi phí của A* trên cùng lưới \cite{lavalle-planning-2006}.
+
+\noindent\textbf{Thuận tiện quản lý tài nguyên và tích hợp điều khiển.} Với lưới nhỏ, số ô và các mảng trạng thái được biết trước, có thể cấp phát bộ nhớ cố định và sinh láng giềng khi cần thay vì lưu toàn bộ cạnh. Quy hoạch thực hiện khi nhận nhiệm vụ hoặc khi bản đồ thay đổi; chuỗi điểm sau xử lý được dùng làm tham chiếu cho bộ bám. Cách tổ chức này giúp tách việc tìm tuyến khỏi vòng đọc encoder, PID tốc độ và xuất PWM, nhưng vẫn phải đo RAM và độ trễ thực tế trên board.
+
+Hạn chế chính là Dijkstra có thể mở rộng nhiều ô hơn A* và tăng chi phí khi lưới mịn. Bản thân nó chưa xét hướng xe, bán kính quay hay giới hạn vận tốc; đường ngắn nhất trên lưới chưa chắc là tuyến robot đi nhanh nhất hoặc dễ bám nhất. Vì vậy, đầu ra cần được rút gọn, làm mượt bằng Bézier trong vùng an toàn, kiểm tra lại va chạm rồi gán profile vận tốc hình thang trước khi đưa vào bộ bám Pure Pursuit và PID hai bánh.
+
+Việc triển khai được đánh giá theo hai bước: trước hết đối chiếu đường đi, chi phí và trạng thái không có đường giữa Colab với board; sau đó đo thời gian quy hoạch, RAM sử dụng và khả năng hoàn thành tuyến trên xe. Dijkstra là lựa chọn cơ sở phù hợp để hiện thực hóa và kiểm chứng hệ thống; nếu bản đồ mở rộng làm vượt ngân sách tài nguyên, A* là phương án nâng cấp cần được khảo sát tiếp.
+
+\chapter{ĐÁNH GIÁ KẾT QUẢ VÀ ĐỀ XUẤT ỨNG DỤNG}
 
 % Phông ký hiệu kỹ thuật có sẵn trên máy biên dịch.
 \setmonofont{Consolas}
 
 Chương này trình bày tích hợp thuật toán trên xe ba bánh vi sai dùng ESP32-C3-MINI, TB6612,
-hai động cơ GA12-N20 có encoder Hall và bánh xe đường kính \(44\,\mathrm{mm}\), tập trung vào phản hồi vận tốc,
+hai động cơ DC giảm tốc GA12-N20 phiên bản \(6\,\mathrm{VDC}\), \(300\,\mathrm{RPM}\) không tải, có encoder Hall, cùng bánh xe đường kính \(44\,\mathrm{mm}\), tập trung vào phản hồi vận tốc,
 ước lượng tư thế, bám đường và quy trình thí nghiệm. Thông số danh định được phân biệt với kết quả đo;
 dữ liệu thực nghiệm cần được bổ sung trước khi kết luận định lượng.
 
@@ -1493,13 +1567,13 @@ dữ liệu thực nghiệm cần được bổ sung trước khi kết luận �
 
 Hai động cơ được bố trí đối xứng qua trục dọc, mỗi động cơ dẫn động một bánh độc lập. Bánh tự lựa tạo điểm đỡ thứ ba và đổi hướng theo chuyển động của thân xe. Điểm tham chiếu \(P\) đặt tại trung điểm trục nối hai bánh chủ động; trục \(X_R\) hướng về phía trước, \(Y_R\) hướng sang trái, chiều quay dương ngược chiều kim đồng hồ. Cách chọn này thống nhất với mô hình động học ở Chương 2.
 
-Động cơ có tên thương mại GA12 N20 Servo nhưng được sử dụng ở đây như động cơ DC giảm tốc có phản hồi encoder; vị trí hoặc vận tốc phải được điều khiển bằng vòng kín bên ngoài. Trục chữ D đường kính \(3\,\mathrm{mm}\) phù hợp với lỗ lắp bánh đã chọn. Các thông số công bố của động cơ và bánh xe được tổng hợp trong Bảng~\ref{tab:robot-hardware-specs}.
+Đề tài chọn động cơ có tên thương mại GA12 N20 Servo, phiên bản \(6\,\mathrm{VDC}\), \(300\,\mathrm{RPM}\) không tải \cite{hshop-ga12-n20-6v300}. Đây là động cơ DC chổi than giảm tốc kim loại có encoder Hall A/B. Hệ thống tạo chức năng servo bằng vòng điều khiển tốc độ trên ESP32-C3-MINI kết hợp driver TB6612FNG. Trục chữ D đường kính \(3\,\mathrm{mm}\) phù hợp với lỗ lắp bánh đã chọn. Bảng~\ref{tab:robot-hardware-specs} tổng hợp thông số do nhà cung cấp công bố cho động cơ và bánh xe \cite{hshop-ga12-n20-6v300,hshop-ga12-wheel-kit}.
 
 \begin{center}
 \begin{minipage}{\linewidth}
   \centering
   \refstepcounter{table}\label{tab:robot-hardware-specs}%
-  \tablename~\thetable: Thông số cấu hình robot theo thông tin được cung cấp\par\smallskip
+  \tablename~\thetable: Thông số cấu hình robot và động cơ GA12-N20 6 VDC 300 RPM\par\smallskip
   \small
   \renewcommand{\arraystretch}{1.25}
   \begin{tabular}{@{}p{0.49\linewidth}p{0.45\linewidth}@{}}
@@ -1507,12 +1581,13 @@ Hai động cơ được bố trí đối xứng qua trục dọc, mỗi động
     \textbf{Hạng mục} & \textbf{Thông số}\\
     \midrule
     Vi điều khiển / driver động cơ & ESP32-C3-MINI / TB6612\\
-    Loại động cơ & DC giảm tốc kim loại GA12-N20\\
-    Điện áp hoạt động được cung cấp & \(3\)--\(12\,\mathrm{VDC}\)\\
+    Loại động cơ & GA12-N20 DC chổi than, giảm tốc kim loại\\
+    Điện áp tham chiếu của phiên bản chọn & \(6\,\mathrm{VDC}\)\\
+    Dải điện áp động cơ do nhà cung cấp công bố & \(3\)--\(12\,\mathrm{VDC}\)\\
     Tỷ số truyền hộp số & \(G=50:1\)\\
-    Tốc độ trục động cơ trước giảm tốc & \(15\,000\,\mathrm{RPM}\)\\
+    Tốc độ trục động cơ trước hộp số & \(15\,000\,\mathrm{RPM}\)\\
     Tốc độ đầu ra không tải tại \(6\,\mathrm{VDC}\) & \(300\,\mathrm{RPM}\)\\
-    Tốc độ đầu ra tải định mức được cung cấp & \(250\,\mathrm{RPM}\)\\
+    Tốc độ đầu ra có tải do nhà cung cấp công bố & \(250\,\mathrm{RPM}\)\\
     Dòng không tải / tải định mức / kẹt trục & \(50/95/400\,\mathrm{mA}\)\\
     Mô-men định mức / kẹt trục & \(0.35/1.30\,\mathrm{kgf\cdot cm}\)\\
     Hộp số / khối lượng động cơ & \(12\times10\,\mathrm{mm}\) / khoảng \(10\,\mathrm{g}\)\\
@@ -1521,26 +1596,31 @@ Hai động cơ được bố trí đối xứng qua trục dọc, mỗi động
     Số chu kỳ mỗi kênh trên một vòng trục encoder & \(7\), trước hộp số\\
     Bánh xe & Cao su, đường kính \(44\,\mathrm{mm}\), rộng \(18\,\mathrm{mm}\)\\
     Bán kính bánh danh định & \(r_0=22\,\mathrm{mm}=0.022\,\mathrm{m}\)\\
-    Khoảng cách tâm hai bánh chủ động \(L\) & Chưa đo\\
-    Khối lượng robot và tải mang & Chưa đo\\
+    Khoảng cách tâm hai bánh chủ động \(L\) & \(13.5\,\mathrm{cm}=0.135\,\mathrm{m}\)\\
     \bottomrule
   \end{tabular}
 \end{minipage}
 \end{center}
 
-Các giá trị tốc độ, dòng điện và mô-men trong bảng cần được kiểm chứng theo điều kiện cấp nguồn và tải của đúng động cơ đang dùng; chưa mặc nhiên coi tất cả là cùng một điểm làm việc đã được đo. Riêng từ đường kính bánh và tốc độ trục đầu ra, có thể tính tốc độ dài danh định:
+Trong điều kiện vận hành được cung cấp, điện áp nguồn của mô hình là \(U=7.4\,\mathrm{V}\), dòng điện trong khoảng \(I=0.4\)--\(0.5\,\mathrm{A}\). Đây là thông tin cấp nguồn của cấu hình sử dụng trong đề tài, được phân biệt với thông số công bố của nhà cung cấp trong Bảng~\ref{tab:robot-hardware-specs}. Tốc độ và mô-men tại điều kiện này phụ thuộc tải thực tế và cần được xác định bằng đo đạc. Với đường kính bánh \(D=0.044\,\mathrm{m}\) và tốc độ trục đầu ra \(n\) tính bằng vòng/phút, tốc độ dài lý thuyết được tính theo:
 \begin{equation}
   v=\frac{\pi D n}{60},\qquad D=0.044\,\mathrm{m}.
 \end{equation}
-Với \(n=250\,\mathrm{RPM}\), kết quả là khoảng \(0.576\,\mathrm{m/s}\); với \(300\,\mathrm{RPM}\), kết quả là khoảng \(0.691\,\mathrm{m/s}\). Đây là phép quy đổi hình học, không phải tốc độ vận hành đã xác nhận của robot. Giới hạn điều khiển cần được chọn sau khi đo đáp ứng dưới tải, có dự phòng cho chuyển hướng và giảm tốc.
+Nếu \(n=250\,\mathrm{RPM}\), tốc độ dài tương ứng khoảng \(0.576\,\mathrm{m/s}\); nếu \(n=300\,\mathrm{RPM}\), tốc độ dài tương ứng khoảng \(0.691\,\mathrm{m/s}\). Hai giá trị này minh họa phép quy đổi hình học, chưa xác nhận tốc độ của robot ở nguồn \(7.4\,\mathrm{V}\). Tốc độ vận hành cần được đo từ encoder dưới tải thực tế để lựa chọn giới hạn điều khiển, có dự phòng cho chuyển hướng và giảm tốc.
 
 \subsubsection*{b. Bố trí khung xe và hiệu chuẩn hình học}
 
 Khung cần giữ hai trục động cơ thẳng hàng, hai bánh tiếp xúc đều và moay-ơ không trượt trên trục. Pin và mạch điều khiển được bố trí để trọng tâm nằm trong vùng đỡ của ba bánh, đồng thời không làm giảm quá mức lực ép lên bánh chủ động. Bánh tự lựa cần quay tự do; độ rơ, ma sát hoặc lệch lắp ráp của bánh này có thể làm thay đổi tải khi xe chuyển hướng.
 
-Trước khi chạy thuật toán, đo \(L\) giữa tâm hai vệt tiếp xúc bánh chủ động, đo đường kính lăn khi có tải và kiểm tra dấu quay của từng bánh. Trong tính toán thực nghiệm, có thể dùng hai bán kính hiệu dụng \(r_L,r_R\) để phản ánh sai lệch lốp và lắp ráp; giá trị ban đầu đều lấy bằng \(r_0\), sau đó hiệu chỉnh qua các lượt đi thẳng và quay có đo đối chứng. Kích thước bao thân xe và phần nhô ra phải được đưa vào phép mở rộng vật cản, thay vì chỉ dùng đường kính bánh.
+Khoảng cách tâm hai bánh chủ động của mô hình là \(L=13.5\,\mathrm{cm}=0.135\,\mathrm{m}\), xác định giữa tâm hai vệt tiếp xúc bánh với mặt sàn. Giá trị \(L=0.135\,\mathrm{m}\) được sử dụng trong mô hình động học và tính toán Odometry. Trước khi chạy thuật toán, cần kiểm tra dấu quay của từng bánh và đường kính lăn khi có tải. Hai bán kính hiệu dụng được khởi tạo là \(r_L=r_R=r_0=0.022\,\mathrm{m}\), sau đó hiệu chỉnh qua các lượt đi thẳng và quay có đo đối chứng để phản ánh sai lệch lốp và lắp ráp. Kích thước bao thân xe và phần nhô ra được đưa vào phép mở rộng vật cản để xác định vùng di chuyển an toàn cho toàn bộ xe.
 
-\hinhminhhoa[Bố trí cơ khí của robot ba bánh thực nghiệm]{Ảnh robot ba bánh thực nghiệm và bản vẽ bố trí hai động cơ N20, bánh cao su \(44\,\mathrm{mm}\), bánh tự lựa, điểm \(P\) và khoảng cách hai bánh \(L\)}
+\begin{center}
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=0.85\linewidth]{Hinh_4_1_Mo_hinh_xe_3_banh.png}
+    \chuthichhinh[fig:bo-tri-co-khi-xe]{Mô hình thiết kế xe ba bánh trong đề tài (góc nhìn từ trên)}
+  \end{minipage}
+\end{center}
 
 \subsection{Thiết kế mạch điện tử và phần cứng điều khiển: ESP32-C3-MINI, driver TB6612 và động cơ DC kèm encoder Hall hai kênh A/B}
 
@@ -1550,7 +1630,7 @@ ESP32-C3-MINI đảm nhiệm thu nhận encoder, tính vận tốc bánh, cập 
 
 Phương án đấu nối sử dụng hai ngõ PWM cho hai kênh công suất, bốn ngõ xác định chiều quay, một tín hiệu cho phép hoạt động và bốn ngõ vào encoder. Các chân GPIO cụ thể chỉ được chốt sau khi đối chiếu sơ đồ đúng phiên bản bo ESP32-C3-MINI, các chân phục vụ khởi động, nạp chương trình và giao tiếp. PWM được tạo bằng ngoại vi LEDC; encoder được đọc bằng ngắt GPIO theo tài liệu ESP-IDF dành cho ESP32-C3 \cite{espressif-c3-peripherals}.
 
-Với module TB6612 sử dụng IC TB6612FNG, nguồn logic \(V_{CC}\) có dải hoạt động \(2.7\)--\(5.5\,\mathrm{V}\), nguồn động cơ \(V_M\) có dải \(2.5\)--\(13.5\,\mathrm{V}\). Phương án chọn \(V_{CC}=3.3\,\mathrm{V}\) để ghép mức logic; nguồn động cơ khởi đầu ở \(6\,\mathrm{V}\) theo điều kiện tốc độ không tải được cung cấp. Hai kênh dùng \texttt{AIN1/AIN2/PWMA} và \texttt{BIN1/BIN2/PWMB}; \texttt{STBY} mức thấp đưa IC về chờ. Chế độ phanh ngắn mạch và chế độ đầu ra trở kháng cao cần được phân biệt theo bảng chức năng của nhà sản xuất \cite[tr. 3--5]{toshiba-tb6612fng}.
+Với module TB6612 sử dụng IC TB6612FNG, nguồn logic \(V_{CC}\) có dải hoạt động \(2.7\)--\(5.5\,\mathrm{V}\), nguồn động cơ \(V_M\) có dải \(2.5\)--\(13.5\,\mathrm{V}\). Phương án chọn \(V_{CC}=3.3\,\mathrm{V}\) để ghép mức logic; nguồn động cơ của cấu hình sử dụng là \(7.4\,\mathrm{V}\). Thông số \(300\,\mathrm{RPM}\) do nhà cung cấp công bố ứng với không tải tại \(6\,\mathrm{V}\); tốc độ ở nguồn \(7.4\,\mathrm{V}\) cần được đo dưới tải thực tế \cite{hshop-ga12-n20-6v300}. Hai kênh dùng \texttt{AIN1/AIN2/PWMA} và \texttt{BIN1/BIN2/PWMB}; \texttt{STBY} mức thấp đưa IC về chờ. Chế độ phanh ngắn mạch và chế độ đầu ra trở kháng cao cần được phân biệt theo bảng chức năng của nhà sản xuất \cite[tr. 3--5]{toshiba-tb6612fng}.
 
 Encoder được đề xuất cấp \(3.3\,\mathrm{V}\) và kiểm tra dạng tín hiệu A/B trước khi nối GPIO. Nếu cấp encoder bằng nguồn khác, cần xác nhận mức ngõ ra và phương án chuyển mức phù hợp với ESP32-C3. Nguồn động cơ và nguồn logic dùng chung điểm tham chiếu GND, có lọc nhiễu và bố trí đường cấp dòng động cơ tách khỏi đường tín hiệu encoder. Điện áp pin, dung lượng nguồn và cách hạ áp thực tế còn cần bổ sung vào hồ sơ lắp ráp.
 
@@ -1572,7 +1652,7 @@ Tần số PWM, độ phân giải duty, \(T_s\), chu kỳ bám đường và th
 
 \subsubsection*{a. Quy ước số đếm encoder và độ phân giải}
 
-Theo mô tả được cung cấp, mỗi kênh A hoặc B có \(7\) chu kỳ xung trên một vòng trục trước hộp số. Với tỷ số truyền \(G=50\), một kênh tạo \(7\times50=350\) chu kỳ trên một vòng trục đầu ra. Số đếm dùng trong chương trình phụ thuộc cách giải mã, được phân biệt trong Bảng~\ref{tab:encoder-decoding}.
+Nhà cung cấp công bố \(7\) xung mỗi kênh A/B trên một vòng trục encoder trước hộp số \cite{hshop-ga12-n20-6v300}. Nếu mỗi xung tương ứng một chu kỳ đầy đủ, thì với tỷ số truyền \(G=50\), một kênh tạo \(7\times50=350\) chu kỳ trên một vòng trục đầu ra. Số đếm dùng trong chương trình phụ thuộc cách giải mã, được phân biệt trong Bảng~\ref{tab:encoder-decoding}.
 
 \begin{center}
 \begin{minipage}{\linewidth}
@@ -1652,7 +1732,7 @@ Kiến trúc đề xuất gồm hai cấp: vòng ngoài tạo vận tốc thân 
 \begin{center}
   \begin{minipage}{\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{Hinh_4_3_Kien_truc_dieu_khien.png}
+    \includegraphics[width=\linewidth]{4.3_editted.png}
     \chuthichhinh[fig:kien-truc-dieu-khien]{Kiến trúc điều khiển bám đường và tốc độ hai bánh}
   \end{minipage}
 \end{center}
@@ -1751,42 +1831,42 @@ Quy trình hiệu chỉnh đề xuất bắt đầu với \(K_I=K_D=0\), tăng d
 
 Trong phạm vi trình bày hiện tại, cấu trúc được giới hạn ở PI/PID cơ bản và phép giới hạn đầu ra. Các thành phần bổ sung như bù thuận, lọc đạo hàm hoặc chống bão hòa tích phân chỉ được khai triển khi có mã cài đặt tương ứng hoặc kết quả thực nghiệm chứng minh sự cần thiết. Khi bổ sung, cần nêu rõ cấu hình và căn cứ đánh giá; chưa có dữ liệu thì chưa kết luận các thành phần này cải thiện đáp ứng.
 
-\section{Kết quả Thực nghiệm Thực tế và Đánh giá Sai số}
+\section{Kết quả mô phỏng trên máy tính và phương án đánh giá thực nghiệm}
 
-Phần này quy định cách thu thập và trình bày kết quả. Do chưa có dữ liệu chạy robot, các bảng bên dưới là biểu mẫu thực nghiệm, chưa thể dùng để kết luận robot đã đạt độ chính xác hoặc tỷ lệ tránh va chạm cụ thể. Trước mỗi đợt đo cần chốt thông số \(L,r_L,r_R,N_L,N_R\), cấu hình điều khiển, tải, điện áp nguồn và điều kiện mặt sàn.
+Phần này trình bày kết quả mô phỏng số trên máy tính và phương án kiểm chứng trên robot. Bảng~\ref{tab:exp-result-template} được điền từ các lượt chạy chương trình mô phỏng Python, không phải số liệu đo trên phần cứng. Các tham số chưa được nhận dạng được công bố như giả thiết; kết quả chỉ có giá trị đối với mô hình và cấu hình đã sử dụng. Trước khi kiểm chứng thực tế cần chốt thông số \(L,r_L,r_R,N_L,N_R\), cấu hình điều khiển, tải, điện áp nguồn và điều kiện mặt sàn.
 
 Một lượt thử gồm khởi tạo tư thế, kiểm tra dữ liệu, phát nhiệm vụ, ghi toàn bộ quá trình và lưu nguyên nhân kết thúc. Mỗi cấu hình được lặp với số lượt đã quy định trước; các lượt không tới đích, mất dữ liệu hoặc bị dừng phải được lưu lại cùng trạng thái, thay vì chỉ giữ các lượt thành công. Ngưỡng đạt/không đạt cần được xác định trước khi xem kết quả, dựa trên bề rộng hành lang, dung sai điểm dừng và khả năng đo của hệ thống.
 
-\subsection{Kịch bản thực nghiệm 1: Kiểm thử khả năng bám quỹ đạo định sẵn (Đường thẳng và Đường cong S-Curve).}
+\subsection{Kịch bản 1: Bám đường thẳng với profile vận tốc hình thang}
 
-\subsubsection*{a. Đường thẳng}
+\subsubsection*{a. Đường tham chiếu và quy luật vận tốc}
 
-Đặt đường tham chiếu có chiều dài \(\ell_s\) trong vùng sàn phẳng được đo kích thước. Thực hiện lượt khởi đầu thẳng hàng để khảo sát sai lệch hai truyền động, rồi các lượt có lệch ngang hoặc lệch hướng ban đầu được xác định trước để khảo sát khả năng trở lại đường. Giữ nguyên tải, thông số PID, khoảng nhìn trước và giới hạn tốc độ trong các lượt cần so sánh.
+Đặt đường tham chiếu thẳng nối điểm xuất phát \(S\) và điểm đích \(G\) trong vùng sàn phẳng không có vật cản. Chiều dài \(\ell_s\), tư thế ban đầu và vị trí các mốc đo được xác định trước. Thực hiện lượt khởi đầu thẳng hàng để khảo sát sai lệch hai truyền động, sau đó các lượt có lệch ngang hoặc lệch hướng ban đầu để đánh giá khả năng trở lại đường. Giữ nguyên tải, thông số PID và khoảng nhìn trước trong các lượt cần so sánh.
 
-Tốc độ dọc đường dùng profile hình thang đã giới hạn ở Chương 2. Theo dõi vận tốc đặt/đo của từng bánh, duty PWM, tư thế Odometry và vị trí đối chứng. Dấu hiệu robot lệch liên tục về một phía cần được phân tích cùng bán kính lăn, hệ số truyền động và sai số định vị; không mặc nhiên sửa mọi sai lệch bằng cách tăng hệ số bám đường.
-
-\subsubsection*{b. Đường cong chữ S}
-
-Trong kịch bản này, chữ S mô tả hình dạng đường đi trong mặt phẳng, khác với profile vận tốc chữ S theo thời gian. Một đường thử có thể tự xây dựng là
+Profile hình thang quy định vận tốc dọc đường \(v(t)\) theo ba pha: tăng tốc, chạy đều và giảm tốc về không. Hình dạng đường đi trong mặt phẳng được giữ cố định. Gọi \(\mathbf p(s)\) là đường hình học theo độ dài cung, quỹ đạo tham chiếu được tạo bởi
 \begin{equation}
-  x_d(u)=\ell_s u,\qquad
-  y_d(u)=A\left(10u^3-15u^4+6u^5\right),
-  \quad 0\leq u\leq1,\quad \ell_s>0.
-  \label{eq:exp-spatial-s-path}
+  \mathbf q_d(t)=\mathbf p(s(t)),\qquad
+  s(t)=\int_0^t v(\tau)\,d\tau,\qquad
+  s(T)=\ell_s.
+  \label{eq:exp-path-time-scaling}
 \end{equation}
-Biên độ \(A\) và chiều dài \(\ell_s\) được chọn sau khi đo mặt bằng. Đường có tiếp tuyến nằm ngang và độ cong bằng \(0\) tại hai đầu; có thể nối với các đoạn thẳng cùng hướng. Quy luật \(u(t)\) phải được chọn theo độ cong và giới hạn bánh, thay vì chỉ đặt tốc độ không đổi cho mọi hình dạng đường.
+Như vậy, bộ quy hoạch xác định tuyến đi, còn profile vận tốc xác định thời điểm robot đi qua từng vị trí trên tuyến \cite[Mục 9.1--9.2]{lynch-park-modern-robotics}. Với cùng \(\mathbf p(s)\), đổi profile chỉ làm thay đổi quy luật tiến triển theo thời gian.
 
-Các lượt khảo sát thay đổi từng yếu tố như mức tốc độ, tham số nhìn trước hoặc lựa chọn làm mượt, trong khi giữ các yếu tố khác cố định. Chỉ tiêu cần ghi gồm sai số ngang, sai số hướng, sai số dừng cuối, tốc độ/gia tốc bánh và thời gian hoàn thành. Nếu so sánh đường gấp khúc với đường mượt, phải nêu rõ phương án gấp khúc có dừng--xoay ở góc hay không, vì hai cách thực hiện có thể khác đáng kể về thời gian.
+\subsubsection*{b. Đối chiếu với profile vận tốc chữ S trên cùng đường đi}
+
+Profile chữ S bổ sung các pha chuyển tiếp gia tốc để giới hạn độ giật, như phần đối chiếu ở Chương 2. Khi minh họa hoặc khảo sát hai profile, giữ nguyên đường \(S\)--\(G\) và điều kiện đầu/cuối. Diện tích dưới đồ thị vận tốc thỏa mãn \(\int_0^T v(t)\,dt=\ell_s\) đối với chuyển động tiến dọc đường. Các thông số vận tốc, gia tốc, độ giật và thời gian hoàn thành cần được ghi rõ; hình dạng đồ thị vận tốc không được dùng làm hình dạng đường đi trên mặt sàn.
+
+Trong phạm vi triển khai cơ sở, đề tài sử dụng profile hình thang. Profile chữ S chỉ phục vụ đối chiếu lý thuyết hoặc khảo sát bổ sung khi có cài đặt tương ứng. Thí nghiệm ghi vận tốc đặt/đo của hai bánh, PWM, tư thế Odometry, vị trí đối chứng, sai số bám và sai số dừng cuối. Hiệu quả giảm rung hoặc giảm trượt chỉ được kết luận khi có dữ liệu đo.
 
 \begin{center}
   \begin{minipage}{\linewidth}
     \centering
     \includegraphics[width=\linewidth]{Hinh_4_4_Bo_tri_thi_nghiem.png}
-    \chuthichhinh[fig:bo-tri-thi-nghiem]{Bố trí thí nghiệm bám đường thẳng và đường cong chữ S}
+    \chuthichhinh[fig:bo-tri-thi-nghiem]{Cùng một đường đi, gán profile vận tốc hình thang hoặc chữ S theo thời gian}
   \end{minipage}
 \end{center}
 
-\subsection{Kịch bản thực nghiệm 2: Tự hành tính toán và quy hoạch quỹ đạo né vật cản thực tế trong không gian phòng thí nghiệm.}
+\subsection{Kịch bản 2: Quy hoạch và bám đường né vật cản tĩnh}
 
 \subsubsection*{a. Thiết lập bản đồ và chuỗi xử lý}
 
@@ -1794,7 +1874,7 @@ Mặt bằng thử được đo trong cùng hệ tọa độ với vị trí rob
 
 Chuỗi xử lý đề xuất gồm tạo bản đồ, chạy bộ tìm đường của Chương 3, kiểm tra đường nối, làm mượt theo mục 2.4, gán tốc độ khả thi rồi gửi đường cho bộ bám. Trước khi chạy, xác nhận đường mượt còn nằm trong vùng tự do. Trong lượt thử, robot đi theo đường đã duyệt; nếu sai lệch vượt miền cho phép hoặc xuất hiện tình huống không được bản đồ mô tả, lượt thử được dừng và ghi lý do.
 
-\subsubsection*{b. Tổ chức so sánh và ghi nhận kết thúc}
+\subsubsection*{b. Tổ chức so sánh và ghi nhận}
 
 Các thuật toán được so sánh trên cùng bản đồ, điểm đầu/đích, mô hình thân xe, quy tắc kiểm tra va chạm và giới hạn chuyển động. Với phương pháp ngẫu nhiên, lưu hạt giống và ngân sách tìm kiếm. Thời gian tính đường được đo trên đúng thiết bị thực thi bộ quy hoạch, tách khỏi thời gian truyền dữ liệu và thời gian robot di chuyển.
 
@@ -1806,27 +1886,32 @@ Lượt thử được tính thành công khi robot đạt vùng đích theo dun
 \begin{minipage}{\linewidth}
   \centering
   \refstepcounter{table}\label{tab:exp-result-template}%
-  \tablename~\thetable: Biểu mẫu tổng hợp kết quả theo nhóm kịch bản\par\smallskip
+  \tablename~\thetable: Kết quả mô phỏng số với profile hình thang (30 lượt/kịch bản)\par\smallskip
   \small
   \renewcommand{\arraystretch}{1.35}
-  \begin{tabular}{@{}p{0.35\linewidth}p{0.17\linewidth}p{0.17\linewidth}p{0.17\linewidth}@{}}
+  \begin{tabular}{@{}p{0.46\linewidth}p{0.22\linewidth}p{0.22\linewidth}@{}}
     \toprule
-    \textbf{Chỉ tiêu} & \textbf{Đường thẳng} & \textbf{Chữ S} & \textbf{Có vật cản}\\
+    \textbf{Chỉ tiêu} & \textbf{Đường thẳng} & \textbf{Có vật cản}\\
     \midrule
-    Số lượt thử / số lượt thành công & Chưa đo & Chưa đo & Chưa đo\\
-    RMSE vị trí đối chứng (m) & Chưa đo & Chưa đo & Chưa đo\\
-    Sai số ngang lớn nhất (m) & Chưa đo & Chưa đo & Chưa đo\\
-    Sai số hướng trung bình (rad) & Chưa đo & Chưa đo & Chưa đo\\
-    Sai số vị trí cuối (m) & Chưa đo & Chưa đo & Chưa đo\\
-    Thời gian hoàn thành (s) & Chưa đo & Chưa đo & Chưa đo\\
-    Khoảng hở thân xe nhỏ nhất (m) & Không áp dụng & Không áp dụng & Chưa đo\\
-    Tỷ lệ thời gian PWM bão hòa (\%) & Chưa đo & Chưa đo & Chưa đo\\
+    Số lượt thử / số lượt thành công & \(30/5\) & \(30/5\)\\
+    RMSE vị trí theo thời gian (m) & \(0.167\pm0.118\) & \(0.167\pm0.121\)\\
+    Sai số ngang lớn nhất (m) & \(0.897\) & \(0.677\)\\
+    Sai số hướng tuyệt đối trung bình (rad) & \(0.101\pm0.089\) & \(0.116\pm0.087\)\\
+    Sai số vị trí khi kết thúc (m) & \(0.293\pm0.267\) & \(0.404\pm0.450\)\\
+    Thời gian hoàn thành (s) & \(13.762\pm0.022\) & \(15.416\pm0.035\)\\
+    Khoảng hở thân xe nhỏ nhất (m) & Không áp dụng & \(-0.00025\)\\
+    Tỷ lệ thời gian PWM bão hòa (\%) & \(0.000\pm0.000\) & \(0.000\pm0.000\)\\
     \bottomrule
   \end{tabular}
+  \par\smallskip
+  \begin{minipage}{0.96\linewidth}
+  \end{minipage}
 \end{minipage}
 \end{center}
 
-Các hàng RMSE theo thời gian chỉ được điền khi có lịch tham chiếu tương ứng và dữ liệu đo đã đồng bộ. Mỗi bảng kết quả chính thức phải đi kèm cấu hình điều khiển và mô tả thiết bị đo; khi so sánh thuật toán, bổ sung cột hoặc bảng riêng cho từng bộ quy hoạch. Khoảng hở được tính từ biên thân xe tới vật cản, không chỉ từ điểm tâm robot.
+Kết quả cho tỷ lệ đạt \(16.7\%\) ở cả hai kịch bản. Trong kịch bản đường thẳng, 25 lượt còn lại không đạt ít nhất một dung sai; trong kịch bản vật cản có 3 lượt va chạm và 22 lượt kết thúc điều khiển nhưng không đạt dung sai. Cả 30 lượt đường thẳng đều kết thúc theo Odometry, còn kịch bản vật cản có 27 lượt kết thúc theo Odometry. Điều này cho thấy điều kiện dừng trên tư thế ước lượng không đồng nghĩa với đạt đích thật. Sai số bánh và trượt chưa được bù làm Odometry lệch tích lũy, dù vận tốc encoder vẫn bám lệnh. Đường tham chiếu sau làm mượt có khoảng hở thân xe với vật cản tối thiểu khoảng \(0.166\,\mathrm{m}\), nhưng sai số định vị và bám vẫn có thể dẫn tới va chạm.
+
+Bảng này đánh giá toàn chuỗi Dijkstra--Bézier--Pure Pursuit--PI trong một cấu hình giả định, không phải so sánh nhiều bộ quy hoạch hoặc kết luận Dijkstra tìm đường thất bại. Trước khi triển khai thực tế cần hiệu chuẩn bán kính hiệu dụng, khoảng cách bánh và bổ sung phép đo định vị đối chứng. Giá trị PWM không bão hòa trong mô hình cũng chưa xác nhận khả năng cấp dòng hoặc dự trữ mô-men của xe thật. Hồ sơ đi kèm lưu cấu hình, hạt giống, thông số từng lượt, toàn bộ CSV và mã nguồn; phép kiểm tra giảm đôi bước tích phân cho sai khác RMSE nhỏ hơn \(10^{-6}\,\mathrm{m}\) ở hai lượt kiểm tra, nhưng không thay thế kiểm chứng độ đúng của mô hình bằng đo đạc.
 
 \subsection{\texorpdfstring{Thu thập dữ liệu và biểu diễn sai số bám quỹ đạo \(\left( e_{x},e_{y},e_{\theta} \right)\) giữa quỹ đạo lý thuyết và quỹ đạo thực tế.}{Thu thập dữ liệu và biểu diễn sai số bám quỹ đạo ex,ey,eθgiữa quỹ đạo lý thuyết và quỹ đạo thực tế.}}
 
@@ -1889,7 +1974,7 @@ Bộ hình kết quả nên gồm đường tham chiếu và đường đo trên
   \begin{minipage}{\linewidth}
     \centering
     \includegraphics[width=\linewidth]{Hinh_4_5_Do_thi_minh_hoa.png}
-    \chuthichhinh[fig:do-thi-quy-dao-sai-so]{Đồ thị quỹ đạo, sai số bám và đáp ứng truyền động}
+    \chuthichhinh[fig:do-thi-quy-dao-sai-so]{Mẫu bố cục đồ thị cho cùng đường tham chiếu và profile hình thang; dữ liệu thực nghiệm chưa bổ sung}
   \end{minipage}
 \end{center}
 
@@ -1915,6 +2000,10 @@ Các nội dung trên được xác định là hướng phát triển, chưa đ
 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Tài liệu tham khảo}
+
+\bibitem{google-colab-faq}
+Google, \textit{Colaboratory -- Frequently Asked Questions},
+\href{https://research.google.com/colaboratory/faq.html}{Tài liệu chính thức về môi trường notebook Colab}.
 
 \bibitem{nguyen-truong-thinh-ky-thuat-robot}
 Nguyễn Trường Thịnh, \textit{Giáo trình Kỹ thuật robot}, Nhà xuất bản Đại học Quốc gia TP. Hồ Chí Minh.
@@ -1985,6 +2074,14 @@ Tài liệu bổ trợ của tác giả tại Northwestern University:
 R. Craig Coulter, \textit{Implementation of the Pure Pursuit Path Tracking Algorithm},
 báo cáo kỹ thuật CMU-RI-TR-92-01, Robotics Institute, Carnegie Mellon University, 1992.
 \href{https://publications.ri.cmu.edu/storage/publications/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf}{Báo cáo gốc}, mục 2--4.
+
+\bibitem{hshop-ga12-n20-6v300}
+Hshop.vn, \textit{Động cơ giảm tốc DC Servo GA12 N20 DC Geared Motor 6VDC 300RPM}, mã sản phẩm HS2312V.
+\href{https://hshop.vn/dong-co-dc-giamtoc-ga12-n20-encoder}{Thông số động cơ và encoder do nhà cung cấp công bố}, truy cập ngày 30/10/2026.
+
+\bibitem{hshop-ga12-wheel-kit}
+Hshop.vn, \textit{Bộ động cơ DC Servo GA12 N20 kèm gá bắt và bánh xe}.
+\href{https://hshop.vn/bo-dong-co-dc-servo-ga12-n20-kem-ga-bat-va-banh-xe-v2-43mm}{Thông số bộ động cơ, gá bắt và bánh cao su 44 mm}, truy cập ngày 30/10/2026.
 
 \bibitem{espressif-c3-peripherals}
 Espressif Systems, \textit{ESP-IDF Programming Guide -- ESP32-C3},

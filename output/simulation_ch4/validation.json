@@ -1,0 +1,19 @@
+{
+  "ideal_straight_max_lateral_m": 0.0,
+  "smoothed_path_min_body_obstacle_clearance_m": 0.16574044091191398,
+  "numerical_convergence": {
+    "straight": {
+      "rmse_position_m": 4.680991705363624e-11,
+      "max_cross_track_m": 7.844684901670007e-10,
+      "final_position_error_m": 5.347291637258778e-10,
+      "completion_s": 0.0
+    },
+    "obstacle": {
+      "rmse_position_m": 1.7422315992665638e-08,
+      "max_cross_track_m": 2.757135474096284e-08,
+      "final_position_error_m": 2.5627434924180292e-08,
+      "completion_s": 0.0
+    }
+  },
+  "csv_recompute_max_absolute_difference": 5.333003483265486e-10
+}

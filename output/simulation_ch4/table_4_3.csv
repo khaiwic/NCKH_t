@@ -1,0 +1,9 @@
+﻿Chỉ tiêu,Đường thẳng,Có vật cản
+Số lượt thử / số lượt thành công,30 / 5,30 / 5
+RMSE vị trí theo thời gian (m),0.167 ± 0.118,0.167 ± 0.121
+Sai số ngang lớn nhất toàn bộ lượt (m),0.897,0.677
+Sai số hướng tuyệt đối trung bình (rad),0.101 ± 0.089,0.116 ± 0.087
+Sai số vị trí khi kết thúc (m),0.293 ± 0.267,0.404 ± 0.450
+Thời gian hoàn thành - chỉ lượt thành công (s),13.762 ± 0.022,15.416 ± 0.035
+Khoảng hở thân xe nhỏ nhất toàn bộ lượt (m),Không áp dụng,-0.00025
+Tỷ lệ thời gian ít nhất một kênh PWM bão hòa (%),0.000 ± 0.000,0.000 ± 0.000
