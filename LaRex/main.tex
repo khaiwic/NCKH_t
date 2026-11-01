@@ -680,13 +680,16 @@ Bánh xe tự lựa có khả năng xoay quanh một trục thẳng đứng; tr�
 
 \subsubsection{Tính holonomic của robot}
 
-Tính holonomic (hay tính toàn phương / tính ràng buộc tích phân được) được sử dụng để mô tả không gian quỹ đạo của robot di động. Trong nghiên cứu robot di động, thuật ngữ này bao gồm các ràng buộc động học của khung robot.
+Tính holonomic được xét thông qua các ràng buộc động học của robot, qua đó xác định những chuyển động mà robot có thể thực hiện. Một ràng buộc được gọi là holonomic (ràng buộc khả tích) nếu có thể biểu diễn bằng quan hệ giữa các biến cấu hình và thời gian; đối với ràng buộc ở dạng vi phân, điều này có nghĩa là có thể tích phân để đưa về quan hệ tương ứng. Ngược lại, ràng buộc vận tốc không thể đưa về dạng quan hệ này được gọi là ràng buộc phi holonomic.
 
-Có thể hiểu tính holonomic của robot mô tả mối quan hệ giữa số bậc tự do có thể điều khiển trực tiếp và tổng số bậc tự do của không gian cấu hình C-space.
+Đối với robot di động trên mặt phẳng, cấu hình của khung robot được mô tả bởi \(\mathbf q=(x,y,\theta)^{\mathsf T}\), trong đó \(x,y\) xác định vị trí và \(\theta\) xác định góc hướng. Như vậy, robot có ba bậc tự do cấu hình. Khi phân loại khả năng chuyển động của robot, cần phân biệt số bậc tự do cấu hình với số thành phần vận tốc độc lập có thể điều khiển tức thời:
 
-Robot holonomic là robot không có bất kỳ ràng buộc phi holonomic (non-holonomic) nào. Ngược lại, robot phi holonomic là robot có một hoặc nhiều ràng buộc động học phi holonomic.
+\begin{itemize}
+  \item \textbf{Robot holonomic:} Không chịu ràng buộc động học phi holonomic. Với robot di động đa hướng trên mặt phẳng, ba thành phần vận tốc của khung robot có thể được điều khiển độc lập, tương ứng với ba bậc tự do cấu hình. Robot có thể tịnh tiến tức thời theo hướng bất kỳ mà không cần thay đổi góc hướng trước. Ví dụ điển hình là robot đa hướng sử dụng bánh omni với cách bố trí truyền động phù hợp.
+  \item \textbf{Robot phi holonomic:} Chịu ít nhất một ràng buộc vận tốc không khả tích. Đối với robot dẫn động vi sai, số thành phần vận tốc độc lập có thể điều khiển tức thời nhỏ hơn số bậc tự do cấu hình. Trong điều kiện bánh xe lăn không trượt ngang, vận tốc ngang trong hệ tọa độ thân robot bằng không, \(v_y=0\). Do đó, robot không thể dịch chuyển tức thời theo phương ngang của thân robot, tức phương trục của hai bánh chủ động, mà phải kết hợp các chuyển động tiến, lùi và quay để đạt cấu hình mong muốn.
+\end{itemize}
 
-Robot bao gồm hệ vi sai hai bánh sau và một bánh caster tự lựa ở phía trước được phân loại là hệ phi holonomic.
+Robot được xét trong đề tài sử dụng hai bánh chủ động phía sau dẫn động vi sai và một bánh tự lựa (caster) phía trước, nên được phân loại là robot phi holonomic. Hai động cơ độc lập điều khiển vận tốc quay của hai bánh chủ động, tương đương với hai đầu vào vận tốc của khung robot là vận tốc tuyến tính \(v\) và vận tốc góc \(\omega\). Vì vậy, robot có hai thành phần vận tốc điều khiển độc lập, trong khi cấu hình trên mặt phẳng vẫn cần ba biến \((x,y,\theta)\) để mô tả. Bánh tự lựa đóng vai trò đỡ và tự điều chỉnh hướng theo chuyển động của khung robot, không bổ sung đầu vào điều khiển độc lập.
 
 \subsubsection{Tính chất của ràng buộc phi holonomic của robot}
 
