@@ -312,7 +312,7 @@ Một mô hình biên thường gặp là
 \]
 Nếu robot đang chạy khi nhận mục tiêu mới, vận tốc đầu phải lấy theo trạng thái thực tại thời điểm chuyển tiếp. Đặt vận tốc tham chiếu về không tức thời có thể tạo lệnh giảm tốc không khả thi. Do đó, cập nhật mục tiêu phải đi kèm một đoạn nối thỏa mãn trạng thái hiện tại.
 
-\textbf{Ứng dụng và tiêu chí đánh giá:} Với xe di động, bài toán thường gặp là chuyển giữa các trạm hoặc tiếp cận vị trí sạc; với tay máy là gắp--đặt và hàn điểm. Chất lượng được đánh giá qua sai số đích, thời gian hoàn thành, khoảng cách tới vật cản và mức đáp ứng giới hạn vận tốc \cite{lynch-park-modern-robotics}.
+\textbf{Ứng dụng và tiêu chí đánh giá:} Với xe di động, bài toán thường gặp là chuyển giữa các trạm hoặc tiếp cận vị trí sạc; với tay máy là gắp--đặt và hàn điểm. Chất lượng được đánh giá qua sai số đích, thời gian hoàn thành, khoảng cách tới vật cản và mức đáp ứng giới hạn vận tốc.
 
 \subsubsection*{b. Chuyển động bám theo đường đi liên tục (Continuous Path / Path Following Motion -- CP)}
 
@@ -465,22 +465,11 @@ Trong phạm vi đề tài chủ yếu dùng động học, năng lượng đư�
 \]
 Khi các tọa độ có đơn vị khác nhau, cần chuẩn hóa hoặc dùng ma trận trọng số thay cho cộng trực tiếp các thành phần. Giảm \(J_j\) và áp dụng ràng buộc cứng \(|j_i(t)|\leq j_{i,\max}\) cũng là hai yêu cầu khác nhau: tích phân nhỏ không tự loại trừ một đỉnh jerk lớn trong khoảng thời gian ngắn.
 
-Ảnh hưởng của thời gian có thể được thấy bằng phép đổi biến \(\tau=t/T\). Nếu giữ nguyên hình dạng chuẩn hóa \(q(t)=\bar q(\tau)\), thì \(\dddot q=T^{-3}\bar q^{(3)}\), do đó
-\[
-  J_j=T^{-5}\int_0^1\|\bar q^{(3)}(\tau)\|^2\,d\tau.
-\]
-Đây là hệ quả trực tiếp của quy tắc đạo hàm. Nếu chỉ giảm jerk mà không chặn thời gian, có thể làm chỉ tiêu nhỏ đi bằng cách cho robot chạy rất chậm. Do đó, so sánh độ êm cần cố định thời gian hoặc công bố rõ cách đánh đổi giữa jerk và thời gian hoàn thành.
+Với cùng hình dạng chuyển động, kéo dài toàn bộ thời gian thực hiện theo cùng một tỷ lệ sẽ làm giảm vận tốc, gia tốc, độ giật và chỉ tiêu tích lũy độ giật. Vì vậy, một phương án có thể đạt chỉ tiêu thấp chỉ nhờ di chuyển chậm. Khi so sánh độ êm, cần giữ cùng thời gian thực hiện hoặc công bố rõ sự đánh đổi với thời gian hoàn thành nhiệm vụ.
 
 \noindent\textbf{Đánh đổi nhiều mục tiêu và tiêu chí áp dụng.}
 
-Một dạng kết hợp có thể dùng là
-\[
-  J=w_T\frac{T}{T_{\mathrm{ref}}}
-    +w_L\frac{L_p}{L_{\mathrm{ref}}}
-    +w_j\frac{J_j}{J_{j,\mathrm{ref}}},
-  \qquad w_T,w_L,w_j\geq0,
-\]
-trong đó \(L_p\) là chiều dài đường đi và các mẫu số dương dùng để chuẩn hóa đơn vị. Trọng số biểu thị ưu tiên và cần được công bố; thay đổi thang đo mà không chuẩn hóa có thể làm thay đổi nghiệm dù ý định ưu tiên không đổi.
+Có thể đánh giá đồng thời thời gian hoàn thành, chiều dài đường đi và mức độ giật bằng cách chuẩn hóa từng đại lượng theo một giá trị tham chiếu dương rồi gán trọng số không âm. Trọng số phản ánh mức ưu tiên của ứng dụng và cần được công bố cùng giá trị tham chiếu. Việc chuẩn hóa giúp so sánh nhất quán giữa các đại lượng khác đơn vị, tránh thay đổi kết quả lựa chọn chỉ do thay đổi thang đo.
 
 Trong đề tài, tránh va chạm và đáp ứng giới hạn chuyển động được đặt thành điều kiện chấp nhận trước khi so sánh chiều dài, thời gian tính toán và độ trơn. Các chỉ tiêu được báo cáo riêng để thấy rõ đánh đổi. Khi chưa xác định ưu tiên của một ứng dụng cụ thể, kết luận nên chỉ ra phương án phù hợp với từng tiêu chí thay vì khẳng định có một thuật toán tốt nhất trong mọi môi trường.
 
@@ -943,7 +932,7 @@ Nếu \(D<v_{\max}^2/a\), không đủ quãng đường cho pha chạy đều; p
 \[
   V=\sqrt{aD},\qquad t_b=\frac{V}{a},\qquad t_f=2t_b.
 \]
-Các quan hệ này xét chuyển động một chiều giữa hai trạng thái nghỉ. Với đường cong, cần giảm vận tốc theo độ cong và giới hạn từng bánh, đồng thời bố trí lại các pha tăng--giảm tốc. Gia tốc của profile hình thang vẫn có bước nhảy tại điểm chuyển pha nên phương pháp này chưa khống chế độ giật \cite[Mục 9.1--9.2]{lynch-park-modern-robotics}.
+Các quan hệ này xét chuyển động một chiều giữa hai trạng thái nghỉ. Với đường cong, cần giảm vận tốc theo độ cong và giới hạn từng bánh, đồng thời bố trí lại các pha tăng--giảm tốc. Gia tốc của profile hình thang vẫn có bước nhảy tại điểm chuyển pha nên phương pháp này chưa khống chế độ giật.
 
 \subsection{Đối chiếu với profile vận tốc chữ S}
 
@@ -951,7 +940,7 @@ Profile chữ S bổ sung các khoảng chuyển tiếp gia tốc để giới h
 \[
   j(t)=\frac{da(t)}{dt},\qquad |j(t)|\leq j_{\max}.
 \]
-Nhờ đó, gia tốc biến thiên liên tục thay vì có bước nhảy như profile hình thang. Với chuyển động đối xứng từ nghỉ đến nghỉ, cấu trúc đầy đủ gồm bảy pha: tăng gia tốc, giữ gia tốc dương, giảm gia tốc về không, chạy đều, tăng mức hãm, giữ gia tốc âm và đưa gia tốc về không \cite[Mục 9.1--9.2]{lynch-park-modern-robotics}. Một số pha có thể có thời lượng bằng không khi quãng đường ngắn.
+Nhờ đó, gia tốc biến thiên liên tục thay vì có bước nhảy như profile hình thang. Với chuyển động đối xứng từ nghỉ đến nghỉ, cấu trúc đầy đủ gồm bảy pha: tăng gia tốc, giữ gia tốc dương, giảm gia tốc về không, chạy đều, tăng mức hãm, giữ gia tốc âm và đưa gia tốc về không. Một số pha có thể có thời lượng bằng không khi quãng đường ngắn.
 
 \begin{figure}[htbp]
   \centering
@@ -967,7 +956,7 @@ Trong đề tài, profile hình thang là phương án gán vận tốc chính v
 \clearpage
 \section{Kỹ thuật Làm mượt Đường đi Hình học (Path Smoothing)}
 
-Làm mượt đường đi thay các góc gãy của kết quả tìm kiếm bằng đoạn chuyển tiếp phù hợp với chuyển động robot. Đề tài chọn Bézier để thiết kế đoạn bo góc; B-Spline được giới thiệu ngắn nhằm đối chiếu khả năng chỉnh sửa đường. Sau bước hình học, profile vận tốc hình thang được dùng để gán thời gian \cite{lynch-park-modern-robotics}. Phần này xét đường phẳng \(\mathbf{p}(u)=[x(u),y(u)]^T\); dấu phẩy chỉ đạo hàm theo \(u\), còn dấu chấm chỉ đạo hàm theo thời gian.
+Làm mượt đường đi thay các góc gãy của kết quả tìm kiếm bằng đoạn chuyển tiếp phù hợp với chuyển động robot. Đề tài chọn Bézier để thiết kế đoạn bo góc; B-Spline được giới thiệu ngắn nhằm đối chiếu khả năng chỉnh sửa đường. Sau bước hình học, profile vận tốc hình thang được dùng để gán thời gian. Phần này xét đường phẳng \(\mathbf{p}(u)=[x(u),y(u)]^T\); dấu phẩy chỉ đạo hàm theo \(u\), còn dấu chấm chỉ đạo hàm theo thời gian.
 
 \subsection{Khuyết tật hình học gãy khúc của thuật toán tìm đường dạng lưới và lấy mẫu ngẫu nhiên.}
 
@@ -1001,9 +990,9 @@ Tại góc gãy, robot không thể vừa bám chính xác vừa duy trì tốc 
   \qquad 0\leq u\leq1.
   \label{eq:smooth-bezier}
 \end{equation}
-Các trọng số Bernstein không âm và có tổng bằng một, nên đường nằm trong bao lồi của các điểm điều khiển. Đường đi qua hai điểm đầu cuối nhưng thường không đi qua các điểm điều khiển ở giữa \cite{shene-bezier-notes}.
+Các trọng số Bernstein không âm và có tổng bằng một, nên đường nằm trong bao lồi của các điểm điều khiển. Đường đi qua hai điểm đầu cuối nhưng thường không đi qua các điểm điều khiển ở giữa.
 
-Hướng tiếp tuyến đầu phụ thuộc đoạn \(\mathbf P_0\mathbf P_1\), hướng cuối phụ thuộc đoạn \(\mathbf P_{n-1}\mathbf P_n\). Dịch các điểm lân cận đầu cuối cho phép chỉnh cách đường cong đi vào và đi ra khỏi góc cua. Thuật toán de Casteljau tính điểm trên đường bằng nội suy tuyến tính lặp, đồng thời có thể chia đường thành các đoạn nhỏ để kiểm tra hình học \cite{patrikalakis-geometric-continuity}.
+Hướng tiếp tuyến đầu phụ thuộc đoạn \(\mathbf P_0\mathbf P_1\), hướng cuối phụ thuộc đoạn \(\mathbf P_{n-1}\mathbf P_n\). Dịch các điểm lân cận đầu cuối cho phép chỉnh cách đường cong đi vào và đi ra khỏi góc cua. Thuật toán de Casteljau tính điểm trên đường bằng nội suy tuyến tính lặp, đồng thời có thể chia đường thành các đoạn nhỏ để kiểm tra hình học.
 
 \subsubsection*{b. Bézier bậc 5 và ghép các đoạn chuyển tiếp}
 
@@ -1021,7 +1010,7 @@ Khi ghép hai đoạn, liên tục \(C^0\) yêu cầu chung vị trí; \(C^1\) y
 
 \subsubsection*{c. Đối chiếu  với B-Spline}
 
-B-Spline thuận tiện với đường dài vì chỉnh một điểm điều khiển chỉ ảnh hưởng một vùng cục bộ; bậc đường cong không phụ thuộc trực tiếp số điểm điều khiển. Mức liên tục phụ thuộc bậc và bội nút, chẳng hạn B-Spline bậc 3 với nút trong đơn đạt \(C^2\) \cite{shene-bspline-notes}. So với B-Spline, các đoạn Bézier phù hợp với cách bo từng góc của chuỗi nút và dễ xác định điều kiện đầu--cuối. Vì vậy, đề tài tập trung khai triển Bézier; B-Spline được giữ làm phương án đối chiếu.
+B-Spline thuận tiện với đường dài vì chỉnh một điểm điều khiển chỉ ảnh hưởng một vùng cục bộ; bậc đường cong không phụ thuộc trực tiếp số điểm điều khiển. Mức liên tục phụ thuộc bậc và bội nút, chẳng hạn B-Spline bậc 3 với nút trong đơn đạt \(C^2\). So với B-Spline, các đoạn Bézier phù hợp với cách bo từng góc của chuỗi nút và dễ xác định điều kiện đầu--cuối. Vì vậy, đề tài tập trung khai triển Bézier; B-Spline được giữ làm phương án đối chiếu.
 
 \subsubsection*{d. Lựa chọn điểm điều khiển và bảo toàn miền tự do}
 
@@ -1041,7 +1030,7 @@ Nếu các điểm điều khiển có ảnh hưởng nằm trong cùng một h�
 
 \subsubsection*{a. Phân biệt liên tục tham số và liên tục hình học}
 
-Liên tục tham số \(C^2\) đòi hỏi vị trí và hai đạo hàm đầu khớp nhau theo cùng tham số. Liên tục hình học \(G^2\) yêu cầu chung vị trí, hướng tiếp tuyến và độ cong, nhưng cho phép thay đổi tốc độ chạy tham số giữa hai đoạn. Với đường chính quy, \(C^2\) kéo theo \(G^2\), còn chiều ngược lại không nhất thiết đúng nếu giữ nguyên cách tham số hóa \cite{patrikalakis-geometric-continuity}.
+Liên tục tham số \(C^2\) đòi hỏi vị trí và hai đạo hàm đầu khớp nhau theo cùng tham số. Liên tục hình học \(G^2\) yêu cầu chung vị trí, hướng tiếp tuyến và độ cong, nhưng cho phép thay đổi tốc độ chạy tham số giữa hai đoạn. Với đường chính quy, \(C^2\) kéo theo \(G^2\), còn chiều ngược lại không nhất thiết đúng nếu giữ nguyên cách tham số hóa.
 
 Phân biệt này giúp tránh nhầm độ trơn của hình dạng với độ trơn của chuyển động. Hai đoạn nối êm về hình học vẫn có thể tạo bước nhảy vận tốc nếu gán thời gian không phù hợp. Ngược lại, chỉ giảm tốc không biến một góc gãy thành một đoạn cong liên tục.
 
@@ -1208,7 +1197,7 @@ Với xe ba bánh vi sai, mô phỏng hình học có thể dùng \(q=(x,y)\) tr
 
 \subsubsection*{a. Giai đoạn học và xây dựng mạng lưới}
 
-PRM gồm giai đoạn học và truy vấn, xây dựng mạng đường đi dùng lại cho nhiều cặp xuất phát--đích trong môi trường tĩnh \cite{kavraki-prm-1996}. Các cấu hình và chuyển động nối hợp lệ tạo thành tập đỉnh \(\mathcal{V}_R\), tập cạnh \(\mathcal{E}_R\) của roadmap \(G_R=(\mathcal{V}_R,\mathcal{E}_R)\).
+PRM gồm giai đoạn học và truy vấn, xây dựng mạng đường đi dùng lại cho nhiều cặp xuất phát--đích trong môi trường tĩnh. Các cấu hình và chuyển động nối hợp lệ tạo thành tập đỉnh \(\mathcal{V}_R\), tập cạnh \(\mathcal{E}_R\) của roadmap \(G_R=(\mathcal{V}_R,\mathcal{E}_R)\).
 
 Quá trình xây dựng roadmap gồm:
 \begin{enumerate}[label=\arabic*.]
@@ -1399,7 +1388,7 @@ Trong cài đặt rời rạc, có thể đánh dấu nghi ngờ mắc kẹt n�
 
 \subsubsection*{b. Mục tiêu không tiếp cận được khi có vật cản gần đích (GNRON)}
 
-GNRON (Goals Nonreachable with Obstacles Nearby) xảy ra khi đích hợp lệ nằm trong vùng tác động của một vật cản, khiến lực đẩy vẫn tồn tại khi robot tiến tới đích. Với thế hút bậc hai, \(\mathbf{F}_{\mathrm{att}}(\mathbf{q}_g)=\mathbf{0}\); trong khi đó, thế đẩy truyền thống có thể tạo \(\mathbf{F}_{\mathrm{rep}}(\mathbf{q}_g)\neq\mathbf{0}\). Do đó, đích không còn là điểm cân bằng mong muốn của trường tổng hợp. Tình huống này có thể xảy ra khi robot cần tiếp cận một vị trí gần tường hoặc gần kệ hàng \cite{ge-cui-2000}.
+GNRON (Goals Nonreachable with Obstacles Nearby) xảy ra khi đích hợp lệ nằm trong vùng tác động của một vật cản, khiến lực đẩy vẫn tồn tại khi robot tiến tới đích. Với thế hút bậc hai, \(\mathbf{F}_{\mathrm{att}}(\mathbf{q}_g)=\mathbf{0}\); trong khi đó, thế đẩy truyền thống có thể tạo \(\mathbf{F}_{\mathrm{rep}}(\mathbf{q}_g)\neq\mathbf{0}\). Do đó, đích không còn là điểm cân bằng mong muốn của trường tổng hợp. Tình huống này có thể xảy ra khi robot cần tiếp cận một vị trí gần tường hoặc gần kệ hàng.
 
 Một cách sửa là làm thế đẩy phụ thuộc thêm khoảng cách tới đích. Đặt \(d_g=\|\mathbf{q}-\mathbf{q}_g\|\); trong khoảng tác động của vật cản, chọn dạng bậc hai theo khoảng cách đích:
 \begin{equation}
@@ -1462,7 +1451,7 @@ Lực ảo có thể phá vỡ trạng thái cân bằng nhưng cũng có thể 
 
 \subsection{Thiết lập môi trường mô phỏng trên nền tảng Colab: Bản đồ lưới(Grid Map)}
 
-Google Colab được lựa chọn để xây dựng mô phỏng bằng Python vì cho phép chạy notebook trên trình duyệt, thuận tiện lưu mã nguồn, hiển thị đường đi và chia sẻ cấu hình thí nghiệm \cite{google-colab-faq}. NumPy dùng để biểu diễn bản đồ và xử lý tọa độ; Matplotlib dùng để vẽ lưới và kết quả; mô-đun \texttt{heapq} hỗ trợ hàng đợi ưu tiên cho Dijkstra và A*. Mô phỏng sử dụng CPU, không yêu cầu GPU; phiên bản thư viện và cấu hình phiên chạy cần được lưu cùng dữ liệu.
+Google Colab được lựa chọn để xây dựng mô phỏng bằng Python vì cho phép chạy notebook trên trình duyệt, thuận tiện lưu mã nguồn, hiển thị đường đi và chia sẻ cấu hình thí nghiệm. NumPy dùng để biểu diễn bản đồ và xử lý tọa độ; Matplotlib dùng để vẽ lưới và kết quả; mô-đun \texttt{heapq} hỗ trợ hàng đợi ưu tiên cho Dijkstra và A*. Mô phỏng sử dụng CPU, không yêu cầu GPU; phiên bản thư viện và cấu hình phiên chạy cần được lưu cùng dữ liệu.
 
 Môi trường được biểu diễn bằng ma trận nhị phân \(M\) có kích thước \(H\times W\), gồm các ô vuông cạnh \(\Delta\) mét, bố trí như ô bàn cờ. Quy ước \textbf{ô trắng là ô có thể đi}, tương ứng \(M_{ij}=0\); \textbf{ô đen là ô tường hoặc vật cản}, tương ứng \(M_{ij}=1\). Các ô không bắt buộc xen kẽ màu. Điểm xuất phát \(S\) và điểm đích \(G\) đều thuộc ô trắng. Với gốc tọa độ tại góc dưới trái, tâm ô cột \(j\), hàng \(i\), đánh số từ \(0\), được quy đổi thành \((x,y)=((j+1/2)\Delta,(i+1/2)\Delta)\).
 
@@ -1831,9 +1820,9 @@ Quy trình hiệu chỉnh đề xuất bắt đầu với \(K_I=K_D=0\), tăng d
 
 Trong phạm vi trình bày hiện tại, cấu trúc được giới hạn ở PI/PID cơ bản và phép giới hạn đầu ra. Các thành phần bổ sung như bù thuận, lọc đạo hàm hoặc chống bão hòa tích phân chỉ được khai triển khi có mã cài đặt tương ứng hoặc kết quả thực nghiệm chứng minh sự cần thiết. Khi bổ sung, cần nêu rõ cấu hình và căn cứ đánh giá; chưa có dữ liệu thì chưa kết luận các thành phần này cải thiện đáp ứng.
 
-\section{Kết quả mô phỏng trên máy tính và phương án đánh giá thực nghiệm}
+\section{Kết quả thực nghiệm mô phỏng và đánh giá sai số}
 
-Phần này trình bày kết quả mô phỏng số trên máy tính và phương án kiểm chứng trên robot. Bảng~\ref{tab:exp-result-template} được điền từ các lượt chạy chương trình mô phỏng Python, không phải số liệu đo trên phần cứng. Các tham số chưa được nhận dạng được công bố như giả thiết; kết quả chỉ có giá trị đối với mô hình và cấu hình đã sử dụng. Trước khi kiểm chứng thực tế cần chốt thông số \(L,r_L,r_R,N_L,N_R\), cấu hình điều khiển, tải, điện áp nguồn và điều kiện mặt sàn.
+Phần này trình bày kết quả thu được từ thực nghiệm mô phỏng trên máy tính, nhằm đánh giá khả năng tìm đường, bám đường và dừng tại đích của hệ thống. Hai kịch bản được khảo sát là di chuyển trên đường thẳng và di chuyển tránh vật cản tĩnh. Dữ liệu được ghi trực tiếp từ các lượt chạy để tổng hợp sai số và phân tích những yếu tố ảnh hưởng đến chất lượng điều khiển. Kết quả là cơ sở lựa chọn nội dung hiệu chỉnh và tổ chức kiểm chứng tiếp theo trên mô hình xe.
 
 Một lượt thử gồm khởi tạo tư thế, kiểm tra dữ liệu, phát nhiệm vụ, ghi toàn bộ quá trình và lưu nguyên nhân kết thúc. Mỗi cấu hình được lặp với số lượt đã quy định trước; các lượt không tới đích, mất dữ liệu hoặc bị dừng phải được lưu lại cùng trạng thái, thay vì chỉ giữ các lượt thành công. Ngưỡng đạt/không đạt cần được xác định trước khi xem kết quả, dựa trên bề rộng hành lang, dung sai điểm dừng và khả năng đo của hệ thống.
 
@@ -1870,23 +1859,25 @@ Trong phạm vi triển khai cơ sở, đề tài sử dụng profile hình than
 
 \subsubsection*{a. Thiết lập bản đồ và chuỗi xử lý}
 
-Mặt bằng thử được đo trong cùng hệ tọa độ với vị trí robot và mục tiêu. Với cấu hình hiện được cung cấp chỉ có encoder, thí nghiệm cơ sở dùng vật cản tĩnh đã đo và nhập vào bản đồ; không giả định robot đã có khả năng tự phát hiện vật cản chưa biết. Phần nhô của thân xe được xét qua vùng cấm cho tâm robot, cộng khoảng dự phòng cho sai số định vị và sai số bám.
+Bản đồ thử nghiệm được thiết lập trong cùng hệ tọa độ với vị trí robot và mục tiêu. Vật cản tĩnh được khai báo trước trên bản đồ; bộ bám sử dụng thông tin chuyển động từ encoder để cập nhật tư thế. Kích thước bao thân xe và khoảng dự phòng cho sai số định vị, sai số bám được xét khi mở rộng vùng cấm. Cách tổ chức này cho phép đánh giá riêng chuỗi quy hoạch và điều khiển với thông tin bản đồ đã biết.
 
 Chuỗi xử lý đề xuất gồm tạo bản đồ, chạy bộ tìm đường của Chương 3, kiểm tra đường nối, làm mượt theo mục 2.4, gán tốc độ khả thi rồi gửi đường cho bộ bám. Trước khi chạy, xác nhận đường mượt còn nằm trong vùng tự do. Trong lượt thử, robot đi theo đường đã duyệt; nếu sai lệch vượt miền cho phép hoặc xuất hiện tình huống không được bản đồ mô tả, lượt thử được dừng và ghi lý do.
 
-\subsubsection*{b. Tổ chức so sánh và ghi nhận}
+\subsubsection*{b. Tổ chức thử nghiệm và ghi nhận kết quả}
 
-Các thuật toán được so sánh trên cùng bản đồ, điểm đầu/đích, mô hình thân xe, quy tắc kiểm tra va chạm và giới hạn chuyển động. Với phương pháp ngẫu nhiên, lưu hạt giống và ngân sách tìm kiếm. Thời gian tính đường được đo trên đúng thiết bị thực thi bộ quy hoạch, tách khỏi thời gian truyền dữ liệu và thời gian robot di chuyển.
+Thực nghiệm gồm 60 lượt chạy, chia đều cho hai kịch bản. Các lượt sử dụng cùng thông số hình học danh định, cấu trúc điều khiển và giới hạn chuyển động. Trong kịch bản có vật cản, Dijkstra xác định đường đi trên bản đồ lưới, Bézier làm mượt các góc chuyển hướng, còn Pure Pursuit kết hợp PI hai bánh thực hiện bám đường. Việc đánh giá tập trung vào chất lượng của toàn bộ chuỗi xử lý này.
 
-Có thể khảo sát ba bố trí: vật cản đơn để kiểm tra vòng tránh, nhiều vật cản để đánh giá đường toàn cục và hành lang hẹp để kiểm tra khoảng hở. Kích thước cụ thể phải được lưu cùng sơ đồ. Nếu nguồn lực chỉ cho phép thử một số bộ quy hoạch, báo cáo rõ nhóm đã thử; không suy rộng kết quả cho các thuật toán chỉ có phần mô phỏng.
+Bản đồ có kích thước 4,0 m theo chiều dài và 2,4 m theo chiều rộng, với bước lưới 0,05 m. Điểm xuất phát và điểm đích cách nhau 3 m theo phương ngang. Kịch bản thứ nhất giữ nguyên đường nối thẳng; kịch bản thứ hai bố trí một vật cản chữ nhật rộng 0,6 m và cao 0,7 m chắn tuyến đi trực tiếp. Sau quy hoạch và làm mượt, đường tránh vật cản dài khoảng 3,412 m. Hai kịch bản đều sử dụng profile vận tốc hình thang, với vận tốc dọc đường tối đa 0,25 m/s và gia tốc 0,20 m/s².
 
-Lượt thử được tính thành công khi robot đạt vùng đích theo dung sai đã đặt, hoàn thành yêu cầu hướng nếu có, không chạm vật cản và không cần can thiệp thủ công. Chỉ việc có một đường đi trên bản đồ chưa đủ để tính là một lượt robot thành công. Các lượt hết thời gian, lỗi điều khiển hoặc bị dừng cũng phải được phân loại.
+Thông số danh định gồm bán kính bánh 0,022 m, khoảng cách hai bánh 0,135 m và độ phân giải encoder 1400 đếm trên một vòng trục đầu ra. Bộ bám có khoảng nhìn trước 0,20 m; vòng PI cập nhật 100 lần mỗi giây. Để khảo sát ảnh hưởng của sai lệch cơ khí và tiếp xúc, mỗi lượt được gán sai lệch bán kính bánh và khoảng cách bánh trong phạm vi 1\%, cùng độ trượt cơ sở từng bánh từ 0 đến 2\%. Mô hình còn xét lượng tử hóa encoder, sai lệch đáp ứng hai động cơ và độ lệch tư thế ban đầu. Các tham số này là điều kiện đặt cho mô hình số; cấu hình đầy đủ và thông số từng lượt được lưu cùng nhật ký chạy.
+
+Một lượt được xác định là thành công khi robot kết thúc trong 35 giây, cách đích không quá 0,05 m, sai lệch hướng cuối không quá 0,10 rad, sai số ngang lớn nhất không quá 0,15 m và không va chạm. Toàn bộ lượt chạy đều được giữ lại trong thống kê, kể cả lượt dừng do va chạm hoặc không đạt dung sai. Trạng thái kết thúc của bộ điều khiển được ghi riêng với kết quả kiểm tra đạt đích, giúp nhận biết trường hợp Odometry báo đã đến nơi nhưng vị trí đối chứng còn lệch.
 
 \begin{center}
 \begin{minipage}{\linewidth}
   \centering
   \refstepcounter{table}\label{tab:exp-result-template}%
-  \tablename~\thetable: Kết quả mô phỏng số với profile hình thang (30 lượt/kịch bản)\par\smallskip
+  \tablename~\thetable: Kết quả thực nghiệm mô phỏng với profile hình thang\par\smallskip
   \small
   \renewcommand{\arraystretch}{1.35}
   \begin{tabular}{@{}p{0.46\linewidth}p{0.22\linewidth}p{0.22\linewidth}@{}}
@@ -1905,76 +1896,50 @@ Lượt thử được tính thành công khi robot đạt vùng đích theo dun
   \end{tabular}
   \par\smallskip
   \begin{minipage}{0.96\linewidth}
+  \footnotesize\textit{Ghi chú:} Các giá trị có dấu ± thể hiện trung bình và độ lệch chuẩn mẫu của 30 lượt. Thời gian hoàn thành chỉ tính trên 5 lượt thành công của mỗi kịch bản. Sai số ngang lớn nhất và khoảng hở nhỏ nhất là cực trị trên toàn bộ lượt. Khoảng hở âm cho biết đã xảy ra va chạm.
   \end{minipage}
 \end{minipage}
 \end{center}
 
-Kết quả cho tỷ lệ đạt \(16.7\%\) ở cả hai kịch bản. Trong kịch bản đường thẳng, 25 lượt còn lại không đạt ít nhất một dung sai; trong kịch bản vật cản có 3 lượt va chạm và 22 lượt kết thúc điều khiển nhưng không đạt dung sai. Cả 30 lượt đường thẳng đều kết thúc theo Odometry, còn kịch bản vật cản có 27 lượt kết thúc theo Odometry. Điều này cho thấy điều kiện dừng trên tư thế ước lượng không đồng nghĩa với đạt đích thật. Sai số bánh và trượt chưa được bù làm Odometry lệch tích lũy, dù vận tốc encoder vẫn bám lệnh. Đường tham chiếu sau làm mượt có khoảng hở thân xe với vật cản tối thiểu khoảng \(0.166\,\mathrm{m}\), nhưng sai số định vị và bám vẫn có thể dẫn tới va chạm.
+Bảng~\ref{tab:exp-result-template} cho thấy mỗi kịch bản có 5 lượt thành công trong tổng số 30 lượt, tương ứng tỷ lệ 16,7\%. Với đường thẳng, cả 30 lượt đều kết thúc theo điều kiện dừng của bộ điều khiển, nhưng 25 lượt không đạt ít nhất một dung sai đánh giá. Với đường có vật cản, 27 lượt kết thúc theo điều kiện dừng, trong đó 22 lượt không đạt dung sai; 3 lượt còn lại dừng do va chạm. Như vậy, việc hoàn tất lệnh di chuyển trên Odometry chưa bảo đảm robot đã đến đúng vị trí yêu cầu.
 
-Bảng này đánh giá toàn chuỗi Dijkstra--Bézier--Pure Pursuit--PI trong một cấu hình giả định, không phải so sánh nhiều bộ quy hoạch hoặc kết luận Dijkstra tìm đường thất bại. Trước khi triển khai thực tế cần hiệu chuẩn bán kính hiệu dụng, khoảng cách bánh và bổ sung phép đo định vị đối chứng. Giá trị PWM không bão hòa trong mô hình cũng chưa xác nhận khả năng cấp dòng hoặc dự trữ mô-men của xe thật. Hồ sơ đi kèm lưu cấu hình, hạt giống, thông số từng lượt, toàn bộ CSV và mã nguồn; phép kiểm tra giảm đôi bước tích phân cho sai khác RMSE nhỏ hơn \(10^{-6}\,\mathrm{m}\) ở hai lượt kiểm tra, nhưng không thay thế kiểm chứng độ đúng của mô hình bằng đo đạc.
+Sai số vị trí trung bình theo chỉ tiêu RMSE xấp xỉ 0,167 m ở cả hai kịch bản. Sai số vị trí khi kết thúc tăng từ khoảng 0,293 m trên đường thẳng lên 0,404 m khi tránh vật cản. Những lượt thành công hoàn thành lần lượt trong khoảng 13,762 giây và 15,416 giây. Sự gia tăng thời gian ở kịch bản có vật cản phù hợp với tuyến đi dài hơn và yêu cầu thay đổi hướng. Tuy nhiên, mức sai số và độ phân tán cho thấy chất lượng định vị, bám đường còn chưa ổn định trong điều kiện đã khảo sát.
 
-\subsection{\texorpdfstring{Thu thập dữ liệu và biểu diễn sai số bám quỹ đạo \(\left( e_{x},e_{y},e_{\theta} \right)\) giữa quỹ đạo lý thuyết và quỹ đạo thực tế.}{Thu thập dữ liệu và biểu diễn sai số bám quỹ đạo ex,ey,eθgiữa quỹ đạo lý thuyết và quỹ đạo thực tế.}}
+Đường tham chiếu sau làm mượt có khoảng hở thân xe với vật cản tối thiểu khoảng 0,166 m, nhưng vẫn xuất hiện va chạm khi robot bám đường. Kết quả này cho thấy cần xét đồng thời khoảng dự phòng của đường đi và sai số chuyển động tích lũy. Trong mô hình, sai lệch bán kính và trượt bánh chưa được bù làm tư thế Odometry lệch dần so với trạng thái đối chứng. Vì vậy, nội dung cần ưu tiên hiệu chỉnh là thông số hình học và chất lượng ước lượng tư thế, bên cạnh việc lựa chọn khoảng nhìn trước và hệ số PI.
 
-\subsubsection*{a. Ghi dữ liệu và thiết lập phép đo đối chứng}
+Trong cả hai kịch bản, PWM không chạm giới hạn đã đặt. Điều này cho thấy bão hòa đầu ra chưa xuất hiện trong cấu hình khảo sát, trong khi sai số định vị vẫn ảnh hưởng rõ đến kết quả. Bảng đánh giá khả năng thực hiện tuyến đường của toàn hệ thống; tỷ lệ thành công thấp chưa đủ để quy nguyên nhân cho riêng thuật toán Dijkstra. Các kết quả cần được kiểm chứng tiếp trên xe với thông số cơ khí, truyền động và phép đo vị trí đã hiệu chuẩn.
 
-Nhật ký tối thiểu cần có thời gian đo, số đếm encoder hai bánh, vận tốc đặt/đo, lệnh \(v_c,\omega_c\), duty PWM, tư thế Odometry, chỉ số tiến triển trên đường và trạng thái điều khiển. Hồ sơ lượt chạy ghi thêm thông số hình học, nguồn điện, tải, PID, khoảng nhìn trước, bản đồ, bộ quy hoạch và điều kiện kết thúc.
+\subsection{Thu thập dữ liệu và phân tích sai số bám đường}
 
-Để đánh giá vị trí thực, có thể dùng camera đã hiệu chuẩn quan sát dấu mốc trên robot, hệ theo dõi ngoài hoặc phép đo vị trí tại các mốc cố định. Gốc tọa độ, tỷ lệ chiều dài và độ lệch giữa dấu mốc đo với điểm \(P\) phải được xác định. Phép đo mốc rời rạc chỉ hỗ trợ đánh giá ở các vị trí đó; không đủ để suy ra RMSE liên tục toàn hành trình. Độ phân giải và độ không chắc chắn của phép đo cần được báo cáo cùng sai số robot.
+\subsubsection*{a. Thu thập và đối chiếu dữ liệu}
 
-Các chuỗi dữ liệu được chuyển về cùng hệ tọa độ và cùng lưới thời gian. Chỉ nội suy trong khoảng có dữ liệu hợp lệ, ghi lại khoảng mất mẫu và độ lệch đồng hồ. Không chỉnh lại gốc hay thời gian riêng cho từng đoạn để làm giảm sai số sau khi đã xem kết quả. Nếu chỉ có encoder, các đồ thị được ghi là sai số trên tư thế ước lượng; chúng chưa phải bằng chứng về độ chính xác vị trí thật.
+Dữ liệu được ghi theo từng chu kỳ điều khiển, gồm thời gian, vị trí và hướng của robot, tư thế Odometry, số đếm encoder, vận tốc đặt và vận tốc phản hồi của hai bánh, lệnh PWM và trạng thái thực hiện nhiệm vụ. Mỗi lượt có nhật ký riêng và đi kèm thông số khởi tạo, giúp truy nguyên nguyên nhân kết thúc và tính lại các chỉ tiêu khi cần.
 
-\subsubsection*{b. Sai số theo thời gian và sai số hình học}
+Trong thực nghiệm này, trạng thái chuyển động do mô hình số tính toán được sử dụng làm dữ liệu đối chứng. Bộ điều khiển chỉ sử dụng Odometry từ encoder, nên sai lệch giữa vị trí đối chứng và vị trí ước lượng có thể được theo dõi riêng. Cách ghi nhận này giúp phân biệt sai số định vị với sai số giữa robot và đường tham chiếu. Khi kiểm chứng trên xe, nguồn đối chứng tương ứng cần được cung cấp bằng camera đã hiệu chuẩn hoặc hệ đo ngoài.
 
-Gọi \((x_k^{\mathrm{gt}},y_k^{\mathrm{gt}},\theta_k^{\mathrm{gt}})\) là tư thế đối chứng và \((x_{d,k},y_{d,k},\theta_{d,k})\) là tham chiếu tại cùng thời điểm. Quy ước sai số là thực tế trừ tham chiếu:
-\begin{equation}
-  \begin{aligned}
-    e_{x,k}&=x_k^{\mathrm{gt}}-x_{d,k},\\
-    e_{y,k}&=y_k^{\mathrm{gt}}-y_{d,k},\\
-    e_{\theta,k}&=\operatorname{atan2}
-      \bigl(\sin(\theta_k^{\mathrm{gt}}-\theta_{d,k}),
-            \cos(\theta_k^{\mathrm{gt}}-\theta_{d,k})\bigr).
-  \end{aligned}
-\end{equation}
-Với \(N\) mẫu cách đều thời gian, một số chỉ tiêu là
-\begin{equation}
-  \operatorname{RMSE}_{p}=\sqrt{\frac{1}{N}\sum_{k=1}^{N}
-    (e_{x,k}^{2}+e_{y,k}^{2})},\qquad
-  E_{p,\max}=\max_k\sqrt{e_{x,k}^{2}+e_{y,k}^{2}},
-\end{equation}
-\begin{equation}
-  \operatorname{MAE}_{\theta}=\frac{1}{N}\sum_{k=1}^{N}|e_{\theta,k}|.
-\end{equation}
-Các đại lượng này phản ánh cả sai lệch hình học và việc robot nhanh/chậm so với lịch. Để đánh giá riêng bám đường, tìm điểm chiếu \(\mathbf{p}(s_k^*)\) theo nhánh tiến triển hợp lệ và dùng hướng tiếp tuyến \(\theta_p(s_k^*)\). Sai số ngang có dấu là
-\begin{equation}
-  e_{\perp,k}=
-    \begin{bmatrix}-\sin\theta_p(s_k^*)&\cos\theta_p(s_k^*)\end{bmatrix}
-    \left(\begin{bmatrix}x_k^{\mathrm{gt}}\\y_k^{\mathrm{gt}}\end{bmatrix}
-       -\mathbf{p}(s_k^*)\right).
-\end{equation}
-Sai số vị trí cuối được tính trực tiếp từ vị trí robot lúc kết thúc và điểm đích, không thay bằng sai số chiếu lên một đoạn bất kỳ. Nếu cần đánh giá riêng Odometry, so sánh tư thế Odometry với tư thế đối chứng cùng thời điểm, tách khỏi sai số giữa robot và đường tham chiếu.
+Các chuỗi dữ liệu sử dụng chung hệ tọa độ và mốc thời gian từ lúc bắt đầu lượt chạy. Vị trí đối chứng được so sánh với vị trí tham chiếu tại cùng thời điểm; sau thời gian di chuyển danh định, tham chiếu được giữ ở đích. Lượt va chạm chỉ được thống kê đến thời điểm dừng, không bổ sung các mẫu bằng không vào phần dữ liệu còn thiếu.
+
+\subsubsection*{b. Ý nghĩa các chỉ tiêu sai số}
+
+RMSE vị trí phản ánh mức sai lệch tổng thể giữa vị trí robot và vị trí tham chiếu trong suốt lượt chạy. Chỉ tiêu này chịu ảnh hưởng của cả độ lệch khỏi đường đi và việc robot tiến nhanh hoặc chậm hơn lịch vận tốc. Do đó, RMSE được xem cùng sai số ngang để đánh giá đầy đủ chất lượng chuyển động.
+
+Sai số ngang là khoảng lệch của robot theo phương vuông góc với đường tham chiếu gần nhất, có xét đúng nhánh tiến triển. Giá trị lớn nhất cho biết mức lệch khỏi tuyến nghiêm trọng nhất trong quá trình di chuyển. Sai số hướng tuyệt đối trung bình thể hiện mức chênh lệch giữa hướng robot và hướng tham chiếu, qua đó hỗ trợ nhận xét khả năng chuyển hướng và ổn định tư thế.
+
+Sai số vị trí khi kết thúc là khoảng cách từ robot đến điểm đích ở thời điểm lượt chạy dừng lại, kể cả trường hợp dừng do va chạm. Khoảng hở nhỏ nhất được xác định từ biên bao thân xe tới vật cản. Giá trị âm trong bảng cho biết biên thân xe đã vượt vào vùng vật cản một lượng nhỏ tại bước phát hiện va chạm của bộ tính số.
 
 \subsubsection*{c. Thống kê và cách trình bày kết quả}
 
-Với \(n_{\mathrm{run}}\) lượt và \(n_{\mathrm{ok}}\) lượt thành công, tỷ lệ thành công là
-\begin{equation}
-  P_{\mathrm{ok}}=100\frac{n_{\mathrm{ok}}}{n_{\mathrm{run}}}\,\%,
-  \qquad n_{\mathrm{run}}>0.
-\end{equation}
-Cho chỉ tiêu \(J_j\) của \(n\) lượt có dữ liệu hợp lệ, báo cáo trung bình và độ lệch chuẩn mẫu:
-\begin{equation}
-  \overline{J}=\frac{1}{n}\sum_{j=1}^{n}J_j,\qquad
-  s_J=\sqrt{\frac{1}{n-1}\sum_{j=1}^{n}(J_j-\overline{J})^2},
-  \quad n\geq2.
-\end{equation}
-Nếu thống kê chỉ dùng các lượt thành công, phải ghi rõ điều đó và vẫn công bố tỷ lệ thành công trên toàn bộ lượt thử. Lượt thất bại không được gán thời gian hay sai số bằng \(0\). Với so sánh theo cặp, dùng cùng bố trí và điều kiện khởi đầu để giảm ảnh hưởng của các yếu tố ngoài thuật toán.
+Các chỉ tiêu sai số được tổng hợp trên cả 30 lượt của từng kịch bản và trình bày bằng giá trị trung bình kèm độ lệch chuẩn mẫu. Trung bình thể hiện mức kết quả chung, còn độ lệch chuẩn cho biết mức phân tán giữa các lượt. Riêng sai số ngang lớn nhất và khoảng hở nhỏ nhất được lấy theo trường hợp bất lợi nhất của toàn bộ lượt chạy, giúp nhận diện những tình huống mà giá trị trung bình có thể che khuất.
 
-Bộ hình kết quả nên gồm đường tham chiếu và đường đo trên mặt phẳng, đồ thị \(e_x,e_y,e_{\theta},e_{\perp}\), vận tốc hai bánh đặt/đo và duty PWM theo thời gian. Đánh dấu các thời điểm bão hòa, mất mẫu, đổi trạng thái hoặc dừng. Từ các đồ thị mới phân tích được sai số chủ yếu do định vị, bám đường, vòng tốc độ, độ trễ hay điều kiện tiếp xúc; chưa có dữ liệu thì chưa xếp hạng thuật toán hoặc khẳng định mức cải thiện.
+Thời gian hoàn thành được tính riêng cho các lượt thành công, bao gồm cả thời gian căn hướng và chờ ổn định cuối lượt. Tỷ lệ thành công vẫn sử dụng đầy đủ 30 lượt làm cơ sở, nên những lượt không đạt không bị loại khỏi đánh giá chung. Tỷ lệ PWM bão hòa là phần trăm thời gian có ít nhất một kênh điều khiển chạm giới hạn duty đã đặt.
+
+Hình~\ref{fig:do-thi-quy-dao-sai-so} thể hiện đường tham chiếu, các đường chuyển động đã ghi và diễn biến sai số của một lượt đại diện trong mỗi kịch bản. Lượt đại diện được chọn theo vị trí trung vị của RMSE, giúp phản ánh mức sai số điển hình của tập dữ liệu. Trên các đồ thị, sai số vị trí có xu hướng tăng trong quá trình di chuyển, phù hợp với ảnh hưởng tích lũy của sai lệch Odometry. Sự khác biệt giữa vị trí dừng theo ước lượng và vị trí đối chứng là căn cứ để ưu tiên hiệu chuẩn cơ khí và cải thiện định vị ở bước phát triển tiếp theo.
 
 \begin{center}
   \begin{minipage}{\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{Hinh_4_5_Do_thi_minh_hoa.png}
-    \chuthichhinh[fig:do-thi-quy-dao-sai-so]{Mẫu bố cục đồ thị cho cùng đường tham chiếu và profile hình thang; dữ liệu thực nghiệm chưa bổ sung}
+    \includegraphics[width=\linewidth]{Hinh_4_5_Ket_qua_mo_phong.png}
+    \chuthichhinh[fig:do-thi-quy-dao-sai-so]{Đường chuyển động và sai số bám đường trong hai kịch bản thực nghiệm mô phỏng}
   \end{minipage}
 \end{center}
 
@@ -2001,10 +1966,6 @@ Các nội dung trên được xác định là hướng phát triển, chưa đ
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Tài liệu tham khảo}
 
-\bibitem{google-colab-faq}
-Google, \textit{Colaboratory -- Frequently Asked Questions},
-\href{https://research.google.com/colaboratory/faq.html}{Tài liệu chính thức về môi trường notebook Colab}.
-
 \bibitem{nguyen-truong-thinh-ky-thuat-robot}
 Nguyễn Trường Thịnh, \textit{Giáo trình Kỹ thuật robot}, Nhà xuất bản Đại học Quốc gia TP. Hồ Chí Minh.
 
@@ -2012,11 +1973,6 @@ Nguyễn Trường Thịnh, \textit{Giáo trình Kỹ thuật robot}, Nhà xuấ
 Steven M. LaValle, \textit{Planning Algorithms}, Cambridge University Press, 2006.
 \href{https://lavalle.pl/planning/}{Bản trực tuyến do tác giả cung cấp}, Chương 2, 4, 5, 7, 13 và 14.
 
-\bibitem{kavraki-prm-1996}
-Lydia E. Kavraki, Petr Švestka, Jean-Claude Latombe và Mark H. Overmars,
-``Probabilistic Roadmaps for Path Planning in High-Dimensional Configuration Spaces'',
-\textit{IEEE Transactions on Robotics and Automation}, tập 12, số 4, tr. 566--580, 1996.
-\href{https://www.kavrakilab.rice.edu/publications/kavraki-svestka1996probabilistic-roadmaps-for.html}{Thông tin bài báo tại Kavraki Lab}.
 
 \bibitem{lavalle-rrt-1998}
 Steven M. LaValle, \textit{Rapidly-Exploring Random Trees: A New Tool for Path Planning},
@@ -2033,56 +1989,6 @@ Oussama Khatib, ``Real-Time Obstacle Avoidance for Manipulators and Mobile Robot
 \textit{The International Journal of Robotics Research}, tập 5, số 1, tr. 90--98, 1986.
 \href{https://khatib.stanford.edu/publications/pdfs/Khatib_1986_IJRR.pdf}{Bản bài báo tại Stanford University}.
 
-\bibitem{ge-cui-2000}
-S. S. Ge và Y. J. Cui, ``New Potential Functions for Mobile Robot Path Planning'',
-\textit{IEEE Transactions on Robotics and Automation}, tập 16, số 5, tr. 615--620, 2000.
-\href{https://bpb-us-w2.wpmucdn.com/blog.nus.edu.sg/dist/f/14858/files/2021/07/TRA-potential-00.pdf}{Bản bài báo tại trang của tác giả, National University of Singapore}.
-
-\bibitem{shene-bezier-notes}
-Ching-Kuang Shene, \textit{CS3621 Introduction to Computing with Geometry},
-Michigan Technological University, ghi chú về đường Bézier:
-\href{https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/Bezier/bezier-construct.html}{Construction of Bézier Curves};
-\href{https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/Bezier/bezier-der.html}{Derivatives of a Bézier Curve}.
-
-\bibitem{shene-bspline-notes}
-Ching-Kuang Shene, \textit{CS3621 Introduction to Computing with Geometry},
-Michigan Technological University, ghi chú về B-Spline:
-\href{https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/bspline-curve.html}{Định nghĩa đường cong};
-\href{https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/bspline-basis.html}{Hàm cơ sở};
-\href{https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/bspline-property.html}{Tính liên tục của hàm cơ sở};
-\href{https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/bspline-curve-prop.html}{Tính chất của đường cong};
-\href{https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/B-spline/bspline-derv.html}{Đạo hàm}.
-
-\bibitem{patrikalakis-geometric-continuity}
-Nicholas M. Patrikalakis, Takashi Maekawa và Wonjoon Cho,
-\textit{Shape Interrogation for Computer Aided Design and Manufacturing (Hyperbook Edition)},
-Massachusetts Institute of Technology,
-\href{https://web.mit.edu/hyperbook/Patrikalakis-Maekawa-Cho/node13.html}{Mục 1.3.5: Algorithms for Bézier curves}.
-
-\bibitem{lynch-park-modern-robotics}
-Kevin M. Lynch và Frank C. Park,
-\textit{Modern Robotics: Mechanics, Planning, and Control}, Cambridge University Press.
-Tài liệu bổ trợ của tác giả tại Northwestern University:
-\href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/2-5-task-space-and-workspace/}{Mục 2.5: Không gian làm việc};
-\href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/9-1-and-9-2-point-to-point-trajectories-part-1-of-2/}{Mục 9.1--9.2: Đường đi và quy luật thời gian};
-\href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/9-1-and-9-2-point-to-point-trajectories-part-2-of-2/}{Mục 9.1--9.2: Các dạng quy luật thời gian và profile chữ S};
-\href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/9-4-time-optimal-time-scaling-part-1-of-3/}{Mục 9.4: Quy luật thời gian tối ưu};
-\href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/13-3-1-modeling-of-nonholonomic-wheeled-mobile-robots/}{Mục 13.3.1: Mô hình robot di động phi holonomic};
-\href{https://modernrobotics.northwestern.edu/nu-gm-book-resource/13-4-odometry/}{Mục 13.4: Odometry}.
-
-\bibitem{coulter-pure-pursuit-1992}
-R. Craig Coulter, \textit{Implementation of the Pure Pursuit Path Tracking Algorithm},
-báo cáo kỹ thuật CMU-RI-TR-92-01, Robotics Institute, Carnegie Mellon University, 1992.
-\href{https://publications.ri.cmu.edu/storage/publications/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf}{Báo cáo gốc}, mục 2--4.
-
-\bibitem{hshop-ga12-n20-6v300}
-Hshop.vn, \textit{Động cơ giảm tốc DC Servo GA12 N20 DC Geared Motor 6VDC 300RPM}, mã sản phẩm HS2312V.
-\href{https://hshop.vn/dong-co-dc-giamtoc-ga12-n20-encoder}{Thông số động cơ và encoder do nhà cung cấp công bố}, truy cập ngày 30/10/2026.
-
-\bibitem{hshop-ga12-wheel-kit}
-Hshop.vn, \textit{Bộ động cơ DC Servo GA12 N20 kèm gá bắt và bánh xe}.
-\href{https://hshop.vn/bo-dong-co-dc-servo-ga12-n20-kem-ga-bat-va-banh-xe-v2-43mm}{Thông số bộ động cơ, gá bắt và bánh cao su 44 mm}, truy cập ngày 30/10/2026.
-
 \bibitem{espressif-c3-peripherals}
 Espressif Systems, \textit{ESP-IDF Programming Guide -- ESP32-C3},
 \href{https://docs.espressif.com/projects/esp-idf/en/stable/esp32c3/api-reference/peripherals/ledc.html}{LED Control (LEDC)} và
@@ -2093,20 +1999,6 @@ Toshiba Electronic Devices \& Storage Corporation, \textit{TB6612FNG: Driver IC 
 \href{https://toshiba.semicon-storage.com/info/TB6612FNG_datasheet_en_20141001.pdf?did=10660\&prodName=TB6612FNG}{Tài liệu kỹ thuật chính thức},
 các mục Operating Range, H-SW Control Function và Electrical Characteristics, tr. 3--5.
 
-\bibitem{ros-control-pid}
-ros-controls, \textit{control\_toolbox -- PID Controller}, tài liệu ROS 2 Control,
-\href{https://control.ros.org/jazzy/doc/control_toolbox/doc/index.html}{Phương trình PID và các chiến lược chống bão hòa tích phân}.
-
-\bibitem{micro-ros-espidf}
-micro-ROS, \textit{micro-ROS component for ESP-IDF},
-\href{https://github.com/micro-ROS/micro_ros_espidf_component}{Thành phần tích hợp micro-ROS cho ESP-IDF, các vi điều khiển được hỗ trợ và kết nối micro-ROS Agent}.
-
-\bibitem{ros-rep-105}
-Wim Meeussen, \textit{REP-105: Coordinate Frames for Mobile Platforms}, ROS Enhancement Proposals,
-\href{https://github.com/ros-infrastructure/rep/blob/master/rep-0105.rst}{Định nghĩa các hệ map, odom và base\_link}.
-
-
-% Bổ sung các tài liệu tham khảo tiếp theo bằng lệnh \bibitem{ma-tai-lieu}.
 \end{thebibliography}
 
 \end{document}

@@ -1,0 +1,12 @@
+{
+  "straight": {
+    "run": 10,
+    "seed": 20261040,
+    "selection": "upper median of the 30 per-run position RMSEs"
+  },
+  "obstacle": {
+    "run": 25,
+    "seed": 20261055,
+    "selection": "upper median of the 30 per-run position RMSEs"
+  }
+}
