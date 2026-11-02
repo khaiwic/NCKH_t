@@ -1,0 +1,8 @@
+{
+  "audited_successful_paths": 390,
+  "audited_quadratic_segments": 1081,
+  "quadrature": "96-point Gauss-Legendre vs 301-point trapezoidal rule",
+  "max_absolute_J_difference": 5.596102773708367e-05,
+  "max_scaled_J_difference": 2.790829041928326e-06,
+  "passed": true
+}

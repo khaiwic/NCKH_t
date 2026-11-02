@@ -1,0 +1,31 @@
+{
+  "open": {
+    "graph_cost_agrees_m": 5.299999999999997,
+    "smooth_clearance_m": 0.23999999999999966
+  },
+  "maze": {
+    "graph_cost_agrees_m": 7.5669047558312075,
+    "smooth_clearance_m": 0.18148291969747482
+  },
+  "clutter": {
+    "graph_cost_agrees_m": 6.02132034355964,
+    "smooth_clearance_m": 0.1688661246633168
+  },
+  "csv_recomputed": true,
+  "all_raw_and_final_paths_collision_checked": true,
+  "figure_selection": {
+    "open / Dijkstra": "open_0_16",
+    "open / A*": "open_1_16",
+    "open / PRM": "open_2_16",
+    "open / RRT*": "open_3_16",
+    "open / APF": "open_4_16",
+    "maze / Dijkstra": "maze_0_16",
+    "maze / A*": "maze_1_16",
+    "maze / PRM": "maze_2_23",
+    "maze / RRT*": "maze_3_25",
+    "clutter / Dijkstra": "clutter_0_16",
+    "clutter / A*": "clutter_1_16",
+    "clutter / PRM": "clutter_2_23",
+    "clutter / RRT*": "clutter_3_04"
+  }
+}

@@ -1,0 +1,672 @@
+{
+  "open": {
+    "Dijkstra": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 27.79091,
+        "sample_sd": 0.2881959179758296
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 1.7465833333333336,
+        "sample_sd": 4.940712339195449
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 5.3000000000000025,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.3000000000000025,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.2399999999999996,
+        "sample_sd": 5.646012854083702e-17
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": {
+        "n": 30,
+        "mean": 1700.0,
+        "sample_sd": 0.0
+      }
+    },
+    "A*": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 2.81167,
+        "sample_sd": 0.0992579264619065
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 0.7206933333333334,
+        "sample_sd": 0.032269478836321724
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 5.3000000000000025,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.3000000000000025,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.2399999999999996,
+        "sample_sd": 5.646012854083702e-17
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": {
+        "n": 30,
+        "mean": 54.0,
+        "sample_sd": 0.0
+      }
+    },
+    "PRM": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 21.86644333333333,
+        "sample_sd": 2.0449629528190236
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 0.8954300000000001,
+        "sample_sd": 0.23080730752490605
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 5.44257770466815,
+        "sample_sd": 0.04709187280244175
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.3000000000000025,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.2399999999999996,
+        "sample_sd": 5.646012854083702e-17
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "build_ms": {
+        "n": 30,
+        "mean": 20.315350000000006,
+        "sample_sd": 2.0085587563620386
+      },
+      "query_ms": {
+        "n": 30,
+        "mean": 1.194,
+        "sample_sd": 0.04663534252488979
+      },
+      "expanded": null
+    },
+    "RRT*": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 83.32150999999999,
+        "sample_sd": 1.1728403640528944
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 0.7698766666666668,
+        "sample_sd": 0.20057635519763495
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 5.3340689411992805,
+        "sample_sd": 0.012510426386487316
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.3000000000000025,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.2399999999999996,
+        "sample_sd": 5.646012854083702e-17
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": null
+    },
+    "APF": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 1.4370366666666667,
+        "sample_sd": 0.07014977810240093
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 0.7687,
+        "sample_sd": 0.15370810222514353
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 5.3000000000000025,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.3000000000000025,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.2399999999999996,
+        "sample_sd": 5.646012854083702e-17
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 0.0,
+        "sample_sd": 0.0
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": null
+    }
+  },
+  "maze": {
+    "Dijkstra": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 26.123106666666665,
+        "sample_sd": 0.31630548844904455
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 2.398376666666666,
+        "sample_sd": 0.19515132887305572
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 7.5669047558312155,
+        "sample_sd": 9.033620566533923e-16
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 7.104880677466928,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 11.25373642766389,
+        "sample_sd": 5.420172339920354e-15
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.1814829196974748,
+        "sample_sd": 2.823006427041851e-17
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 4.467155368922984,
+        "sample_sd": 9.033620566533923e-16
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": {
+        "n": 30,
+        "mean": 1223.0,
+        "sample_sd": 0.0
+      }
+    },
+    "A*": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 20.801180000000002,
+        "sample_sd": 0.33939361483844027
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 2.4937533333333337,
+        "sample_sd": 0.32141166720592446
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 7.5669047558312155,
+        "sample_sd": 0.0
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 7.119737386970284,
+        "sample_sd": 0.0
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 11.573911822748805,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.18816516047640422,
+        "sample_sd": 2.823006427041851e-17
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 4.754098139632621,
+        "sample_sd": 9.033620566533923e-16
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": {
+        "n": 30,
+        "mean": 796.0,
+        "sample_sd": 0.0
+      }
+    },
+    "PRM": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 30.132243333333335,
+        "sample_sd": 8.852198194981282
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 2.421313333333333,
+        "sample_sd": 0.27452321393373236
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 7.492046397246734,
+        "sample_sd": 0.22989038533032857
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 7.188642225755055,
+        "sample_sd": 0.15779988583246687
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 11.49944705488855,
+        "sample_sd": 2.7513973253169968
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.1984128732924332,
+        "sample_sd": 0.028830585750210604
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 5.063365109477958,
+        "sample_sd": 1.791876695352534
+      },
+      "build_ms": {
+        "n": 30,
+        "mean": 28.657173333333336,
+        "sample_sd": 8.84562964075104
+      },
+      "query_ms": {
+        "n": 30,
+        "mean": 1.1000666666666667,
+        "sample_sd": 0.04738979472078522
+      },
+      "expanded": null
+    },
+    "RRT*": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 97.33195333333335,
+        "sample_sd": 2.2583291763561846
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 6.02809,
+        "sample_sd": 18.829177390392335
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 7.131185921989853,
+        "sample_sd": 0.06300768676830121
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 7.029506312428418,
+        "sample_sd": 0.051905458814895764
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 9.758071069788818,
+        "sample_sd": 1.0320099623462287
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.1790466312151343,
+        "sample_sd": 0.015570168943351113
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 4.4836766073411045,
+        "sample_sd": 1.0985189487741391
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": null
+    },
+    "APF": {
+      "trials": 30,
+      "found": 0,
+      "successes": 0,
+      "failure_reasons": {
+        "stagnation": 30
+      },
+      "planning_ms": {
+        "n": 30,
+        "mean": 2.23231,
+        "sample_sd": 0.050576158687529967
+      },
+      "post_ms": null,
+      "raw_length_m": null,
+      "smooth_length_m": null,
+      "J_kappa_per_m": null,
+      "min_body_clearance_m": null,
+      "max_curvature_per_m": null,
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": null
+    }
+  },
+  "clutter": {
+    "Dijkstra": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 26.88498666666667,
+        "sample_sd": 0.7517155692530726
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 3.6880633333333335,
+        "sample_sd": 0.4416357006147388
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 6.021320343559642,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.772371090251479,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 4.024821992811285,
+        "sample_sd": 9.033620566533923e-16
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.16886612466331677,
+        "sample_sd": 2.823006427041851e-17
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 2.642330492740503,
+        "sample_sd": 9.033620566533923e-16
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": {
+        "n": 30,
+        "mean": 786.0,
+        "sample_sd": 0.0
+      }
+    },
+    "A*": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 9.328426666666667,
+        "sample_sd": 0.29746855172331704
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 3.588866666666667,
+        "sample_sd": 0.2593036647922906
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 6.021320343559641,
+        "sample_sd": 1.8067241133067846e-15
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.7681120305431675,
+        "sample_sd": 9.033620566533923e-16
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 3.6625779830411545,
+        "sample_sd": 1.3550430849800884e-15
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.1737773872448134,
+        "sample_sd": 0.0
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 2.6294913224026724,
+        "sample_sd": 0.0
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": {
+        "n": 30,
+        "mean": 204.0,
+        "sample_sd": 0.0
+      }
+    },
+    "PRM": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 49.99614,
+        "sample_sd": 0.9485935609427621
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 6.616740000000001,
+        "sample_sd": 16.063268366457294
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 5.990518743505496,
+        "sample_sd": 0.21896005359564125
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.864810858873147,
+        "sample_sd": 0.20696475475665457
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 5.707132970332389,
+        "sample_sd": 3.226643240741745
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.17752057456630257,
+        "sample_sd": 0.010137811669121928
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 3.5063634712116145,
+        "sample_sd": 1.3436297301431603
+      },
+      "build_ms": {
+        "n": 30,
+        "mean": 48.44296666666666,
+        "sample_sd": 0.9343044129682544
+      },
+      "query_ms": {
+        "n": 30,
+        "mean": 1.1526199999999998,
+        "sample_sd": 0.06907873269208714
+      },
+      "expanded": null
+    },
+    "RRT*": {
+      "trials": 30,
+      "found": 30,
+      "successes": 30,
+      "failure_reasons": {},
+      "planning_ms": {
+        "n": 30,
+        "mean": 135.7648,
+        "sample_sd": 11.480052698305094
+      },
+      "post_ms": {
+        "n": 30,
+        "mean": 3.8329233333333335,
+        "sample_sd": 0.6681752855317251
+      },
+      "raw_length_m": {
+        "n": 30,
+        "mean": 5.789048464172933,
+        "sample_sd": 0.03710601110556481
+      },
+      "smooth_length_m": {
+        "n": 30,
+        "mean": 5.750554409183187,
+        "sample_sd": 0.03149765477439499
+      },
+      "J_kappa_per_m": {
+        "n": 30,
+        "mean": 3.1658551292023147,
+        "sample_sd": 0.6864726552349717
+      },
+      "min_body_clearance_m": {
+        "n": 30,
+        "mean": 0.1718745180936996,
+        "sample_sd": 0.009971248168022834
+      },
+      "max_curvature_per_m": {
+        "n": 30,
+        "mean": 2.6839087544675544,
+        "sample_sd": 0.5169327026603775
+      },
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": null
+    },
+    "APF": {
+      "trials": 30,
+      "found": 0,
+      "successes": 0,
+      "failure_reasons": {
+        "stagnation": 30
+      },
+      "planning_ms": {
+        "n": 30,
+        "mean": 5.183823333333334,
+        "sample_sd": 0.14290093429711542
+      },
+      "post_ms": null,
+      "raw_length_m": null,
+      "smooth_length_m": null,
+      "J_kappa_per_m": null,
+      "min_body_clearance_m": null,
+      "max_curvature_per_m": null,
+      "build_ms": null,
+      "query_ms": null,
+      "expanded": null
+    }
+  }
+}

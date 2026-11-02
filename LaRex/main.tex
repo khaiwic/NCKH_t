@@ -995,39 +995,72 @@ Tại góc gãy, robot không thể vừa bám chính xác vừa duy trì tốc 
   \qquad 0\leq u\leq1.
   \label{eq:smooth-bezier}
 \end{equation}
-Các trọng số Bernstein không âm và có tổng bằng một, nên đường nằm trong bao lồi của các điểm điều khiển. Đường đi qua hai điểm đầu cuối nhưng thường không đi qua các điểm điều khiển ở giữa.
+Các trọng số Bernstein không âm và có tổng bằng một, nên đường nằm trong bao lồi của các điểm điều khiển. Đường đi qua hai điểm đầu cuối nhưng thường không đi qua các điểm điều khiển ở giữa. Thuật toán de Casteljau tính điểm trên đường bằng nội suy tuyến tính lặp, đồng thời có thể chia đường thành các đoạn nhỏ để kiểm tra hình học.
 
-Hướng tiếp tuyến đầu phụ thuộc đoạn \(\mathbf P_0\mathbf P_1\), hướng cuối phụ thuộc đoạn \(\mathbf P_{n-1}\mathbf P_n\). Dịch các điểm lân cận đầu cuối cho phép chỉnh cách đường cong đi vào và đi ra khỏi góc cua. Thuật toán de Casteljau tính điểm trên đường bằng nội suy tuyến tính lặp, đồng thời có thể chia đường thành các đoạn nhỏ để kiểm tra hình học.
+Trong đề tài, mỗi góc của đường gấp khúc sau bước rút gọn được bo bằng một đoạn Bézier bậc 2. Ba điểm điều khiển gồm điểm bắt đầu đoạn bo, đỉnh góc cần thay thế và điểm kết thúc đoạn bo. Lựa chọn này phù hợp với cài đặt mô phỏng, có ít tham số và cho phép điều chỉnh phạm vi bo góc bằng khoảng lùi trên hai đoạn thẳng kề nhau.
 
-\subsubsection*{b. Bézier bậc 5 và ghép các đoạn chuyển tiếp}
+\subsubsection*{b. Bézier bậc 2 và ghép các đoạn chuyển tiếp}
 
-Bézier bậc 5 được chọn để xây dựng đoạn chuyển tiếp vì sáu điểm điều khiển cho phép đặt vị trí cùng đạo hàm bậc nhất và bậc hai ở cả hai đầu. Các quan hệ tại đầu đoạn có dạng
+Với ba điểm điều khiển \(\mathbf P_0,\mathbf P_1,\mathbf P_2\), đường Bézier bậc 2 có dạng
 \begin{equation}
-  \mathbf p'(0)=5(\mathbf P_1-\mathbf P_0),\qquad
-  \mathbf p''(0)=20(\mathbf P_2-2\mathbf P_1+\mathbf P_0).
+  \mathbf p(u)=(1-u)^2\mathbf P_0
+    +2u(1-u)\mathbf P_1+u^2\mathbf P_2,
+  \qquad 0\leq u\leq1.
+  \label{eq:smooth-bezier-quadratic}
+\end{equation}
+Đường đi từ \(\mathbf P_0\) tới \(\mathbf P_2\); điểm \(\mathbf P_1\) điều chỉnh độ uốn và nhìn chung không nằm trên đường cong. Các đạo hàm theo tham số hình học là
+\begin{equation}
+  \begin{aligned}
+    \mathbf p'(u)&=2(1-u)(\mathbf P_1-\mathbf P_0)
+                  +2u(\mathbf P_2-\mathbf P_1),\\
+    \mathbf p''(u)&=2(\mathbf P_2-2\mathbf P_1+\mathbf P_0).
+  \end{aligned}
+  \label{eq:smooth-bezier-derivatives}
+\end{equation}
+Suy ra các tiếp tuyến đầu cuối:
+\begin{equation}
+  \mathbf p'(0)=2(\mathbf P_1-\mathbf P_0),\qquad
+  \mathbf p'(1)=2(\mathbf P_2-\mathbf P_1).
   \label{eq:smooth-bezier-endpoints}
 \end{equation}
-Đầu cuối có quan hệ tương tự theo thứ tự các điểm điều khiển. Nhờ đó, có thể đặt hướng tiếp tuyến theo hai đoạn cần nối và chọn đạo hàm bậc hai để điều chỉnh độ cong. Các đạo hàm này được lấy theo tham số hình học, chưa phải vận tốc và gia tốc thực của xe.
+Đặt \(\mathbf P_0,\mathbf P_1\) trên đoạn đi vào và \(\mathbf P_1,\mathbf P_2\) trên đoạn đi ra giúp đoạn bo tiếp xúc theo đúng hướng chuyển động với hai đoạn thẳng. Với góc bo không suy biến và đường cong chính quy, cách dựng này tạo liên tục hình học \(G^1\) tại hai điểm nối trên đường lý tưởng, tức liên tục vị trí và hướng tiếp tuyến.
 
-Khi ghép hai đoạn, liên tục \(C^0\) yêu cầu chung vị trí; \(C^1\) yêu cầu khớp thêm đạo hàm bậc nhất; \(C^2\) yêu cầu khớp cả đạo hàm bậc hai theo cùng tham số. Nếu hai đoạn dùng các khoảng tham số khác nhau, phải quy đổi tỷ lệ đạo hàm trước khi so khớp. Đặt các điểm điều khiển thẳng hàng chỉ giúp liên tục hướng, chưa đủ kết luận \(C^2\).
+Liên tục \(G^1\) không đồng nghĩa với liên tục tham số \(C^1\): để đạt \(C^1\), độ lớn đạo hàm còn phải khớp theo cùng cách tham số hóa. Đối với góc bo không thẳng hàng, độ cong tại đầu và cuối đoạn Bézier bậc 2 nhìn chung khác không, trong khi độ cong của đoạn thẳng bằng không. Do đó, phương án hiện tại chưa bảo đảm liên tục độ cong \(G^2\) hoặc liên tục tham số \(C^2\) trên toàn đường ghép. Các đạo hàm theo \(u\) cũng chưa phải vận tốc và gia tốc thực của xe; tính khả thi chuyển động còn phụ thuộc quy luật thời gian và bộ điều khiển bám.
 
-Đối với bo góc giữa hai đoạn thẳng, có thể chọn độ cong đầu cuối bằng không để chuyển tiếp êm về hình học. Tuy vậy, bậc cao không tự bảo đảm bán kính cua đủ lớn hoặc tránh được vật cản; các điểm điều khiển vẫn phải được lựa chọn trong miền an toàn.
+\subsubsection*{c. Đối chiếu với B-Spline}
 
-\subsubsection*{c. Đối chiếu  với B-Spline}
-
-B-Spline thuận tiện với đường dài vì chỉnh một điểm điều khiển chỉ ảnh hưởng một vùng cục bộ; bậc đường cong không phụ thuộc trực tiếp số điểm điều khiển. Mức liên tục phụ thuộc bậc và bội nút, chẳng hạn B-Spline bậc 3 với nút trong đơn đạt \(C^2\). So với B-Spline, các đoạn Bézier phù hợp với cách bo từng góc của chuỗi nút và dễ xác định điều kiện đầu--cuối. Vì vậy, đề tài tập trung khai triển Bézier; B-Spline được giữ làm phương án đối chiếu.
+B-Spline bậc 2 được xây dựng từ nhiều điểm điều khiển và một vector nút, tạo thành các đoạn đa thức bậc 2 ghép nối. Mỗi điểm điều khiển chỉ ảnh hưởng một vùng cục bộ; bậc đường cong không phụ thuộc trực tiếp số điểm điều khiển. Với các nút trong đơn, đường đạt liên tục tham số \(C^1\), nhưng nhìn chung chưa đạt \(C^2\) tại các nút này. Khi dùng vector nút kẹp có bội đầu và cuối bằng 3, đường đi qua hai điểm điều khiển đầu cuối, còn các điểm điều khiển bên trong thường không nằm trên đường cong. Trong khi đó, một đoạn Bézier bậc 2 chỉ dùng ba điểm điều khiển và phù hợp với cách bo từng góc của đường gấp khúc. Đề tài sử dụng Bézier bậc 2 để triển khai mô phỏng; B-Spline bậc 2 được dùng để đối chiếu cấu trúc điều khiển và tính liên tục, chưa phải phương pháp đã được đánh giá bằng cùng bộ thí nghiệm.
 
 \subsubsection*{d. Lựa chọn điểm điều khiển và bảo toàn miền tự do}
 
-Với Bézier, chuỗi nút tìm đường được dùng để chọn vị trí bắt đầu và kết thúc các đoạn bo góc. Không nên mặc nhiên coi mọi nút là điểm đường cong chắc chắn đi qua; các vị trí tác vụ bắt buộc cần được đặt thành ràng buộc riêng.
+Xét ba nút liên tiếp \(\mathbf A,\mathbf B,\mathbf C\) của đường sau rút gọn, với hai đoạn kề có độ dài khác không. Chọn khoảng lùi \(\ell>0\) trên mỗi đoạn để đặt
+\begin{equation}
+  \begin{aligned}
+    \mathbf P_0&=\mathbf B-\ell\,
+      \frac{\mathbf B-\mathbf A}{\|\mathbf B-\mathbf A\|},\\
+    \mathbf P_1&=\mathbf B,\\
+    \mathbf P_2&=\mathbf B+\ell\,
+      \frac{\mathbf C-\mathbf B}{\|\mathbf C-\mathbf B\|}.
+  \end{aligned}
+  \label{eq:smooth-bezier-corner}
+\end{equation}
+Trong mô phỏng, giá trị khởi tạo được chọn là
+\[
+  \ell=\min\!\left\{0{,}15\,\mathrm{m},\;
+       0{,}4\|\mathbf B-\mathbf A\|,\;
+       0{,}4\|\mathbf C-\mathbf B\|\right\}.
+\]
+Giới hạn theo chiều dài hai đoạn giúp tránh dùng phần lớn một đoạn cho thao tác bo góc. Nếu đường cong không đạt khoảng hở yêu cầu, giảm \(\ell\) còn một nửa rồi kiểm tra lại; cài đặt cho phép tối đa 14 lần thử. Nếu vẫn không đạt, bước làm mượt báo thất bại. Đỉnh \(\mathbf B\) trở thành điểm điều khiển, nên xe không bắt buộc đi qua đỉnh này; các vị trí tác vụ phải đi qua chính xác cần được giữ bằng ràng buộc riêng.
 
-Nếu các điểm điều khiển có ảnh hưởng nằm trong cùng một hành lang lồi an toàn, tính bao lồi giúp giữ đoạn cong trong hành lang đó. Chỉ kiểm tra từng điểm điều khiển ở ngoài vật cản là chưa đủ, vì đường nối giữa chúng vẫn có thể cắt vật cản. Hành lang cần tính đến kích thước xe và khoảng dự phòng; nếu không có chứng nhận bao lồi, phải kiểm tra đường cong bằng chia nhỏ hoặc kiểm tra va chạm thích hợp.
+Do tính bao lồi, nếu tam giác điều khiển nằm hoàn toàn trong một hành lang lồi an toàn đã tính kích thước xe và khoảng dự phòng, đoạn Bézier cũng nằm trong hành lang đó. Chỉ kiểm tra ba điểm điều khiển ở ngoài vật cản là chưa đủ. Trong mô phỏng, mỗi đoạn bo được kiểm tra tại 301 giá trị \(u\) cách đều, các đoạn thẳng nối được lấy mẫu và toàn bộ đường sau xử lý được kiểm tra lại. Đây là kiểm tra rời rạc theo độ phân giải đã chọn, chưa phải chứng nhận không va chạm liên tục cho mọi hình học vật cản. Đường cong sau đó được lưu dưới dạng chuỗi điểm cho bộ bám; mức liên tục của đường lý tưởng cần được phân biệt với biểu diễn lấy mẫu này.
+
+Hình~\ref{fig:bezier-bspline-hanh-lang} đối chiếu một đoạn Bézier bậc 2 với đường B-Spline bậc 2 trong các hành lang lồi an toàn minh họa. Phía trái, ba điểm \(\mathbf P_0,\mathbf P_1,\mathbf P_2\) xác định một đoạn Bézier. Phía phải, bảy điểm \(\mathbf P_0,\ldots,\mathbf P_6\) cùng vector nút kẹp \(U=[0,0,0,1,2,3,4,5,5,5]\) xác định đường B-Spline; các ô vuông đánh dấu vị trí trên đường ứng với bốn nút trong \(u=1,2,3,4\), không phải các điểm điều khiển. Hai đường đều nằm trong bao lồi của tập điểm điều khiển tương ứng và trong hành lang minh họa đã chọn. Hình dùng để giải thích cấu trúc hình học, không biểu diễn kết quả mô phỏng hoặc so sánh định lượng chất lượng bám đường.
 
 \begin{center}
   \begin{minipage}{\linewidth}
     \centering
-    \includegraphics[width=0.8\linewidth]{bezier_bspline_hanh_lang_an_toan.png}
-    \chuthichhinh[fig:bezier-bspline-hanh-lang]{Đường Bézier, B-Spline và hành lang an toàn}
+    \includegraphics[width=\linewidth]{Hinh2_6.png}
+    \chuthichhinh[fig:bezier-bspline-hanh-lang]{Đối chiếu Bézier bậc 2 và B-Spline bậc 2 trong hành lang lồi an toàn}
   \end{minipage}
 \end{center}
 
@@ -1449,99 +1482,153 @@ Lực ảo có thể phá vỡ trạng thái cân bằng nhưng cũng có thể 
 
 Đối với đề tài robot ba bánh, một kiến trúc có thể khảo sát là dùng A*, PRM hoặc RRT* để tạo đường toàn cục, sau đó dùng APF để điều chỉnh hướng chuyển động cục bộ theo các điểm dẫn đường. Cách kết hợp này phải được đánh giá bằng các kịch bản có hành lang hẹp, vật cản chữ U và đích gần vật cản. Các kết quả về tỷ lệ thành công, chiều dài đường đi và thời gian xử lý chỉ được kết luận sau mô phỏng hoặc thực nghiệm; phần lý thuyết ở đây không giả định sẵn hiệu quả của phương án.
 
-% Mục 3.4: ba trang A4 dọc; mỗi tiểu mục bắt đầu trên một trang.
+% Mục 3.4: thiết lập, kết quả định lượng và lựa chọn phương án triển khai.
 \clearpage
 \section{Xây dựng kịch bản mô phỏng và đánh giá so sánh đa thuật toán}
 \label{sec:mo-phong-so-sanh}
 
-\subsection{Thiết lập môi trường mô phỏng trên nền tảng Colab: Bản đồ lưới(Grid Map)}
+\subsection{Thiết lập môi trường mô phỏng và bản đồ lưới}
 
-Google Colab được lựa chọn để xây dựng mô phỏng bằng Python vì cho phép chạy notebook trên trình duyệt, thuận tiện lưu mã nguồn, hiển thị đường đi và chia sẻ cấu hình thí nghiệm. NumPy dùng để biểu diễn bản đồ và xử lý tọa độ; Matplotlib dùng để vẽ lưới và kết quả; mô-đun \texttt{heapq} hỗ trợ hàng đợi ưu tiên cho Dijkstra và A*. Mô phỏng sử dụng CPU, không yêu cầu GPU; phiên bản thư viện và cấu hình phiên chạy cần được lưu cùng dữ liệu.
-
-Môi trường được biểu diễn bằng ma trận nhị phân \(M\) có kích thước \(H\times W\), gồm các ô vuông cạnh \(\Delta\) mét, bố trí như ô bàn cờ. Quy ước \textbf{ô trắng là ô có thể đi}, tương ứng \(M_{ij}=0\); \textbf{ô đen là ô tường hoặc vật cản}, tương ứng \(M_{ij}=1\). Các ô không bắt buộc xen kẽ màu. Điểm xuất phát \(S\) và điểm đích \(G\) đều thuộc ô trắng. Với gốc tọa độ tại góc dưới trái, tâm ô cột \(j\), hàng \(i\), đánh số từ \(0\), được quy đổi thành \((x,y)=((j+1/2)\Delta,(i+1/2)\Delta)\).
+Miền hoạt động có kích thước \(6{,}0\times4{,}0\,\mathrm{m}\), chia thành \(60\times40\) ô vuông cạnh \(\Delta=0{,}10\,\mathrm{m}\). Tâm ô cột \(j\), hàng \(i\), tính từ góc dưới trái, có tọa độ \((x,y)=((j+1/2)\Delta,(i+1/2)\Delta)\). Điểm đầu \(S=(0{,}35;1{,}95)\,\mathrm{m}\) và đích \(G=(5{,}65;1{,}95)\,\mathrm{m}\) được giữ chung cho năm thuật toán. Ba bản đồ M0, M1, M2 lần lượt là không có vật cản bên trong, mê cung với hai vách so le và môi trường có chín vật cản chữ nhật. Hình~\ref{fig:gridmap-colab} thể hiện đúng các bản đồ sử dụng trong phép đo.
 
 \begin{center}
-\setlength{\unitlength}{0.40cm}
-\begin{picture}(12,12)
-  % Vật cản minh họa, không phải dữ liệu kết quả mô phỏng.
-  \put(3,0){\rule{0.40cm}{3.2cm}}
-  \put(3,10){\rule{0.40cm}{0.8cm}}
-  \put(7,4){\rule{0.40cm}{3.2cm}}
-  \put(7,0){\rule{0.40cm}{0.8cm}}
-  \put(8,4){\rule{1.2cm}{0.40cm}}
-  \multiput(0,0)(1,0){13}{\line(0,1){12}}
-  \multiput(0,0)(0,1){13}{\line(1,0){12}}
-  \put(0,0){\makebox(1,1){\small S}}
-  \put(11,11){\makebox(1,1){\small G}}
-\end{picture}
-\chuthichhinh[fig:gridmap-colab]{Minh họa Grid Map: ô trắng có thể đi, ô đen là tường}
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Hinh3_8_Ban_do_so_sanh.png}
+    \chuthichhinh[fig:gridmap-colab]{Ba bản đồ so sánh: M0 không vật cản, M1 mê cung tĩnh và M2 nhiều vật cản; vùng xám nhạt là phần mở rộng vật cản}
+  \end{minipage}
 \end{center}
 
-Dijkstra và A* dùng lưới 8 hướng, với chi phí \(\Delta\) cho bước ngang/dọc và \(\sqrt{2}\Delta\) cho bước chéo; cấm đi chéo xuyên góc tường. PRM, RRT* và APF dùng cùng bản đồ hình học; mọi đoạn nối đều phải được kiểm tra va chạm. Vật cản được mở rộng theo bán kính bao thân xe cộng khoảng dự phòng trước khi lập kế hoạch, để đường của tâm xe không đi quá sát tường.
+Robot được giả định có thân bao tròn bán kính \(0{,}11\,\mathrm{m}\). Khi tìm đường, mỗi vật cản chữ nhật được mở rộng theo hai trục thêm \(0{,}26\,\mathrm{m}\), gồm bán kính thân và khoảng dự phòng \(0{,}15\,\mathrm{m}\). Đây là phép bao bảo thủ của tổng Minkowski với đĩa, có phần dư tại các góc. Biên bản đồ cũng giới hạn vị trí tâm xe. Sau làm mượt, đường được chấp nhận khi còn nằm ngoài các hình chữ nhật mở rộng \(0{,}21\,\mathrm{m}\), tương ứng khoảng dự phòng tối thiểu \(0{,}10\,\mathrm{m}\) cho thân xe. Mọi phương pháp dùng cùng hình học và quy tắc kiểm tra đoạn nối; tiếp xúc vùng cấm được tính là va chạm.
 
-Ba nhóm kịch bản gồm: không vật cản, mê cung tĩnh và mật độ vật cản cao. Trong từng kịch bản, giữ nguyên bản đồ, độ phân giải và cặp \(S,G\) cho năm thuật toán. PRM và RRT* được chạy lặp với các hạt giống ngẫu nhiên đã lưu; mọi phương pháp dùng cùng thời hạn xử lý và điều kiện đạt đích. Đây là thiết kế thí nghiệm; các chỉ số chỉ được điền sau khi thực sự chạy mô phỏng.
+Dijkstra và A* dùng lưới tám hướng, chi phí \(\Delta\) cho bước ngang/dọc và \(\sqrt{2}\Delta\) cho bước chéo; cấm đi chéo xuyên góc. A* dùng heuristic octile. PRM lấy 500 mẫu tự do, bổ sung \(S,G\) và thử nối 12 láng giềng mỗi đỉnh; mỗi lượt xây lại mạng và truy vấn bằng Dijkstra. RRT* chạy tối đa 1500 vòng lặp, bước mở rộng \(0{,}40\,\mathrm{m}\), xác suất lấy mẫu đích \(5\%\), bán kính láng giềng \(r_n=\min\{0{,}40;6\sqrt{\log n/n}\}\,\mathrm{m}\) với \(n\geq2\); cuối ngân sách lấy kết nối tới đích có chi phí nhỏ nhất. APF dùng trường hút--đẩy cơ bản với \(k_{\mathrm{att}}=1\), \(k_{\mathrm{rep}}=0{,}035\), khoảng tác động \(0{,}60\,\mathrm{m}\), bước tối đa \(0{,}03\,\mathrm{m}\) và tối đa 3000 bước. Lực đẩy xét vật cản bên trong; biên bản đồ là ràng buộc kiểm tra chuyển động. Phép so sánh chưa bổ sung lực ảo thoát bẫy cho APF.
 
-\newpage
-\subsection{So sánh Dijkstra, A*, PRM, RRT* và APF theo bốn tiêu chí đánh giá}
+\subsection{Kết quả so sánh các thuật toán và lựa chọn phương án triển khai}
 
-Bảng~\ref{tab:so-sanh-nam-thuat-toan} đối chiếu đặc tính dự kiến theo bốn tiêu chí đã xác định. Các nhận xét là cơ sở lựa chọn phương pháp và tổ chức phép đo, chưa phải kết quả định lượng của Colab \cite{lavalle-planning-2006,karaman-frazzoli-2011,khatib-apf-1986}.
+\subsubsection*{a. Quy trình hậu xử lý và cách lượng hóa chỉ tiêu}
 
-\begin{center}
-\begingroup
-\singlespacing
-\fontsize{11}{13.2}\selectfont
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.16}
-\refstepcounter{table}\label{tab:so-sanh-nam-thuat-toan}
-\tablename~\thetable: So sánh các thuật toán trên cùng Grid Map\par\smallskip
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.10\linewidth}
-  >{\raggedright\arraybackslash}p{0.205\linewidth}
-  >{\raggedright\arraybackslash}p{0.205\linewidth}
-  >{\raggedright\arraybackslash}p{0.205\linewidth}
-  >{\raggedright\arraybackslash}p{\dimexpr0.285\linewidth-32pt\relax}@{}}
-\toprule
-\textbf{Thuật toán} & \textbf{Chiều dài đường đi (m)} & \textbf{Thời gian CPU (ms)} & \textbf{Độ trơn: \(\int\kappa^2ds\)} & \textbf{Thành công tránh va chạm (\%)}\\
-\midrule
-Dijkstra & Ngắn nhất trên đồ thị nếu trọng số là độ dài. & Có thể mở rộng nhiều ô; phụ thuộc kích thước lưới. & Đường gấp khúc; cần làm mượt trước khi tính độ cong. & Tìm được đường nếu tồn tại trên lưới và đủ thời gian.\\
-\midrule
-A* & Cùng chi phí tối ưu với Dijkstra khi heuristic phù hợp. & Heuristic tốt thường giảm số ô mở rộng. & Vẫn có góc gãy; không tự bảo đảm đường trơn. & Đầy đủ trên lưới hữu hạn với cài đặt đúng và đủ thời gian.\\
-\midrule
-PRM & Ngắn nhất trên roadmap khi dùng Dijkstra; chưa tối ưu toàn miền. & Tốn công xây roadmap; có thể dùng lại cho nhiều truy vấn. & Các cạnh thẳng tạo góc tại nút nối. & Phụ thuộc số mẫu, kết nối và độ hẹp hành lang.\\
-\midrule
-RRT* & Cải thiện nhờ nối lại cây; tối ưu tiệm cận dưới các giả thiết. & Phụ thuộc số mẫu; thêm chi phí tìm lân cận và nối lại. & Bộ nối thẳng vẫn tạo góc; cần làm mượt. & Đầy đủ xác suất dưới các giả thiết; hữu hạn mẫu vẫn có thể thất bại.\\
-\midrule
-APF & Không bảo đảm ngắn nhất; phụ thuộc trường thế và tham số. & Mỗi bước thường đơn giản; mắc kẹt có thể làm hết thời hạn. & Có thể đổi hướng êm, nhưng vẫn dao động gần tường. & Có thể mắc cực tiểu cục bộ; không bảo đảm tới đích.\\
-\bottomrule
-\end{tabular}
-\endgroup
-\end{center}
+Tất cả đường có nghiệm đều qua cùng quy trình nối tắt, bo góc Bézier bậc 2 và kiểm tra lại khoảng hở. Khoảng lùi, số mẫu và số lần giảm đoạn bo theo mục 2.4.2, được giữ chung cho năm thuật toán. Kiểm tra dây cung cộng thêm cận sai lệch đường Bézier so với dây cung để tránh bỏ sót va chạm giữa các mẫu.
 
-\noindent\textbf{Cách lượng hóa các tiêu chí.} Với \(\mathbf p_i\) là điểm đường đi theo đơn vị mét và \(n\) đoạn nối, chiều dài được tính bằng
+Chiều dài trước và sau xử lý được ký hiệu \(L_0,L_s\), tính bằng tổng độ dài các đoạn lấy mẫu. Độ trơn hình học sau xử lý được đánh giá bằng
 \[
-L=\sum_{i=0}^{n-1}\|\mathbf p_{i+1}-\mathbf p_i\|.
+  J_\kappa=\int_0^{L_s}\kappa(s)^2\,ds,
+  \qquad [J_\kappa]=\mathrm{m}^{-1}.
 \]
-Thời gian CPU đo bằng \texttt{time.process\_time()}, đổi sang ms, không gồm vẽ hình và đọc tệp. PRM phải báo cáo riêng thời gian xây roadmap và truy vấn; nhiệm vụ mới tính cả hai. Các lần đo dùng cùng phiên Colab; tốc độ của board phải được đo riêng.
+Tích phân được tính từ đạo hàm giải tích của từng đoạn Bézier; các đoạn thẳng đóng góp bằng không. Chỉ tiêu này không đo độ giật theo thời gian và không chứng minh độ cong liên tục tại mối nối. Khoảng hở nhỏ nhất \(d_{\min}\) được tính từ thân bao xe tới vật cản hoặc biên bản đồ trên đường lấy mẫu với bước không vượt \(0{,}002\,\mathrm{m}\); đây là giá trị hình học trong mô hình, chưa phải phép đo trên xe.
 
-Độ trơn \(J_\kappa=\int_0^L\kappa(s)^2\,ds\) càng nhỏ càng ít tích lũy độ cong. Đường gấp khúc không khả vi tại góc, nên chỉ tính chỉ số sau cùng một quy trình làm mượt, lấy mẫu và kiểm tra va chạm lại; lưu cả chiều dài trước/sau xử lý. Chỉ số này không thay thế giới hạn độ cong cực đại.
+Thời gian tìm đường \(T_p\) và hậu xử lý \(T_h\) được đo riêng bằng \texttt{time.perf\_counter\_ns()}, đổi sang ms. Đây là thời gian thực thi trôi qua trên máy đo, có thể chịu ảnh hưởng của lập lịch hệ điều hành; không gọi là thời gian CPU thuần. \(T_p\) bao gồm tạo biểu diễn lưới cho nhóm đồ thị hoặc xây mạng/cây cho nhóm lấy mẫu; không gồm đọc, ghi tệp và vẽ hình. Với PRM, tổng thời gian bao gồm xây mạng và truy vấn. Với RRT*, thời gian bao gồm giai đoạn tiếp tục cải thiện cây đến cuối ngân sách, thay vì chỉ đo lúc có nghiệm đầu tiên.
 
-Tỷ lệ thành công là \(P=100n_{\mathrm{đạt}}/n_{\mathrm{thử}}\). Một lượt đạt phải tới vùng đích trong thời hạn và không va chạm trên toàn đường cuối cùng. Báo cáo trung bình, độ lệch chuẩn trên các lượt thành công và tỷ lệ thành công trên toàn bộ lượt thử; không gán độ dài bằng \(0\) cho lượt thất bại.
+Một lượt đạt phải nối đúng \(G\) trong thời hạn và còn hợp lệ sau hậu xử lý. \(T_p\) tính trên mọi lượt; \(T_h\) trên lượt có nghiệm; chỉ tiêu hình học trên lượt đạt, để dấu gạch ngang nếu không có nghiệm. Tỷ lệ này đánh giá quy hoạch hình học, khác tỷ lệ hoàn thành nhiệm vụ có điều khiển bám ở Chương 4.
 
-\newpage
-\subsection{Bàn luận và lựa chọn Dijkstra để triển khai trên board thực tế}
+\clearpage
+\subsubsection*{b. Kết quả định lượng trên ba bản đồ}
 
-Với mục tiêu xây dựng mô hình xe ba bánh chạy trên bản đồ tĩnh, quy mô nhỏ và đã biết trước, đề tài lựa chọn \textbf{Dijkstra làm thuật toán tìm đường toàn cục để triển khai trên board ESP32-C3-MINI}. Quyết định này dựa trên sự phù hợp với phạm vi thực nghiệm và khả năng kiểm chứng từng bước; không xem Dijkstra là phương pháp nhanh nhất cho mọi bản đồ.
+Bảng~\ref{tab:so-sanh-nam-thuat-toan} trình bày thời gian trung bình kèm độ lệch chuẩn mẫu và số lượt đạt. Bảng~\ref{tab:chat-luong-duong-ch3} trình bày giá trị trung bình của các chỉ tiêu hình học; độ lệch chuẩn đầy đủ được lưu trong \texttt{summary.json}.
 
-\noindent\textbf{Dễ lập trình và chuyển từ mô phỏng sang phần cứng.} Dijkstra gồm các thao tác rõ ràng: lấy ô có chi phí nhỏ nhất, cập nhật láng giềng và truy vết đường. Bản đồ có thể lưu bằng mảng một chiều; mỗi ô có chi phí, chỉ số ô cha và cờ trạng thái. Cấu trúc này thuận tiện chuyển từ Python sang C/C++, quan sát biến khi chạy thử và kiểm tra từng đoạn đường trên mô hình.
+\begin{center}
+\begin{minipage}{\linewidth}
+  \centering
+  \singlespacing
+  \refstepcounter{table}\label{tab:so-sanh-nam-thuat-toan}
+  \tablename~\thetable: Thời gian thực thi và số lượt quy hoạch đạt trên ba bản đồ\par\smallskip
+  \small
+  \renewcommand{\arraystretch}{1.16}
+  \begin{tabular}{@{}llrrr@{}}
+    \toprule
+    \textbf{Bản đồ} & \textbf{Thuật toán} & \(T_p\) \textbf{(ms)} & \(T_h\) \textbf{(ms)} & \textbf{Đạt/thử}\\
+    \midrule
+    M0 & Dijkstra & \(27.79\pm0.29\) & \(1.75\pm4.94\) & 30/30\\
+    M0 & A* & \(2.81\pm0.10\) & \(0.72\pm0.03\) & 30/30\\
+    M0 & PRM & \(21.87\pm2.04\) & \(0.90\pm0.23\) & 30/30\\
+    M0 & RRT* & \(83.32\pm1.17\) & \(0.77\pm0.20\) & 30/30\\
+    M0 & APF & \(1.44\pm0.07\) & \(0.77\pm0.15\) & 30/30\\
+    \midrule
+    M1 & Dijkstra & \(26.12\pm0.32\) & \(2.40\pm0.20\) & 30/30\\
+    M1 & A* & \(20.80\pm0.34\) & \(2.49\pm0.32\) & 30/30\\
+    M1 & PRM & \(30.13\pm8.85\) & \(2.42\pm0.27\) & 30/30\\
+    M1 & RRT* & \(97.33\pm2.26\) & \(6.03\pm18.83\) & 30/30\\
+    M1 & APF & \(2.23\pm0.05\) & -- & 0/30\\
+    \midrule
+    M2 & Dijkstra & \(26.88\pm0.75\) & \(3.69\pm0.44\) & 30/30\\
+    M2 & A* & \(9.33\pm0.30\) & \(3.59\pm0.26\) & 30/30\\
+    M2 & PRM & \(50.00\pm0.95\) & \(6.62\pm16.06\) & 30/30\\
+    M2 & RRT* & \(135.76\pm11.48\) & \(3.83\pm0.67\) & 30/30\\
+    M2 & APF & \(5.18\pm0.14\) & -- & 0/30\\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip
+\end{minipage}
+\end{center}
 
-\noindent\textbf{Ít tham số và thuận tiện thực nghiệm lặp lại.} Thuật toán không cần hàm heuristic như A*, số lượng mẫu và bán kính kết nối như PRM/RRT*, hoặc hệ số hút--đẩy như APF. Khi bản đồ, trọng số, thứ tự xét láng giềng và quy tắc xử lý đồng hạng được cố định, kết quả có tính lặp lại. Nhờ đó, có thể dùng cùng tuyến tham chiếu để khảo sát ảnh hưởng của PID, sai số encoder và tốc độ chạy xe.
+\begin{center}
+\begin{minipage}{\linewidth}
+  \centering
+  \singlespacing
+  \refstepcounter{table}\label{tab:chat-luong-duong-ch3}
+  \tablename~\thetable: Chất lượng hình học của các đường quy hoạch đạt sau cùng quy trình xử lý\par\smallskip
+  \small
+  \renewcommand{\arraystretch}{1.16}
+  \begin{tabular}{@{}llrrrr@{}}
+    \toprule
+    \textbf{Bản đồ} & \textbf{Thuật toán} & \(L_0\) \textbf{(m)} & \(L_s\) \textbf{(m)} & \(J_\kappa\) \textbf{(1/m)} & \(d_{\min}\) \textbf{(m)}\\
+    \midrule
+    M0 & Dijkstra & 5.300 & 5.300 & 0.000 & 0.240\\
+    M0 & A* & 5.300 & 5.300 & 0.000 & 0.240\\
+    M0 & PRM & 5.443 & 5.300 & 0.000 & 0.240\\
+    M0 & RRT* & 5.334 & 5.300 & 0.000 & 0.240\\
+    M0 & APF & 5.300 & 5.300 & 0.000 & 0.240\\
+    \midrule
+    M1 & Dijkstra & 7.567 & 7.105 & 11.254 & 0.181\\
+    M1 & A* & 7.567 & 7.120 & 11.574 & 0.188\\
+    M1 & PRM & 7.492 & 7.189 & 11.499 & 0.198\\
+    M1 & RRT* & 7.131 & 7.030 & 9.758 & 0.179\\
+    M1 & APF & -- & -- & -- & --\\
+    \midrule
+    M2 & Dijkstra & 6.021 & 5.772 & 4.025 & 0.169\\
+    M2 & A* & 6.021 & 5.768 & 3.663 & 0.174\\
+    M2 & PRM & 5.991 & 5.865 & 5.707 & 0.178\\
+    M2 & RRT* & 5.789 & 5.751 & 3.166 & 0.172\\
+    M2 & APF & -- & -- & -- & --\\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip
+\end{minipage}
+\end{center}
 
-\noindent\textbf{Có nghiệm đối chứng rõ ràng trên lưới.} Với trọng số cạnh không âm, Dijkstra tìm đường có tổng chi phí nhỏ nhất khi đích được lấy ra hợp lệ; nếu hàng đợi rỗng thì không có đường trên đồ thị đã xây dựng. Đặc điểm này giúp phân biệt lỗi bản đồ, lỗi tìm đường và lỗi bám đường. Khi dùng trọng số độ dài, kết quả còn là mốc kiểm tra chi phí của A* trên cùng lưới \cite{lavalle-planning-2006}.
+\clearpage
+Hình~\ref{fig:duong-di-so-sanh-ch3} minh họa các đường đại diện.
 
-\noindent\textbf{Thuận tiện quản lý tài nguyên và tích hợp điều khiển.} Với lưới nhỏ, số ô và các mảng trạng thái được biết trước, có thể cấp phát bộ nhớ cố định và sinh láng giềng khi cần thay vì lưu toàn bộ cạnh. Quy hoạch thực hiện khi nhận nhiệm vụ hoặc khi bản đồ thay đổi; chuỗi điểm sau xử lý được dùng làm tham chiếu cho bộ bám. Cách tổ chức này giúp tách việc tìm tuyến khỏi vòng đọc encoder, PID tốc độ và xuất PWM, nhưng vẫn phải đo RAM và độ trễ thực tế trên board.
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.90\linewidth]{Hinh3_9_Duong_di_so_sanh.png}
+  \caption{Đường đi đại diện của năm thuật toán trên ba bản đồ; vùng xám nhạt là phần mở rộng vật cản dùng khi tìm đường}
+  \label{fig:duong-di-so-sanh-ch3}
+\end{figure}
 
-Hạn chế chính là Dijkstra có thể mở rộng nhiều ô hơn A* và tăng chi phí khi lưới mịn. Bản thân nó chưa xét hướng xe, bán kính quay hay giới hạn vận tốc; đường ngắn nhất trên lưới chưa chắc là tuyến robot đi nhanh nhất hoặc dễ bám nhất. Vì vậy, đầu ra cần được rút gọn, làm mượt bằng Bézier trong vùng an toàn, kiểm tra lại va chạm rồi gán profile vận tốc hình thang trước khi đưa vào bộ bám Pure Pursuit và PID hai bánh.
+\clearpage
+\subsubsection*{c. Nhận xét kết quả của từng thuật toán}
 
-Việc triển khai được đánh giá theo hai bước: trước hết đối chiếu đường đi, chi phí và trạng thái không có đường giữa Colab với board; sau đó đo thời gian quy hoạch, RAM sử dụng và khả năng hoàn thành tuyến trên xe. Dijkstra là lựa chọn cơ sở phù hợp để hiện thực hóa và kiểm chứng hệ thống; nếu bản đồ mở rộng làm vượt ngân sách tài nguyên, A* là phương án nâng cấp cần được khảo sát tiếp.
+\noindent\textbf{Dijkstra.} Cả ba bản đồ đều có 30/30 lượt đạt. Chiều dài ban đầu lần lượt là 5,300 m; 7,567 m và 6,021 m, giảm còn 5,300 m; 7,105 m và 5,772 m sau xử lý. Thời gian tìm đường trung bình nằm trong khoảng 26.12--27.79 ms; đường và chỉ tiêu hình học lặp lại giữa các lượt. Số đỉnh mở rộng ở M0, M1, M2 lần lượt là 1700, 1223, 786. Kết quả thể hiện khả năng tạo nghiệm đối chứng ổn định trên các lưới đang xét, chưa chứng minh Dijkstra nhanh nhất hoặc tạo đường ngắn nhất trong không gian liên tục.
+
+\noindent\textbf{A*.} Cũng đạt 30/30 lượt trên mỗi bản đồ và cùng chi phí đường ban đầu với Dijkstra, phù hợp với heuristic octile và trọng số đã chọn. Số đỉnh mở rộng giảm còn 54, 796, 204; thời gian trung bình tương ứng 2.81 ms; 20.80 ms; 9.33 ms, thấp hơn Dijkstra trên cả ba bản đồ. Các đường đồng chi phí có thể khác hình dạng do quy tắc phá hòa, nên \(L_s\), \(J_\kappa\) và khoảng hở sau xử lý không nhất thiết bằng nhau. Trên M2, A* cho đường sau xử lý ngắn hơn và \(J_\kappa\) nhỏ hơn Dijkstra trong cấu hình này.
+
+\noindent\textbf{PRM.} Đạt 30/30 lượt ở từng bản đồ, nhưng chiều dài và độ trơn biến thiên theo bộ mẫu. Trên M1, chiều dài sau xử lý là \(7.189\pm0.158\,\mathrm{m}\); trên M2 là \(5.865\pm0.207\,\mathrm{m}\). Thời gian xây mạng trung bình ở M0, M1, M2 lần lượt là 20.32 ms; 28.66 ms; 48.44 ms, còn truy vấn lần lượt là 1.19 ms; 1.10 ms; 1.15 ms. Phép đo xây mạng lại cho từng lượt, chưa lượng hóa lợi ích tái sử dụng roadmap cho nhiều nhiệm vụ.
+
+\noindent\textbf{RRT*.} Đạt 30/30 lượt trên mỗi bản đồ và có thời gian thực thi cao nhất trong nhóm phương pháp tìm được nghiệm, do tiếp tục phát triển và nối lại cây đến hết 1500 vòng lặp. Trên M1, đường sau xử lý dài trung bình 7.030 m với \(J_\kappa=9.758\,\mathrm{m}^{-1}\); trên M2, hai giá trị tương ứng là 5.751 m và 3.166 \(\mathrm{m}^{-1}\), đều thấp hơn Dijkstra. Kết quả cho thấy đánh đổi giữa thời gian tính toán và chất lượng đường trên hai bản đồ này; chưa thể suy ra mức ưu thế cố định với mọi ngân sách và tham số.
+
+\noindent\textbf{APF.} Trên M0, cả 30 lượt đạt đường thẳng dài 5,300 m, \(J_\kappa=0\) và thời gian tìm đường trung bình 1.44 ms. Trên M1 và M2, cả 30 lượt dừng theo tiêu chí không tiến triển nên không có chiều dài nghiệm đạt, độ trơn hoặc khoảng hở để tổng hợp. Kết quả chỉ áp dụng cho APF cơ bản với bộ tham số đã công bố; chưa đánh giá các phương án sửa GNRON hoặc bổ sung lực ảo ở mục 3.3.2. Do cấu hình này không có thành phần ngẫu nhiên, 30 lần dừng trên cùng bản đồ là lặp lại cùng tình huống, không phải 30 bằng chứng độc lập về xác suất thất bại.
+
+Trên M0, bước nối tắt đưa mọi nghiệm đạt về cùng đoạn thẳng, nên khác biệt chiều dài ban đầu của PRM và RRT* không còn sau xử lý. Trên M1 và M2, nhóm lấy mẫu có thể tạo đường ngắn hơn đường tối ưu trên lưới vì dùng biểu diễn liên tục khác. Kết quả sau xử lý đánh giá toàn chuỗi tìm đường--nối tắt--Bézier, chưa tách riêng đóng góp từng bước. Các bản đồ hữu hạn và cố định chưa đủ để khẳng định một thuật toán tốt nhất cho mọi môi trường.
+
+\subsubsection*{d. Lựa chọn Dijkstra làm cấu hình triển khai cơ sở}
+
+Đề tài chọn Dijkstra làm bộ tìm đường toàn cục cơ sở cho chuỗi xử lý ở Chương 4. Trong phép đo hiện tại, phương pháp đạt nghiệm hợp lệ trên cả ba bản đồ, có thời gian tìm đường trung bình khoảng 26--28 ms trên máy đo và cho kết quả hình học lặp lại. Các kết quả hỗ trợ việc dùng Dijkstra để lập tuyến trên bản đồ tĩnh quy mô nhỏ, với ngân sách tìm đường 2 giây đã khảo sát.
+
+Lý do lựa chọn còn nằm ở khả năng kiểm tra và tích hợp: các bước nới lỏng cạnh, chốt chi phí và truy vết có thể đối chiếu trực tiếp; không cần thêm heuristic hoặc tham số lấy mẫu. Khi giữ nguyên bản đồ và quy tắc phá hòa, nhóm có thể dùng một đường cơ sở cố định để khảo sát ảnh hưởng của làm mượt, Odometry và điều khiển bám. Tính tối ưu và lặp lại trên lưới cũng có thể đạt với A* phù hợp; lợi thế của A* về số nút và thời gian đã được ghi nhận trong phép đo này.
+
+Lựa chọn Dijkstra là quyết định xây dựng cấu hình cơ sở thuận tiện kiểm chứng. Đề tài chấp nhận chi phí tìm kiếm cao hơn A*, đồng thời ghi nhận RRT* cho đường ngắn và chỉ tiêu độ cong tốt hơn ở hai bản đồ có vật cản. Khi yêu cầu phản hồi nhanh hơn hoặc bản đồ lớn hơn, A* là phương án cần ưu tiên khảo sát tiếp; khi ưu tiên cải thiện hình học và cho phép ngân sách tính toán lớn hơn, có thể tiếp tục đánh giá RRT*.
+
+Các số đo trên máy tính chưa chứng minh thời gian quy hoạch hoặc mức RAM trên ESP32-C3-MINI. Khi chuyển bộ quy hoạch lên board, cần đo riêng thời gian, bộ nhớ và tác động tới chu kỳ điều khiển. Phần so sánh xác lập lựa chọn thuật toán cơ sở và giới hạn của lựa chọn; độ chính xác bám đường và khả năng hoàn thành nhiệm vụ của robot được đánh giá riêng ở Chương 4.
 
 \chapter{ĐÁNH GIÁ KẾT QUẢ VÀ ĐỀ XUẤT ỨNG DỤNG}
 
@@ -1622,11 +1709,9 @@ Khoảng cách tâm hai bánh chủ động của mô hình là \(L=13.5\,\mathr
 
 ESP32-C3-MINI đảm nhiệm thu nhận encoder, tính vận tốc bánh, cập nhật Odometry, thực hiện hai bộ điều khiển tốc độ và thực thi thuật toán tìm đường, làm mượt.
 
-Phương án đấu nối sử dụng hai ngõ PWM cho hai kênh công suất, bốn ngõ xác định chiều quay, một tín hiệu cho phép hoạt động và bốn ngõ vào encoder. Các chân GPIO cụ thể chỉ được chốt sau khi đối chiếu sơ đồ đúng phiên bản bo ESP32-C3-MINI, các chân phục vụ khởi động, nạp chương trình và giao tiếp. PWM được tạo bằng ngoại vi LEDC; encoder được đọc bằng ngắt GPIO theo tài liệu ESP-IDF dành cho ESP32-C3 \cite{espressif-c3-peripherals}.
+Phương án đấu nối sử dụng hai ngõ PWM cho hai kênh công suất, bốn ngõ xác định chiều quay, một tín hiệu cho phép hoạt động và bốn ngõ vào encoder. PWM được tạo bằng ngoại vi LEDC; encoder được đọc bằng ngắt GPIO theo tài liệu ESP-IDF dành cho ESP32-C3 \cite{espressif-c3-peripherals}.
 
 Với module TB6612 sử dụng IC TB6612FNG, nguồn logic \(V_{CC}\) có dải hoạt động \(2.7\)--\(5.5\,\mathrm{V}\), nguồn động cơ \(V_M\) có dải \(2.5\)--\(13.5\,\mathrm{V}\). Phương án chọn \(V_{CC}=3.3\,\mathrm{V}\) để ghép mức logic; nguồn động cơ của cấu hình sử dụng là \(7.4\,\mathrm{V}\). Thông số \(300\,\mathrm{RPM}\) do nhà cung cấp công bố ứng với không tải tại \(6\,\mathrm{V}\); tốc độ ở nguồn \(7.4\,\mathrm{V}\) cần được đo dưới tải thực tế. Hai kênh dùng \texttt{AIN1/AIN2/PWMA} và \texttt{BIN1/BIN2/PWMB}; \texttt{STBY} mức thấp đưa IC về chờ. Chế độ phanh ngắn mạch và chế độ đầu ra trở kháng cao cần được phân biệt theo bảng chức năng của nhà sản xuất \cite[tr. 3--5]{toshiba-tb6612fng}.
-
-Encoder được đề xuất cấp \(3.3\,\mathrm{V}\) và kiểm tra dạng tín hiệu A/B trước khi nối GPIO. Nếu cấp encoder bằng nguồn khác, cần xác nhận mức ngõ ra và phương án chuyển mức phù hợp với ESP32-C3. Nguồn động cơ và nguồn logic dùng chung điểm tham chiếu GND, có lọc nhiễu và bố trí đường cấp dòng động cơ tách khỏi đường tín hiệu encoder. Điện áp pin, dung lượng nguồn và cách hạ áp thực tế còn cần bổ sung vào hồ sơ lắp ráp.
 
 \subsubsection*{b. Tổ chức phần mềm theo chu kỳ}
 
@@ -1789,8 +1874,6 @@ Nếu một bánh vượt giới hạn góc quay \(\Omega_{L,\max}\) hoặc \(\O
 \end{equation}
 Cách giảm chung này giữ tỷ lệ quay--tiến của lệnh tức thời. Sau đó vẫn cần giới hạn gia tốc và kiểm tra đoạn chuyển tiếp; chỉ cắt riêng vận tốc một bánh có thể làm đổi độ cong mong muốn.
 
-Pure Pursuit trong cấu hình này chủ yếu bám hình học của đường. Nếu tốc độ được điều chỉnh theo tiến triển thực tế hoặc phải dừng do vật cản, robot có thể tới cùng vị trí ở thời điểm khác lịch tham chiếu ban đầu. Vì vậy, sai số bám đường và sai số bám theo thời gian phải được đánh giá riêng; không khẳng định thuật toán cơ bản bảo đảm đồng bộ thời gian với toàn bộ quỹ đạo.
-
 \subsection{\texorpdfstring{Bộ điều khiển PI/PID vận tốc vòng kín và giới hạn PWM cho hai bánh \((v_L,v_R)\)}{Bộ điều khiển PI/PID vận tốc vòng kín và giới hạn PWM cho hai bánh (vL,vR)}}
 
 \subsubsection*{a. Cấu trúc PI/PID cơ bản và giới hạn đầu ra}
@@ -1826,10 +1909,6 @@ Quy trình hiệu chỉnh đề xuất bắt đầu với \(K_I=K_D=0\), tăng d
 Trong phạm vi trình bày hiện tại, cấu trúc được giới hạn ở PI/PID cơ bản và phép giới hạn đầu ra. Các thành phần bổ sung như bù thuận, lọc đạo hàm hoặc chống bão hòa tích phân chỉ được khai triển khi có mã cài đặt tương ứng hoặc kết quả thực nghiệm chứng minh sự cần thiết. Khi bổ sung, cần nêu rõ cấu hình và căn cứ đánh giá; chưa có dữ liệu thì chưa kết luận các thành phần này cải thiện đáp ứng.
 
 \section{Kết quả thực nghiệm mô phỏng và đánh giá sai số}
-
-Phần này trình bày kết quả thu được từ thực nghiệm mô phỏng trên máy tính, nhằm đánh giá khả năng tìm đường, bám đường và dừng tại đích của hệ thống. Hai kịch bản được khảo sát là di chuyển trên đường thẳng và di chuyển tránh vật cản tĩnh. Dữ liệu được ghi trực tiếp từ các lượt chạy để tổng hợp sai số và phân tích những yếu tố ảnh hưởng đến chất lượng điều khiển. Kết quả là cơ sở lựa chọn nội dung hiệu chỉnh và tổ chức kiểm chứng tiếp theo trên mô hình xe.
-
-Một lượt thử gồm khởi tạo tư thế, kiểm tra dữ liệu, phát nhiệm vụ, ghi toàn bộ quá trình và lưu nguyên nhân kết thúc. Mỗi cấu hình được lặp với số lượt đã quy định trước; các lượt không tới đích, mất dữ liệu hoặc bị dừng phải được lưu lại cùng trạng thái, thay vì chỉ giữ các lượt thành công. Ngưỡng đạt/không đạt cần được xác định trước khi xem kết quả, dựa trên bề rộng hành lang, dung sai điểm dừng và khả năng đo của hệ thống.
 
 \subsection{Kịch bản 1: Bám đường thẳng với profile vận tốc hình thang}
 
@@ -1911,8 +1990,6 @@ Bảng~\ref{tab:exp-result-template} cho thấy mỗi kịch bản có 5 lượt
 Sai số vị trí trung bình theo chỉ tiêu RMSE xấp xỉ 0,167 m ở cả hai kịch bản. Sai số vị trí khi kết thúc tăng từ khoảng 0,293 m trên đường thẳng lên 0,404 m khi tránh vật cản. Những lượt thành công hoàn thành lần lượt trong khoảng 13,762 giây và 15,416 giây. Sự gia tăng thời gian ở kịch bản có vật cản phù hợp với tuyến đi dài hơn và yêu cầu thay đổi hướng. Tuy nhiên, mức sai số và độ phân tán cho thấy chất lượng định vị, bám đường còn chưa ổn định trong điều kiện đã khảo sát.
 
 Đường tham chiếu sau làm mượt có khoảng hở thân xe với vật cản tối thiểu khoảng 0,166 m, nhưng vẫn xuất hiện va chạm khi robot bám đường. Kết quả này cho thấy cần xét đồng thời khoảng dự phòng của đường đi và sai số chuyển động tích lũy. Trong mô hình, sai lệch bán kính và trượt bánh chưa được bù làm tư thế Odometry lệch dần so với trạng thái đối chứng. Vì vậy, nội dung cần ưu tiên hiệu chỉnh là thông số hình học và chất lượng ước lượng tư thế, bên cạnh việc lựa chọn khoảng nhìn trước và hệ số PI.
-
-Trong cả hai kịch bản, PWM không chạm giới hạn đã đặt. Điều này cho thấy bão hòa đầu ra chưa xuất hiện trong cấu hình khảo sát, trong khi sai số định vị vẫn ảnh hưởng rõ đến kết quả. Bảng đánh giá khả năng thực hiện tuyến đường của toàn hệ thống; tỷ lệ thành công thấp chưa đủ để quy nguyên nhân cho riêng thuật toán Dijkstra. Các kết quả cần được kiểm chứng tiếp trên xe với thông số cơ khí, truyền động và phép đo vị trí đã hiệu chuẩn.
 
 \subsection{Thu thập dữ liệu và phân tích sai số bám đường}
 
