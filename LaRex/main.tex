@@ -352,7 +352,7 @@ Nếu yêu cầu tiếp xúc êm, còn cần ràng buộc vận tốc tương đ
 
 \subsection{Phân loại theo đối tượng cơ cấu: Robot tay máy và robot di động.}
 
-Đối tượng cơ cấu quyết định cách biểu diễn cấu hình và các ràng buộc của bài toán. Với tay máy, quỹ đạo thường được biểu diễn bằng tọa độ khớp \(q=(q_1,\ldots,q_n)\), cần xét giới hạn khớp và va chạm giữa các khâu. Với robot di động, quỹ đạo mô tả chuyển động của thân robot trong môi trường, có xét kích thước và khả năng chuyển động của cơ cấu \cite{lynch-park-modern-robotics}.
+Đối tượng cơ cấu quyết định cách biểu diễn cấu hình và các ràng buộc của bài toán. Với tay máy, quỹ đạo thường được biểu diễn bằng tọa độ khớp \(q=(q_1,\ldots,q_n)\), cần xét giới hạn khớp và va chạm giữa các khâu. Với robot di động, quỹ đạo mô tả chuyển động của thân robot trong môi trường, có xét kích thước và khả năng chuyển động của cơ cấu.
 
 \begin{center}
 \begin{minipage}{\linewidth}
@@ -447,7 +447,7 @@ Khi hình học đường đi đã cố định, bài toán có thể chuyển t
   \dot q=q_s\dot s,\qquad
   \ddot q=q_s\ddot s+q_{ss}\dot s^2,
 \]
-trong đó \(q_s=dq/ds\). Giới hạn vận tốc, gia tốc hoặc mô-men tạo ra miền cho phép của \(\dot s,\ddot s\); thời gian ngắn nhất phải được tìm trong miền này \cite{lynch-park-modern-robotics}. Trong mô hình đơn giản chỉ giới hạn vận tốc và gia tốc, nghiệm có thể gồm các pha tăng tốc, chạy đều và giảm tốc. Khi thêm giới hạn jerk, các chỗ đổi gia tốc phải có giai đoạn chuyển tiếp.
+trong đó \(q_s=dq/ds\). Giới hạn vận tốc, gia tốc hoặc mô-men tạo ra miền cho phép của \(\dot s,\ddot s\); thời gian ngắn nhất phải được tìm trong miền này. Trong mô hình đơn giản chỉ giới hạn vận tốc và gia tốc, nghiệm có thể gồm các pha tăng tốc, chạy đều và giảm tốc. Khi thêm giới hạn jerk, các chỗ đổi gia tốc phải có giai đoạn chuyển tiếp.
 
 Đối với xe, giới hạn tốc độ qua cua còn gắn với gia tốc pháp tuyến \(a_n=v^2|\kappa|\). Nếu chọn ngưỡng thiết kế \(a_{n,\max}\), điều kiện sơ bộ tại điểm có \(\kappa\neq0\) là \(v\leq\sqrt{a_{n,\max}/|\kappa|}\). Như vậy, một tuyến ngắn nhiều góc gắt có thể mất thời gian hơn một tuyến dài nhưng cong thoải. Giá trị ngưỡng phải được xác định phù hợp với xe và điều kiện thử.
 
@@ -1055,7 +1055,7 @@ Khi xe đi tiến và hướng thân trùng tiếp tuyến, quan hệ động h�
   \omega=v\kappa.
   \label{eq:smooth-unicycle}
 \end{equation}
-Cách dựng này đáp ứng ràng buộc không trượt ngang của mô hình vi sai \cite{lynch-park-modern-robotics}. Nếu vận tốc liên tục, độ cong liên tục giúp tránh bước nhảy của tốc độ quay. Khi độ cong tăng, cần giảm vận tốc để giữ yêu cầu quay trong khả năng của xe.
+Cách dựng này đáp ứng ràng buộc không trượt ngang của mô hình vi sai. Nếu vận tốc liên tục, độ cong liên tục giúp tránh bước nhảy của tốc độ quay. Khi độ cong tăng, cần giảm vận tốc để giữ yêu cầu quay trong khả năng của xe.
 
 Xe ba bánh dùng hai bánh chủ động để tạo chuyển động, bánh tự lựa hỗ trợ cân bằng. Khả năng quay tại chỗ không thay thế yêu cầu làm mượt khi cần chạy liên tục. Với pha quay tại chỗ, vận tốc tịnh tiến bằng không nhưng tốc độ quay có thể khác không; pha này phải mô tả riêng. Nhiệm vụ đi lùi hoặc đổi chiều cũng cần phân chia các pha và xác định lại quan hệ giữa hướng thân với hướng đi.
 
@@ -1403,7 +1403,7 @@ Một cách sửa là làm thế đẩy phụ thuộc thêm khoảng cách tới
       d_g^{2}.
   \label{eq:gnron-modified-potential}
 \end{equation}
-Ngoài khoảng tác động, thế sửa đổi bằng \(0\). Khi đích có khoảng hở dương tới vật cản, thế này và lực tương ứng tiến về \(0\) tại đích. Do thế hút chỉ bằng \(0\) tại đích và các thế đẩy không âm, đích trở thành cực tiểu toàn cục có giá trị thế bằng \(0\). Tuy vậy, vẫn có thể tồn tại các cực tiểu cục bộ khác; sửa GNRON không đồng nghĩa giải quyết mọi tình huống mắc kẹt \cite{ge-cui-2000}.
+Ngoài khoảng tác động, thế sửa đổi bằng \(0\). Khi đích có khoảng hở dương tới vật cản, thế này và lực tương ứng tiến về \(0\) tại đích. Do thế hút chỉ bằng \(0\) tại đích và các thế đẩy không âm, đích trở thành cực tiểu toàn cục có giá trị thế bằng \(0\). Tuy vậy, vẫn có thể tồn tại các cực tiểu cục bộ khác; sửa GNRON không đồng nghĩa giải quyết mọi tình huống mắc kẹt.
 
 Để tính lực đúng, phải đạo hàm cả khoảng cách đến vật cản và khoảng cách đến đích. Đặt \(A_i=1/\rho_i-1/\rho_0\); trong miền \(0<\rho_i<\rho_0\), với \(d_g>0\), ta có
 \begin{equation}
@@ -1561,7 +1561,7 @@ dữ liệu thực nghiệm cần được bổ sung trước khi kết luận �
 
 Hai động cơ được bố trí đối xứng qua trục dọc, mỗi động cơ dẫn động một bánh độc lập. Bánh tự lựa tạo điểm đỡ thứ ba và đổi hướng theo chuyển động của thân xe. Điểm tham chiếu \(P\) đặt tại trung điểm trục nối hai bánh chủ động; trục \(X_R\) hướng về phía trước, \(Y_R\) hướng sang trái, chiều quay dương ngược chiều kim đồng hồ. Cách chọn này thống nhất với mô hình động học ở Chương 2.
 
-Đề tài chọn động cơ có tên thương mại GA12 N20 Servo, phiên bản \(6\,\mathrm{VDC}\), \(300\,\mathrm{RPM}\) không tải \cite{hshop-ga12-n20-6v300}. Đây là động cơ DC chổi than giảm tốc kim loại có encoder Hall A/B. Hệ thống tạo chức năng servo bằng vòng điều khiển tốc độ trên ESP32-C3-MINI kết hợp driver TB6612FNG. Trục chữ D đường kính \(3\,\mathrm{mm}\) phù hợp với lỗ lắp bánh đã chọn. Bảng~\ref{tab:robot-hardware-specs} tổng hợp thông số do nhà cung cấp công bố cho động cơ và bánh xe \cite{hshop-ga12-n20-6v300,hshop-ga12-wheel-kit}.
+Đề tài chọn động cơ có tên thương mại GA12 N20, phiên bản \(6\,\mathrm{VDC}\), \(300\,\mathrm{RPM}\) không tải. Đây là động cơ DC chổi than giảm tốc kim loại có encoder Hall A/B. Hệ thống tạo chức năng servo bằng vòng điều khiển tốc độ trên ESP32-C3-MINI kết hợp driver TB6612FNG. Trục chữ D đường kính \(3\,\mathrm{mm}\) phù hợp với lỗ lắp bánh đã chọn. Bảng~\ref{tab:robot-hardware-specs} tổng hợp thông số do nhà cung cấp công bố cho động cơ và bánh xe.
 
 \begin{center}
 \begin{minipage}{\linewidth}
@@ -1620,11 +1620,11 @@ Khoảng cách tâm hai bánh chủ động của mô hình là \(L=13.5\,\mathr
 
 \subsubsection*{a. Kiến trúc điều khiển và kết nối tín hiệu}
 
-ESP32-C3-MINI đảm nhiệm thu nhận encoder, tính vận tốc bánh, cập nhật Odometry và thực hiện hai bộ điều khiển tốc độ. Thuật toán tìm đường và làm mượt có thể chạy trên máy tính, sau đó gửi đường tham chiếu hoặc các điểm dẫn đường tới robot. Đây là phương án phân chia đề xuất để giảm khối lượng tính toán trong vòng điều khiển; việc chạy trực tiếp toàn bộ bộ quy hoạch trên vi điều khiển cần được đánh giá riêng về bộ nhớ và thời gian xử lý.
+ESP32-C3-MINI đảm nhiệm thu nhận encoder, tính vận tốc bánh, cập nhật Odometry, thực hiện hai bộ điều khiển tốc độ và thực thi thuật toán tìm đường, làm mượt.
 
 Phương án đấu nối sử dụng hai ngõ PWM cho hai kênh công suất, bốn ngõ xác định chiều quay, một tín hiệu cho phép hoạt động và bốn ngõ vào encoder. Các chân GPIO cụ thể chỉ được chốt sau khi đối chiếu sơ đồ đúng phiên bản bo ESP32-C3-MINI, các chân phục vụ khởi động, nạp chương trình và giao tiếp. PWM được tạo bằng ngoại vi LEDC; encoder được đọc bằng ngắt GPIO theo tài liệu ESP-IDF dành cho ESP32-C3 \cite{espressif-c3-peripherals}.
 
-Với module TB6612 sử dụng IC TB6612FNG, nguồn logic \(V_{CC}\) có dải hoạt động \(2.7\)--\(5.5\,\mathrm{V}\), nguồn động cơ \(V_M\) có dải \(2.5\)--\(13.5\,\mathrm{V}\). Phương án chọn \(V_{CC}=3.3\,\mathrm{V}\) để ghép mức logic; nguồn động cơ của cấu hình sử dụng là \(7.4\,\mathrm{V}\). Thông số \(300\,\mathrm{RPM}\) do nhà cung cấp công bố ứng với không tải tại \(6\,\mathrm{V}\); tốc độ ở nguồn \(7.4\,\mathrm{V}\) cần được đo dưới tải thực tế \cite{hshop-ga12-n20-6v300}. Hai kênh dùng \texttt{AIN1/AIN2/PWMA} và \texttt{BIN1/BIN2/PWMB}; \texttt{STBY} mức thấp đưa IC về chờ. Chế độ phanh ngắn mạch và chế độ đầu ra trở kháng cao cần được phân biệt theo bảng chức năng của nhà sản xuất \cite[tr. 3--5]{toshiba-tb6612fng}.
+Với module TB6612 sử dụng IC TB6612FNG, nguồn logic \(V_{CC}\) có dải hoạt động \(2.7\)--\(5.5\,\mathrm{V}\), nguồn động cơ \(V_M\) có dải \(2.5\)--\(13.5\,\mathrm{V}\). Phương án chọn \(V_{CC}=3.3\,\mathrm{V}\) để ghép mức logic; nguồn động cơ của cấu hình sử dụng là \(7.4\,\mathrm{V}\). Thông số \(300\,\mathrm{RPM}\) do nhà cung cấp công bố ứng với không tải tại \(6\,\mathrm{V}\); tốc độ ở nguồn \(7.4\,\mathrm{V}\) cần được đo dưới tải thực tế. Hai kênh dùng \texttt{AIN1/AIN2/PWMA} và \texttt{BIN1/BIN2/PWMB}; \texttt{STBY} mức thấp đưa IC về chờ. Chế độ phanh ngắn mạch và chế độ đầu ra trở kháng cao cần được phân biệt theo bảng chức năng của nhà sản xuất \cite[tr. 3--5]{toshiba-tb6612fng}.
 
 Encoder được đề xuất cấp \(3.3\,\mathrm{V}\) và kiểm tra dạng tín hiệu A/B trước khi nối GPIO. Nếu cấp encoder bằng nguồn khác, cần xác nhận mức ngõ ra và phương án chuyển mức phù hợp với ESP32-C3. Nguồn động cơ và nguồn logic dùng chung điểm tham chiếu GND, có lọc nhiễu và bố trí đường cấp dòng động cơ tách khỏi đường tín hiệu encoder. Điện áp pin, dung lượng nguồn và cách hạ áp thực tế còn cần bổ sung vào hồ sơ lắp ráp.
 
@@ -1646,7 +1646,7 @@ Tần số PWM, độ phân giải duty, \(T_s\), chu kỳ bám đường và th
 
 \subsubsection*{a. Quy ước số đếm encoder và độ phân giải}
 
-Nhà cung cấp công bố \(7\) xung mỗi kênh A/B trên một vòng trục encoder trước hộp số \cite{hshop-ga12-n20-6v300}. Nếu mỗi xung tương ứng một chu kỳ đầy đủ, thì với tỷ số truyền \(G=50\), một kênh tạo \(7\times50=350\) chu kỳ trên một vòng trục đầu ra. Số đếm dùng trong chương trình phụ thuộc cách giải mã, được phân biệt trong Bảng~\ref{tab:encoder-decoding}.
+Nhà cung cấp công bố \(7\) xung mỗi kênh A/B trên một vòng trục encoder trước hộp số. Nếu mỗi xung tương ứng một chu kỳ đầy đủ, thì với tỷ số truyền \(G=50\), một kênh tạo \(7\times50=350\) chu kỳ trên một vòng trục đầu ra. Số đếm dùng trong chương trình phụ thuộc cách giải mã, được phân biệt trong Bảng~\ref{tab:encoder-decoding}.
 
 \begin{center}
 \begin{minipage}{\linewidth}
@@ -1690,7 +1690,7 @@ Gọi \(\Delta n_{L,k}\), \(\Delta n_{R,k}\) là số đếm có dấu trong chu
   \Delta\theta_k=\frac{\Delta s_{R,k}-\Delta s_{L,k}}{L}.
   \label{eq:exp-odom-increments}
 \end{equation}
-Quan hệ này được suy ra từ mô hình vi sai; tích phân chuyển động bánh xe để ước lượng tư thế là nguyên lý của Odometry \cite[Mục 13.4]{lynch-park-modern-robotics}.
+Quan hệ này được suy ra từ mô hình vi sai; tích phân chuyển động bánh xe để ước lượng tư thế là nguyên lý của Odometry.
 
 Nếu vận tốc xoắn của thân xe được coi là không đổi trong một chu kỳ, có thể cập nhật bằng công thức cung tròn:
 \begin{equation}
@@ -1735,7 +1735,7 @@ Kiến trúc đề xuất gồm hai cấp: vòng ngoài tạo vận tốc thân 
 
 \subsubsection*{a. Hình học điểm nhìn trước}
 
-Pure Pursuit xác định một điểm phía trước trên đường và dựng cung tròn đi từ tư thế hiện tại tới điểm đó \cite[Mục 2--3]{coulter-pure-pursuit-1992}. Đặt tư thế ước lượng là \((\widehat{x},\widehat{y},\widehat{\theta})\), điểm nhìn trước trong hệ toàn cục là \((x_g,y_g)\). Chuyển điểm sang hệ thân xe:
+Pure Pursuit xác định một điểm phía trước trên đường và dựng cung tròn đi từ tư thế hiện tại tới điểm đó. Đặt tư thế ước lượng là \((\widehat{x},\widehat{y},\widehat{\theta})\), điểm nhìn trước trong hệ toàn cục là \((x_g,y_g)\). Chuyển điểm sang hệ thân xe:
 \begin{equation}
   \begin{bmatrix}x_g^R\\y_g^R\end{bmatrix}
   =\begin{bmatrix}
@@ -1799,7 +1799,7 @@ Mỗi bánh sử dụng một bộ điều khiển vận tốc vòng kín. Với
 \begin{equation}
   e_{i,k}=v_{i,k}^{\mathrm{ref}}-\widehat{v}_{i,k}.
 \end{equation}
-Với khoảng thời gian lấy mẫu \(\Delta t_k>0\), dạng rời rạc cơ bản của bộ điều khiển PID gồm thành phần tỷ lệ, tích phân và vi phân \cite{ros-control-pid}:
+Với khoảng thời gian lấy mẫu \(\Delta t_k>0\), dạng rời rạc cơ bản của bộ điều khiển PID gồm thành phần tỷ lệ, tích phân và vi phân:
 \begin{equation}
   S_{i,k}=S_{i,k-1}+e_{i,k}\Delta t_k,
 \end{equation}
@@ -1844,7 +1844,7 @@ Profile hình thang quy định vận tốc dọc đường \(v(t)\) theo ba pha
   s(T)=\ell_s.
   \label{eq:exp-path-time-scaling}
 \end{equation}
-Như vậy, bộ quy hoạch xác định tuyến đi, còn profile vận tốc xác định thời điểm robot đi qua từng vị trí trên tuyến \cite[Mục 9.1--9.2]{lynch-park-modern-robotics}. Với cùng \(\mathbf p(s)\), đổi profile chỉ làm thay đổi quy luật tiến triển theo thời gian.
+Như vậy, bộ quy hoạch xác định tuyến đi, còn profile vận tốc xác định thời điểm robot đi qua từng vị trí trên tuyến. Với cùng \(\mathbf p(s)\), đổi profile chỉ làm thay đổi quy luật tiến triển theo thời gian.
 
 \subsubsection*{b. Đối chiếu với profile vận tốc chữ S trên cùng đường đi}
 
@@ -1960,7 +1960,7 @@ Trước khi mở rộng ứng dụng, cần chứng minh độ lặp lại dư�
 
 \subsection{Hướng phát triển: Tích hợp micro-ROS trên ESP32-C3-MINI, SLAM và quy hoạch quỹ đạo thời gian thực}
 
-Trên cơ sở mô hình hiện tại, đề tài có thể phát triển theo hướng kết nối bộ điều khiển ESP32-C3-MINI với hệ sinh thái ROS 2 thông qua micro-ROS \cite{micro-ros-espidf}. Vi điều khiển dự kiến tiếp tục đảm nhiệm đọc encoder, điều khiển tốc độ động cơ và xuất PWM; máy tính hoặc máy tính nhúng đảm nhiệm các tác vụ định vị và quy hoạch. Việc tích hợp cần được khảo sát về tài nguyên phần cứng, độ trễ truyền thông và khả năng duy trì chu kỳ điều khiển, đồng thời có cơ chế dừng khi mất kết nối hoặc lệnh điều khiển quá hạn.
+Trên cơ sở mô hình hiện tại, đề tài có thể phát triển theo hướng kết nối bộ điều khiển ESP32-C3-MINI với hệ sinh thái ROS 2 thông qua micro-ROS. Vi điều khiển dự kiến tiếp tục đảm nhiệm đọc encoder, điều khiển tốc độ động cơ và xuất PWM; máy tính hoặc máy tính nhúng đảm nhiệm các tác vụ định vị và quy hoạch. Việc tích hợp cần được khảo sát về tài nguyên phần cứng, độ trễ truyền thông và khả năng duy trì chu kỳ điều khiển, đồng thời có cơ chế dừng khi mất kết nối hoặc lệnh điều khiển quá hạn.
 
 Một hướng mở rộng khác là bổ sung LiDAR hoặc camera, kết hợp dữ liệu encoder và cảm biến quán tính để nghiên cứu bản đồ hóa và định vị đồng thời (SLAM). Khối SLAM dự kiến được triển khai trên máy tính hoặc máy tính nhúng để xây dựng bản đồ và ước lượng tư thế robot, hỗ trợ điều hướng trong môi trường chưa biết trước. Nội dung này cần được thực hiện từng bước, từ lựa chọn và hiệu chuẩn cảm biến đến đánh giá độ tin cậy định vị trong điều kiện phòng thí nghiệm.
 

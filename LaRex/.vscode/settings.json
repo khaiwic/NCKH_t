@@ -2,9 +2,15 @@
   "latex-workshop.latex.tools": [
     {
       "name": "tectonic-local",
-      "command": ".tools/tectonic/tectonic.exe",
+      "command": "C:/Users/ADMIN/Documents/NCKH/LaRex/.tools/tectonic/tectonic.exe",
       "cwd": "%WORKSPACE_FOLDER%",
-      "args": ["--synctex", "--keep-logs", "--outdir", "%OUTDIR%", "%DOC_EXT%"],
+      "args": [
+        "--synctex",
+        "--keep-logs",
+        "--outdir",
+        "%OUTDIR%",
+        "%DOC_EXT%"
+      ],
       "env": {
         "TECTONIC_CACHE_DIR": "%WORKSPACE_FOLDER%/.tools/tectonic/cache"
       }
@@ -13,12 +19,14 @@
   "latex-workshop.latex.recipes": [
     {
       "name": "Tectonic (PDF)",
-      "tools": ["tectonic-local"]
+      "tools": [
+        "tectonic-local"
+      ]
     }
   ],
-  "latex-workshop.latex.recipe.default": "first",
-  "latex-workshop.latex.build.forceRecipeUsage": true,
+  "latex-workshop.latex.recipe.default": "Tectonic (PDF)",
   "latex-workshop.latex.autoBuild.run": "onSave",
   "latex-workshop.latex.outDir": "%DIR%",
-  "latex-workshop.view.pdf.viewer": "tab"
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.build.enableMagicComments": false
 }
